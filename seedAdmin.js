@@ -20,25 +20,29 @@ const seedData = async () => {
     console.log('[Seed Script] Connected successfully.');
 
     // 1. Seed / Update Admin
-    const adminEmail = 'admin@kisandirect.com';
-    const adminPassword = 'AdminPassword123';
-    const salt = await bcrypt.genSalt(10);
-    const hashedAdminPassword = await bcrypt.hash(adminPassword, salt);
+// 1. Seed / Update Admin
+const adminEmail = 'shivamkumarmzp2@gmail.com';
+const adminPassword = 'Shakti@826';
 
-    let admin = await Admin.findOne({ email: adminEmail });
-    if (!admin) {
-      admin = await Admin.create({
-        name: 'System Administrator',
-        email: adminEmail,
-        password: hashedAdminPassword,
-        role: 'admin'
-      });
-      console.log(`[Seed] Created Admin Account: ${adminEmail} / ${adminPassword}`);
-    } else {
-      admin.password = hashedAdminPassword;
-      await admin.save();
-      console.log(`[Seed] Admin Account Already Exists (${adminEmail}). Password refreshed.`);
-    }
+const salt = await bcrypt.genSalt(10);
+const hashedAdminPassword = await bcrypt.hash(adminPassword, salt);
+
+let admin = await Admin.findOne({ role: 'admin' });
+
+if (!admin) {
+  admin = await Admin.create({
+    name: 'System Administrator',
+    email: adminEmail,
+    password: hashedAdminPassword,
+    role: 'admin'
+  });
+  console.log(`[Seed] Created Admin Account: ${adminEmail}`);
+} else {
+  admin.email = adminEmail;
+  admin.password = hashedAdminPassword;
+  await admin.save();
+  console.log(`[Seed] Admin Account Updated (${adminEmail}).`);
+}
 
     // 2. Check if we should populate demo farmers & products if empty
     const farmerCount = await Farmer.countDocuments();
