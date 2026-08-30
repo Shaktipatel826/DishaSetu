@@ -49,7 +49,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // Fallback for API routes (404 Not Found)
-app.use('/api/*', (req, res) => {
+app.use('/api/{*splat}', (req, res) => {
   res.status(404).json({
     success: false,
     message: `API route [${req.method} ${req.originalUrl}] not found.`
@@ -57,10 +57,9 @@ app.use('/api/*', (req, res) => {
 });
 
 // Fallback for SPA/Static routes -> send to index.html if file doesn't exist
-app.get('*', (req, res) => {
+app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
-
 // Global Centralized Error Handler
 app.use((err, req, res, next) => {
   console.error('[Server Error]:', err.stack || err.message);
@@ -71,7 +70,7 @@ app.use((err, req, res, next) => {
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
+app.listen(PORT, '0.0.0.0', () =>  {
   console.log(`====================================================`);
   console.log(`🌾 Kisan Direct Server running on http://localhost:${PORT}`);
   console.log(`🌾 Environment: ${process.env.NODE_ENV || 'development'}`);
