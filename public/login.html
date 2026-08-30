@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login | Kisan Direct Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .role-tabs {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.5rem;
+      background: var(--bg-muted);
+      padding: 0.4rem;
+      border-radius: var(--radius-md);
+      margin-bottom: 1.5rem;
+    }
+    .role-tab-btn {
+      padding: 0.6rem;
+      font-size: 0.88rem;
+      font-weight: 700;
+      border-radius: var(--radius-sm);
+      border: none;
+      background: transparent;
+      color: #64748b;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .role-tab-btn.active {
+      background: #fff;
+      color: var(--primary-dark);
+      box-shadow: var(--shadow-sm);
+    }
+    .demo-box {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-md);
+    }
+    .demo-btn {
+      font-size: 0.78rem;
+      padding: 0.35rem 0.65rem;
+      margin: 0.2rem;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="main-content flex-center">
+    <div class="container" style="max-width: 500px;">
+      
+      <div class="card" style="padding: 2.25rem;">
+        <div class="text-center mb-3">
+          <span style="font-size: 2.5rem;">🌾</span>
+          <h2 class="mt-1">Sign In to Kisan Direct</h2>
+          <p style="font-size: 0.92rem; color: var(--text-muted);">
+            Access your grains, sales orders, or platform portal.
+          </p>
+        </div>
+
+        <!-- Role Selector Tabs -->
+        <div class="role-tabs">
+          <button type="button" class="role-tab-btn active" onclick="setRole('customer')">🛒 Customer</button>
+          <button type="button" class="role-tab-btn" onclick="setRole('farmer')">🌱 Farmer</button>
+          <button type="button" class="role-tab-btn" onclick="setRole('admin')">⚙️ Admin</button>
+        </div>
+
+        <form id="login-form">
+          <input type="hidden" id="selected-role" value="customer">
+
+          <!-- Email -->
+          <div class="form-group">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input type="email" id="login-email" class="form-control" placeholder="name@example.com" required>
+          </div>
+
+          <!-- Password -->
+          <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <input type="password" id="login-password" class="form-control" placeholder="Enter your password" required>
+          </div>
+
+          <button type="submit" id="login-btn" class="btn btn-primary btn-block mt-2">
+            Sign In
+          </button>
+        </form>
+
+        <!-- Quick Demo Login Helpers -->
+        <div class="demo-box text-center">
+          <div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem;">
+            ⚡ Quick 1-Click Demo Logins:
+          </div>
+          <div class="flex-center" style="flex-wrap: wrap;">
+            <button class="btn btn-secondary demo-btn" onclick="fillCredentials('customer', 'priya.customer@kisandirect.com', 'Kisan@123')">
+              👤 Demo Customer
+            </button>
+            <button class="btn btn-secondary demo-btn" onclick="fillCredentials('farmer', 'ramesh.farmer@kisandirect.com', 'Kisan@123')">
+              🌱 Demo Farmer
+            </button>
+            <button class="btn btn-secondary demo-btn" onclick="fillCredentials('admin', 'admin@kisandirect.com', 'AdminPassword123')">
+              🛡️ Demo Admin
+            </button>
+          </div>
+        </div>
+
+        <div class="text-center mt-3" style="font-size: 0.9rem; color: var(--text-muted);">
+          New to Kisan Direct? <a href="register.html" style="font-weight: 600;">Create an account</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await renderNavbar();
+
+      const params = new URLSearchParams(window.location.search);
+      const roleParam = params.get('role');
+      if (roleParam && ['customer', 'farmer', 'admin'].includes(roleParam)) {
+        setRole(roleParam);
+      }
+    });
+
+    function setRole(role) {
+      document.getElementById('selected-role').value = role;
+      document.querySelectorAll('.role-tab-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if (btn.textContent.toLowerCase().includes(role)) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    function fillCredentials(role, email, password) {
+      setRole(role);
+      document.getElementById('login-email').value = email;
+      document.getElementById('login-password').value = password;
+      showToast(`Filled ${role} demo credentials! Click Sign In.`, 'info');
+    }
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const role = document.getElementById('selected-role').value;
+      const email = document.getElementById('login-email').value.trim();
+      const password = document.getElementById('login-password').value;
+      const loginBtn = document.getElementById('login-btn');
+
+      loginBtn.disabled = true;
+      loginBtn.textContent = 'Authenticating...';
+
+      const res = await apiFetch('/api/auth/login', {
+        method: 'POST',
+        body: { role, email, password }
+      });
+
+      if (res.success && res.user) {
+        showToast(res.message || 'Login successful!', 'success');
+        localStorage.setItem('kisan_user', JSON.stringify(res.user));
+
+        const params = new URLSearchParams(window.location.search);
+        const redirect = params.get('redirect');
+
+        setTimeout(() => {
+          if (redirect) {
+            window.location.href = redirect;
+          } else if (res.user.role === 'farmer') {
+            window.location.href = 'farmer-dashboard.html';
+          } else if (res.user.role === 'admin') {
+            window.location.href = 'admin-dashboard.html';
+          } else {
+            window.location.href = 'customer-dashboard.html';
+          }
+        }, 800);
+      } else {
+        showToast(res.message || 'Login failed. Please check credentials.', 'error');
+        loginBtn.disabled = false;
+        loginBtn.textContent = 'Sign In';
+      }
+    });
+  </script>
+</body>
+</html>

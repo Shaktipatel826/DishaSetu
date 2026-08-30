@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Dashboard | Kisan Direct Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="main-content">
+    <div class="container">
+      
+      <div class="dashboard-layout">
+        
+        <!-- Admin Sidebar -->
+        <aside class="sidebar">
+          <div class="sidebar-user">
+            <div class="user-avatar" style="background: linear-gradient(135deg, #1e293b, #475569);">🛡️</div>
+            <h3 id="admin-name" style="font-size: 1.15rem; margin-bottom: 0.2rem;">Administrator</h3>
+            <span class="user-role-tag" style="background-color: #334155;">Platform Admin</span>
+          </div>
+
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item active" onclick="switchAdminTab('overview')">
+              <span>📊</span> Statistics Overview
+            </li>
+            <li class="sidebar-nav-item" onclick="switchAdminTab('farmers')">
+              <span>🌱</span> Manage Farmers
+            </li>
+            <li class="sidebar-nav-item" onclick="switchAdminTab('customers')">
+              <span>🛒</span> Manage Customers
+            </li>
+            <li class="sidebar-nav-item" onclick="switchAdminTab('products')">
+              <span>🌾</span> Manage Products
+            </li>
+            <li class="sidebar-nav-item" onclick="switchAdminTab('orders')">
+              <span>📦</span> Manage Orders
+            </li>
+            <li class="sidebar-nav-item" onclick="switchAdminTab('feedback')">
+              <span>⭐</span> Moderate Feedback
+            </li>
+            <li class="sidebar-nav-item" onclick="handleLogout()" style="color: #dc2626;">
+              <span>🚪</span> Logout
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <section class="dashboard-main">
+
+          <!-- TAB 1: OVERVIEW -->
+          <div id="tab-overview" class="tab-pane">
+            <div class="mb-3">
+              <h2>Platform Analytics & Overview</h2>
+              <p style="color: var(--text-muted); margin: 0;">Real-time metrics for Kisan Direct direct grain marketplace.</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon">🌱</div>
+                <div>
+                  <div class="stat-val" id="stat-farmers">0</div>
+                  <div class="stat-label">Total Farmers</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon">👥</div>
+                <div>
+                  <div class="stat-val" id="stat-customers">0</div>
+                  <div class="stat-label">Total Customers</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon">🌾</div>
+                <div>
+                  <div class="stat-val" id="stat-products">0</div>
+                  <div class="stat-label">Total Grain Listings</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div>
+                  <div class="stat-val" id="stat-orders">0</div>
+                  <div class="stat-label">Total Orders Placed</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div>
+                  <div class="stat-val" id="stat-pending-orders">0</div>
+                  <div class="stat-label">Pending Orders</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div>
+                  <div class="stat-val" id="stat-volume">₹0</div>
+                  <div class="stat-label">Delivered Volume</div>
+                </div>
+              </div>
+            </div>
+
+            <div class="card mt-3">
+              <h3>System Control & Quick Navigation</h3>
+              <p style="color: var(--text-muted); font-size: 0.92rem;">
+                Use the left navigation sidebar to view, inspect, or remove platform records across farmers, customers, grain catalogs, orders, and customer feedback.
+              </p>
+              <div class="flex gap-2 mt-2" style="flex-wrap: wrap;">
+                <button onclick="switchAdminTab('farmers')" class="btn btn-outline btn-sm">Manage Farmers</button>
+                <button onclick="switchAdminTab('products')" class="btn btn-outline btn-sm">Manage Products</button>
+                <button onclick="switchAdminTab('orders')" class="btn btn-outline btn-sm">Manage Orders</button>
+                <button onclick="switchAdminTab('feedback')" class="btn btn-outline btn-sm">Moderate Feedback</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: FARMERS TABLE -->
+          <div id="tab-farmers" class="tab-pane" style="display: none;">
+            <div class="flex-between mb-3">
+              <div>
+                <h2>Registered Farmers</h2>
+                <p style="color: var(--text-muted); margin: 0;">List of verified grain producers on Kisan Direct.</p>
+              </div>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Farmer Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Farm Location</th>
+                    <th>Products</th>
+                    <th>Orders</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="farmers-table-body">
+                  <tr><td colspan="7" class="text-center">Loading farmers...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 3: CUSTOMERS TABLE -->
+          <div id="tab-customers" class="tab-pane" style="display: none;">
+            <div class="mb-3">
+              <h2>Registered Customers</h2>
+              <p style="color: var(--text-muted); margin: 0;">Direct grain buyers across India.</p>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Customer Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Default Address</th>
+                    <th>Orders Placed</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="customers-table-body">
+                  <tr><td colspan="6" class="text-center">Loading customers...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 4: PRODUCTS TABLE -->
+          <div id="tab-products" class="tab-pane" style="display: none;">
+            <div class="mb-3">
+              <h2>Marketplace Products</h2>
+              <p style="color: var(--text-muted); margin: 0;">All grain varieties currently listed by farmers.</p>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Grain Name</th>
+                    <th>Category</th>
+                    <th>Price / kg</th>
+                    <th>Stock (kg)</th>
+                    <th>Farmer</th>
+                    <th>Rating</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table-body">
+                  <tr><td colspan="8" class="text-center">Loading products...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 5: ORDERS TABLE -->
+          <div id="tab-orders" class="tab-pane" style="display: none;">
+            <div class="mb-3">
+              <h2>All Marketplace Orders</h2>
+              <p style="color: var(--text-muted); margin: 0;">Order transactions between consumers and farmers.</p>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order #</th>
+                    <th>Date</th>
+                    <th>Customer</th>
+                    <th>Farmer</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  <tr><td colspan="7" class="text-center">Loading orders...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 6: FEEDBACK MODERATION TABLE -->
+          <div id="tab-feedback" class="tab-pane" style="display: none;">
+            <div class="mb-3">
+              <h2>Customer Ratings & Feedback Moderation</h2>
+              <p style="color: var(--text-muted); margin: 0;">Inspect and moderate customer reviews.</p>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Product</th>
+                    <th>Customer</th>
+                    <th>Farmer</th>
+                    <th>Rating</th>
+                    <th>Review Comment</th>
+                    <th>Date</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="feedback-table-body">
+                  <tr><td colspan="7" class="text-center">Loading feedback...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    let adminUser = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await renderNavbar();
+      adminUser = await requireRoleAuth('admin');
+      if (!adminUser) return;
+
+      document.getElementById('admin-name').textContent = adminUser.name;
+      loadAdminStats();
+    });
+
+    function switchAdminTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
+
+      const activePane = document.getElementById(`tab-${tabId}`);
+      if (activePane) activePane.style.display = 'block';
+
+      document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
+        if (btn.textContent.toLowerCase().includes(tabId)) {
+          btn.classList.add('active');
+        }
+      });
+
+      if (tabId === 'farmers') loadFarmers();
+      if (tabId === 'customers') loadCustomers();
+      if (tabId === 'products') loadProducts();
+      if (tabId === 'orders') loadOrders();
+      if (tabId === 'feedback') loadFeedback();
+    }
+
+    async function loadAdminStats() {
+      const res = await apiFetch('/api/admin/stats');
+      if (res.success && res.stats) {
+        const s = res.stats;
+        document.getElementById('stat-farmers').textContent = s.totalFarmers;
+        document.getElementById('stat-customers').textContent = s.totalCustomers;
+        document.getElementById('stat-products').textContent = s.totalProducts;
+        document.getElementById('stat-orders').textContent = s.totalOrders;
+        document.getElementById('stat-pending-orders').textContent = s.pendingOrders;
+        document.getElementById('stat-volume').textContent = `₹${s.totalMarketplaceVolume.toLocaleString('en-IN')}`;
+      }
+    }
+
+    async function loadFarmers() {
+      const res = await apiFetch('/api/admin/farmers');
+      const tbody = document.getElementById('farmers-table-body');
+
+      if (res.success && res.farmers) {
+        if (res.farmers.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="text-center">No farmers registered yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = res.farmers.map(f => `
+          <tr>
+            <td><strong>${f.name}</strong></td>
+            <td>${f.email}</td>
+            <td>${f.phone}</td>
+            <td>📍 ${f.location}</td>
+            <td><span class="badge badge-grain">${f.productCount} Grains</span></td>
+            <td>${f.orderCount} Orders</td>
+            <td>
+              <button onclick="deleteFarmer('${f._id}', '${f.name}')" class="btn btn-sm btn-danger">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    async function deleteFarmer(id, name) {
+      if (!confirm(`Are you sure you want to remove farmer "${name}" and all their products?`)) return;
+
+      const res = await apiFetch(`/api/admin/farmers/${id}`, { method: 'DELETE' });
+      if (res.success) {
+        showToast(res.message || 'Farmer removed.', 'info');
+        loadFarmers();
+        loadAdminStats();
+      } else {
+        showToast(res.message || 'Error deleting farmer.', 'error');
+      }
+    }
+
+    async function loadCustomers() {
+      const res = await apiFetch('/api/admin/customers');
+      const tbody = document.getElementById('customers-table-body');
+
+      if (res.success && res.customers) {
+        if (res.customers.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" class="text-center">No customers registered yet.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = res.customers.map(c => `
+          <tr>
+            <td><strong>${c.name}</strong></td>
+            <td>${c.email}</td>
+            <td>${c.phone}</td>
+            <td style="max-width: 250px;">${c.address}</td>
+            <td>${c.orderCount} Orders</td>
+            <td>
+              <button onclick="deleteCustomer('${c._id}', '${c.name}')" class="btn btn-sm btn-danger">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    async function deleteCustomer(id, name) {
+      if (!confirm(`Are you sure you want to remove customer "${name}"?`)) return;
+
+      const res = await apiFetch(`/api/admin/customers/${id}`, { method: 'DELETE' });
+      if (res.success) {
+        showToast(res.message || 'Customer removed.', 'info');
+        loadCustomers();
+        loadAdminStats();
+      } else {
+        showToast(res.message || 'Error deleting customer.', 'error');
+      }
+    }
+
+    async function loadProducts() {
+      const res = await apiFetch('/api/admin/products');
+      const tbody = document.getElementById('products-table-body');
+
+      if (res.success && res.products) {
+        if (res.products.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="8" class="text-center">No products found.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = res.products.map(p => `
+          <tr>
+            <td>
+              <img src="${p.image || 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600'}" alt="${p.name}" style="width: 45px; height: 45px; border-radius: var(--radius-sm); object-fit: cover;">
+            </td>
+            <td><strong>${p.name}</strong></td>
+            <td><span class="badge badge-grain">${p.category}</span></td>
+            <td>₹${p.pricePerKg} / kg</td>
+            <td>${p.stockKg} kg</td>
+            <td>${p.farmer ? p.farmer.name : 'Unknown'}</td>
+            <td>★ ${p.ratingAvg} (${p.ratingCount})</td>
+            <td>
+              <button onclick="deleteProduct('${p._id}', '${p.name}')" class="btn btn-sm btn-danger">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    async function deleteProduct(id, name) {
+      if (!confirm(`Are you sure you want to remove product "${name}"?`)) return;
+
+      const res = await apiFetch(`/api/admin/products/${id}`, { method: 'DELETE' });
+      if (res.success) {
+        showToast(res.message || 'Product removed.', 'info');
+        loadProducts();
+        loadAdminStats();
+      } else {
+        showToast(res.message || 'Error deleting product.', 'error');
+      }
+    }
+
+    async function loadOrders() {
+      const res = await apiFetch('/api/admin/orders');
+      const tbody = document.getElementById('orders-table-body');
+
+      if (res.success && res.orders) {
+        if (res.orders.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="text-center">No orders found.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = res.orders.map(o => `
+          <tr>
+            <td><strong>${o.orderNumber}</strong></td>
+            <td>${formatDate(o.createdAt)}</td>
+            <td>${o.customer ? o.customer.name : 'Customer'}</td>
+            <td>${o.farmer ? o.farmer.name : 'Farmer'}</td>
+            <td><strong>₹${o.totalAmount}</strong></td>
+            <td>${getStatusBadge(o.orderStatus)}</td>
+            <td>
+              <button onclick="deleteOrder('${o._id}', '${o.orderNumber}')" class="btn btn-sm btn-danger">Delete</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    async function deleteOrder(id, orderNumber) {
+      if (!confirm(`Are you sure you want to delete order #${orderNumber}?`)) return;
+
+      const res = await apiFetch(`/api/admin/orders/${id}`, { method: 'DELETE' });
+      if (res.success) {
+        showToast(res.message || 'Order removed.', 'info');
+        loadOrders();
+        loadAdminStats();
+      } else {
+        showToast(res.message || 'Error deleting order.', 'error');
+      }
+    }
+
+    async function loadFeedback() {
+      const res = await apiFetch('/api/admin/feedback');
+      const tbody = document.getElementById('feedback-table-body');
+
+      if (res.success && res.feedback) {
+        if (res.feedback.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="text-center">No feedback records found.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = res.feedback.map(fb => `
+          <tr>
+            <td><strong>${fb.product ? fb.product.name : 'Grain Product'}</strong></td>
+            <td>${fb.customer ? fb.customer.name : 'Customer'}</td>
+            <td>${fb.farmer ? fb.farmer.name : 'Farmer'}</td>
+            <td><span class="rating-stars">★ ${fb.rating}</span></td>
+            <td style="max-width: 300px;">"${fb.comment}"</td>
+            <td>${formatDate(fb.createdAt)}</td>
+            <td>
+              <button onclick="deleteFeedback('${fb._id}')" class="btn btn-sm btn-danger">Remove</button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    async function deleteFeedback(id) {
+      if (!confirm('Are you sure you want to remove this feedback review?')) return;
+
+      const res = await apiFetch(`/api/admin/feedback/${id}`, { method: 'DELETE' });
+      if (res.success) {
+        showToast(res.message || 'Feedback review removed.', 'info');
+        loadFeedback();
+      } else {
+        showToast(res.message || 'Error deleting feedback.', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

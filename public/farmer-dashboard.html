@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Dashboard | Kisan Direct</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="main-content">
+    <div class="container">
+      
+      <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+          <div class="sidebar-user">
+            <div class="user-avatar" id="avatar-initials">🧑‍🌾</div>
+            <h3 id="sidebar-farmer-name" style="font-size: 1.15rem; margin-bottom: 0.2rem;">Farmer</h3>
+            <span class="user-role-tag">Verified Farmer</span>
+            <div id="sidebar-farmer-loc" style="font-size: 0.8rem; color: var(--text-muted); margin-top: 0.4rem;">
+              📍 Farm Location
+            </div>
+          </div>
+
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item active" onclick="switchTab('overview')">
+              <span>📊</span> Overview & Earnings
+            </li>
+            <li class="sidebar-nav-item" onclick="switchTab('products')">
+              <span>🌾</span> My Products & Stock
+            </li>
+            <li class="sidebar-nav-item" onclick="switchTab('orders')">
+              <span>📦</span> Incoming Orders
+            </li>
+            <li class="sidebar-nav-item" onclick="switchTab('profile')">
+              <span>⚙️</span> Farm Profile
+            </li>
+            <li class="sidebar-nav-item" onclick="handleLogout()" style="color: #dc2626;">
+              <span>🚪</span> Logout
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <section class="dashboard-main">
+
+          <!-- TAB 1: OVERVIEW & EARNINGS -->
+          <div id="tab-overview" class="tab-pane">
+            <div class="flex-between mb-3">
+              <div>
+                <h2>Farmer Portal Overview</h2>
+                <p style="color: var(--text-muted); margin: 0;">Track your grain sales, direct revenue, and incoming buyer orders.</p>
+              </div>
+              <button onclick="openAddProductModal()" class="btn btn-primary btn-sm">+ Add New Crop</button>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-icon">💰</div>
+                <div>
+                  <div class="stat-val" id="stat-earnings">₹0</div>
+                  <div class="stat-label">Total Realized Earnings</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon">⏳</div>
+                <div>
+                  <div class="stat-val" id="stat-pending-val">₹0</div>
+                  <div class="stat-label">Orders in Pipeline</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon">📦</div>
+                <div>
+                  <div class="stat-val" id="stat-total-orders">0</div>
+                  <div class="stat-label">Total Received Orders</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon">🌾</div>
+                <div>
+                  <div class="stat-val" id="stat-products">0</div>
+                  <div class="stat-label">Listed Grains</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Recent Orders Preview -->
+            <div class="card">
+              <div class="flex-between mb-2">
+                <h3>Recent Incoming Orders</h3>
+                <button onclick="switchTab('orders')" class="btn btn-outline btn-sm">View All Orders</button>
+              </div>
+              <div class="table-responsive">
+                <table class="data-table" id="overview-orders-table">
+                  <thead>
+                    <tr>
+                      <th>Order #</th>
+                      <th>Customer</th>
+                      <th>Grains</th>
+                      <th>Amount</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td colspan="6" class="text-center">Loading orders...</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: MY PRODUCTS -->
+          <div id="tab-products" class="tab-pane" style="display: none;">
+            <div class="flex-between mb-3">
+              <div>
+                <h2>My Grain Inventory</h2>
+                <p style="color: var(--text-muted); margin: 0;">Manage listed crops, update stock quantities, and adjust pricing.</p>
+              </div>
+              <button onclick="openAddProductModal()" class="btn btn-primary">+ List New Grain</button>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table" id="my-products-table">
+                <thead>
+                  <tr>
+                    <th>Image</th>
+                    <th>Grain Name</th>
+                    <th>Category</th>
+                    <th>Price / kg</th>
+                    <th>Stock (kg)</th>
+                    <th>Rating</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="products-table-body">
+                  <tr><td colspan="7" class="text-center">Loading products...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 3: INCOMING ORDERS -->
+          <div id="tab-orders" class="tab-pane" style="display: none;">
+            <div class="mb-3">
+              <h2>Incoming Customer Orders</h2>
+              <p style="color: var(--text-muted); margin: 0;">Accept orders, pack grains, and dispatch directly to households.</p>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Order Details</th>
+                    <th>Customer & Delivery Address</th>
+                    <th>Grains Ordered</th>
+                    <th>Total Payout</th>
+                    <th>Status</th>
+                    <th>Update Status</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  <tr><td colspan="6" class="text-center">Loading incoming orders...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- TAB 4: PROFILE -->
+          <div id="tab-profile" class="tab-pane" style="display: none;">
+            <div class="card" style="max-width: 600px; padding: 2rem;">
+              <h2 class="mb-2">Farm & Personal Profile</h2>
+              <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Update your contact details and registered farm location.</p>
+
+              <form id="farmer-profile-form">
+                <div class="form-group">
+                  <label class="form-label">Farmer Full Name</label>
+                  <input type="text" id="prof-name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Email Address (Read-only)</label>
+                  <input type="email" id="prof-email" class="form-control" readonly style="background:#f1f5f9;">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Phone Number</label>
+                  <input type="tel" id="prof-phone" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Farm / Village Location</label>
+                  <input type="text" id="prof-location" class="form-control" required>
+                  <div class="input-help">Displayed to consumers on your grain product cards.</div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+              </form>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ADD / EDIT PRODUCT MODAL -->
+  <div class="modal-overlay" id="product-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-title">List New Grain Product</h3>
+        <button class="modal-close-btn" onclick="closeProductModal()">×</button>
+      </div>
+      <form id="product-form">
+        <input type="hidden" id="edit-product-id" value="">
+        <div class="modal-body">
+          <div class="form-group">
+            <label class="form-label" for="prod-name">Grain / Crop Name *</label>
+            <input type="text" id="prod-name" class="form-control" placeholder="e.g. Sharbati Golden Premium Wheat" required>
+          </div>
+
+          <div class="flex gap-2">
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="prod-category">Category *</label>
+              <select id="prod-category" class="form-select" required>
+                <option value="Wheat">Wheat</option>
+                <option value="Rice">Rice</option>
+                <option value="Dal">Dal</option>
+                <option value="Millets">Millets</option>
+                <option value="Pulses">Pulses</option>
+                <option value="Oilseeds">Oilseeds</option>
+                <option value="Spices">Spices</option>
+                <option value="Barley">Barley</option>
+                <option value="Corn">Corn</option>
+                <option value="Oats">Oats</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="prod-price">Price per kg (₹) *</label>
+              <input type="number" id="prod-price" class="form-control" placeholder="e.g. 50" min="1" required>
+            </div>
+
+            <div class="form-group" style="flex: 1;">
+              <label class="form-label" for="prod-stock">Available Stock (kg) *</label>
+              <input type="number" id="prod-stock" class="form-control" placeholder="e.g. 200" min="0" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prod-image">Product Image URL</label>
+            <input type="url" id="prod-image" class="form-control" placeholder="https://images.unsplash.com/...">
+            <div class="input-help">Leave empty to use automatic high-res category grain image.</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="prod-desc">Harvest Description & Organic Notes</label>
+            <textarea id="prod-desc" class="form-control" placeholder="Describe variety, soil/harvest conditions, or purity details..." rows="3"></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeProductModal()">Cancel</button>
+          <button type="submit" id="save-product-btn" class="btn btn-primary">Save Product</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    let farmerUser = null;
+    let allProducts = [];
+    let allOrders = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await renderNavbar();
+      farmerUser = await requireRoleAuth('farmer');
+      if (!farmerUser) return;
+
+      // Populate Sidebar
+      document.getElementById('sidebar-farmer-name').textContent = farmerUser.name;
+      document.getElementById('sidebar-farmer-loc').textContent = `📍 ${farmerUser.location || 'Direct Farm'}`;
+      document.getElementById('avatar-initials').textContent = farmerUser.name.charAt(0).toUpperCase();
+
+      // Populate Profile Form
+      document.getElementById('prof-name').value = farmerUser.name || '';
+      document.getElementById('prof-email').value = farmerUser.email || '';
+      document.getElementById('prof-phone').value = farmerUser.phone || '';
+      document.getElementById('prof-location').value = farmerUser.location || '';
+
+      loadDashboardData();
+    });
+
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
+
+      const activePane = document.getElementById(`tab-${tabId}`);
+      if (activePane) activePane.style.display = 'block';
+
+      document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
+        if (btn.textContent.toLowerCase().includes(tabId)) {
+          btn.classList.add('active');
+        }
+      });
+
+      if (tabId === 'products') loadProducts();
+      if (tabId === 'orders') loadOrders();
+    }
+
+    async function loadDashboardData() {
+      // 1. Earnings stats
+      const earningsRes = await apiFetch('/api/farmers/earnings');
+      if (earningsRes.success && earningsRes.stats) {
+        const s = earningsRes.stats;
+        document.getElementById('stat-earnings').textContent = `₹${s.totalEarnings.toLocaleString('en-IN')}`;
+        document.getElementById('stat-pending-val').textContent = `₹${s.pendingEarnings.toLocaleString('en-IN')}`;
+        document.getElementById('stat-total-orders').textContent = s.totalOrders;
+        document.getElementById('stat-products').textContent = s.totalProducts;
+      }
+
+      // 2. Load orders
+      loadOrders();
+      // 3. Load products
+      loadProducts();
+    }
+
+    async function loadProducts() {
+      const res = await apiFetch('/api/farmers/products');
+      const tbody = document.getElementById('products-table-body');
+
+      if (res.success && res.products) {
+        allProducts = res.products;
+        if (res.products.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding: 2rem;">No grains listed yet. Click "+ List New Grain" above.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = res.products.map(p => `
+          <tr>
+            <td>
+              <img src="${p.image || 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600'}" alt="${p.name}" style="width: 50px; height: 50px; border-radius: var(--radius-sm); object-fit: cover;">
+            </td>
+            <td>
+              <strong>${p.name}</strong>
+            </td>
+            <td><span class="badge badge-grain">${p.category}</span></td>
+            <td><strong>₹${p.pricePerKg}</strong> / kg</td>
+            <td>
+              ${p.stockKg > 0 ? `<span style="font-weight: 700; color: var(--primary-dark);">${p.stockKg} kg</span>` : `<span class="badge badge-rejected">Out of Stock</span>`}
+            </td>
+            <td>
+              <span class="rating-stars">★ ${p.ratingAvg > 0 ? p.ratingAvg : 'New'} (${p.ratingCount})</span>
+            </td>
+            <td>
+              <div class="flex gap-1">
+                <button class="btn btn-sm btn-outline" onclick="openEditProductModal('${p._id}')">Edit</button>
+                <button class="btn btn-sm btn-danger" onclick="deleteProduct('${p._id}', '${p.name}')">Delete</button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    async function loadOrders() {
+      const res = await apiFetch('/api/farmers/orders');
+      const tbody = document.getElementById('orders-table-body');
+      const overviewTbody = document.querySelector('#overview-orders-table tbody');
+
+      if (res.success && res.orders) {
+        allOrders = res.orders;
+
+        if (res.orders.length === 0) {
+          const emptyHtml = `<tr><td colspan="6" class="text-center" style="padding: 2rem;">No orders received yet.</td></tr>`;
+          tbody.innerHTML = emptyHtml;
+          overviewTbody.innerHTML = emptyHtml;
+          return;
+        }
+
+        // Overview Table (Top 5)
+        overviewTbody.innerHTML = res.orders.slice(0, 5).map(o => `
+          <tr>
+            <td><strong>${o.orderNumber}</strong></td>
+            <td>${o.customer ? o.customer.name : 'Customer'}</td>
+            <td>${o.items.map(i => `${i.name} (${i.quantityKg}kg)`).join(', ')}</td>
+            <td><strong>₹${o.totalAmount}</strong></td>
+            <td>${getStatusBadge(o.orderStatus)}</td>
+            <td>
+              <button onclick="switchTab('orders')" class="btn btn-sm btn-secondary">Manage</button>
+            </td>
+          </tr>
+        `).join('');
+
+        // Full Orders Table
+        tbody.innerHTML = res.orders.map(o => `
+          <tr>
+            <td>
+              <div style="font-weight: 700; color: var(--primary-dark);">${o.orderNumber}</div>
+              <div style="font-size: 0.78rem; color: var(--text-muted);">${formatDate(o.createdAt)}</div>
+              <div style="font-size: 0.82rem; margin-top: 4px;">Payment: <strong>${o.paymentMethod}</strong> (${o.paymentStatus})</div>
+            </td>
+            <td>
+              <div style="font-weight: 600;">${o.customer ? o.customer.name : 'Customer'}</div>
+              <div style="font-size: 0.82rem; color: #4b5563;">📞 ${o.deliveryPhone || (o.customer ? o.customer.phone : '')}</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted); max-width: 200px;">🏠 ${o.deliveryAddress}</div>
+            </td>
+            <td>
+              <ul style="list-style: none; font-size: 0.88rem; padding: 0;">
+                ${o.items.map(i => `<li>• ${i.name} — <strong>${i.quantityKg} kg</strong> (₹${i.subtotal})</li>`).join('')}
+              </ul>
+            </td>
+            <td>
+              <div style="font-size: 1.15rem; font-weight: 800; color: var(--primary-dark);">₹${o.totalAmount}</div>
+            </td>
+            <td>
+              ${getStatusBadge(o.orderStatus)}
+            </td>
+            <td>
+              ${renderOrderActionControls(o)}
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function renderOrderActionControls(order) {
+      const status = order.orderStatus;
+      if (status === 'pending') {
+        return `
+          <div class="flex gap-1" style="flex-direction: column;">
+            <button onclick="updateOrderStatus('${order._id}', 'accepted')" class="btn btn-sm btn-primary">✓ Accept Order</button>
+            <button onclick="updateOrderStatus('${order._id}', 'rejected')" class="btn btn-sm btn-danger">✕ Reject</button>
+          </div>
+        `;
+      } else if (status === 'accepted') {
+        return `<button onclick="updateOrderStatus('${order._id}', 'packed')" class="btn btn-sm btn-primary">📦 Mark Packed</button>`;
+      } else if (status === 'packed') {
+        return `<button onclick="updateOrderStatus('${order._id}', 'shipped')" class="btn btn-sm btn-primary">🚚 Mark Shipped</button>`;
+      } else if (status === 'shipped') {
+        return `<button onclick="updateOrderStatus('${order._id}', 'delivered')" class="btn btn-sm btn-primary" style="background-color: #059669;">🎉 Mark Delivered</button>`;
+      } else if (status === 'delivered') {
+        return `<span style="font-size: 0.85rem; color: #059669; font-weight: 700;">✓ Completed & Paid</span>`;
+      } else {
+        return `<span style="font-size: 0.85rem; color: #dc2626;">Rejected</span>`;
+      }
+    }
+
+    async function updateOrderStatus(orderId, status) {
+      if (!confirm(`Are you sure you want to update order status to "${status}"?`)) return;
+
+      const res = await apiFetch(`/api/farmers/orders/${orderId}/status`, {
+        method: 'PUT',
+        body: { status }
+      });
+
+      if (res.success) {
+        showToast(res.message || `Order status updated to ${status}!`, 'success');
+        loadDashboardData();
+      } else {
+        showToast(res.message || 'Failed to update order status.', 'error');
+      }
+    }
+
+    // Product Modal Handlers
+    function openAddProductModal() {
+      document.getElementById('modal-title').textContent = 'List New Grain Product';
+      document.getElementById('edit-product-id').value = '';
+      document.getElementById('product-form').reset();
+      document.getElementById('product-modal').classList.add('open');
+    }
+
+    function openEditProductModal(productId) {
+      const p = allProducts.find(item => item._id === productId);
+      if (!p) return;
+
+      document.getElementById('modal-title').textContent = 'Update Grain Product';
+      document.getElementById('edit-product-id').value = p._id;
+      document.getElementById('prod-name').value = p.name;
+      document.getElementById('prod-category').value = p.category;
+      document.getElementById('prod-price').value = p.pricePerKg;
+      document.getElementById('prod-stock').value = p.stockKg;
+      document.getElementById('prod-image').value = p.image || '';
+      document.getElementById('prod-desc').value = p.description || '';
+
+      document.getElementById('product-modal').classList.add('open');
+    }
+
+    function closeProductModal() {
+      document.getElementById('product-modal').classList.remove('open');
+    }
+
+    document.getElementById('product-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const editId = document.getElementById('edit-product-id').value;
+      const name = document.getElementById('prod-name').value.trim();
+      const category = document.getElementById('prod-category').value;
+      const pricePerKg = Number(document.getElementById('prod-price').value);
+      const stockKg = Number(document.getElementById('prod-stock').value);
+      const image = document.getElementById('prod-image').value.trim();
+      const description = document.getElementById('prod-desc').value.trim();
+
+      const isEdit = !!editId;
+      const endpoint = isEdit ? `/api/farmers/products/${editId}` : '/api/farmers/products';
+      const method = isEdit ? 'PUT' : 'POST';
+
+      const res = await apiFetch(endpoint, {
+        method,
+        body: { name, category, pricePerKg, stockKg, image, description }
+      });
+
+      if (res.success) {
+        showToast(res.message || 'Product saved successfully!', 'success');
+        closeProductModal();
+        loadDashboardData();
+      } else {
+        showToast(res.message || 'Failed to save product.', 'error');
+      }
+    });
+
+    async function deleteProduct(productId, name) {
+      if (!confirm(`Are you sure you want to delete "${name}"?`)) return;
+
+      const res = await apiFetch(`/api/farmers/products/${productId}`, {
+        method: 'DELETE'
+      });
+
+      if (res.success) {
+        showToast('Product deleted.', 'info');
+        loadDashboardData();
+      } else {
+        showToast(res.message || 'Failed to delete product.', 'error');
+      }
+    }
+
+    // Profile Form
+    document.getElementById('farmer-profile-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('prof-name').value.trim();
+      const phone = document.getElementById('prof-phone').value.trim();
+      const location = document.getElementById('prof-location').value.trim();
+
+      const res = await apiFetch('/api/auth/profile', {
+        method: 'PUT',
+        body: { name, phone, location }
+      });
+
+      if (res.success && res.user) {
+        showToast('Farm profile updated successfully!', 'success');
+        localStorage.setItem('kisan_user', JSON.stringify(res.user));
+        document.getElementById('sidebar-farmer-name').textContent = res.user.name;
+        document.getElementById('sidebar-farmer-loc').textContent = `📍 ${res.user.location}`;
+      } else {
+        showToast(res.message || 'Failed to update profile.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

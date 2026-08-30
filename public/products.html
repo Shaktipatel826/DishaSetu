@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Grains & Crops | Kisan Direct Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- Page Header & Search Bar -->
+      <div class="card mb-3" style="padding: 1.75rem; background: #fff;">
+        <div class="flex-between" style="flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <h2>Farm-Fresh Grains Catalog</h2>
+            <p style="margin: 0; color: var(--text-muted);">
+              Direct from verified agricultural farmers across India.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 0.75rem; flex: 1; max-width: 500px; min-width: 280px;">
+            <input type="text" id="search-input" class="form-control" placeholder="Search wheat, basmati rice, millets, dal..." oninput="handleSearch()">
+            <select id="sort-select" class="form-select" style="max-width: 180px;" onchange="applyFilters()">
+              <option value="newest">Newest First</option>
+              <option value="rating">Top Rated</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Category Filter Chips -->
+        <div class="category-chips" id="category-chips-container">
+          <button class="chip active" onclick="setCategory('All')">All Grains</button>
+          <button class="chip" onclick="setCategory('Wheat')">🌾 Wheat</button>
+          <button class="chip" onclick="setCategory('Rice')">🍚 Rice</button>
+          <button class="chip" onclick="setCategory('Dal')">🥣 Dal / Lentils</button>
+          <button class="chip" onclick="setCategory('Millets')">🥣 Millets</button>
+          <button class="chip" onclick="setCategory('Pulses')">🫘 Pulses</button>
+          <button class="chip" onclick="setCategory('Oilseeds')">🌻 Oilseeds</button>
+          <button class="chip" onclick="setCategory('Spices')">🌶️ Spices</button>
+          <button class="chip" onclick="setCategory('Barley')">🌾 Barley</button>
+          <button class="chip" onclick="setCategory('Corn')">🌽 Corn</button>
+        </div>
+      </div>
+
+      <!-- Result Count & Feedback -->
+      <div class="flex-between mb-2">
+        <span id="results-count" style="font-weight: 600; font-size: 0.95rem; color: var(--text-muted);">
+          Loading available grains...
+        </span>
+      </div>
+
+      <!-- Product Grid -->
+      <div class="product-grid" id="products-grid">
+        <!-- Rendered via JS -->
+      </div>
+
+    </div>
+  </main>
+
+  <script src="script.js"></script>
+  <script>
+    let currentCategory = 'All';
+    let searchTimeout = null;
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await renderNavbar('products');
+
+      // Check URL query for category or search
+      const params = new URLSearchParams(window.location.search);
+      const catParam = params.get('category');
+      const searchParam = params.get('search');
+
+      if (catParam) {
+        currentCategory = catParam;
+      }
+      if (searchParam) {
+        document.getElementById('search-input').value = searchParam;
+      }
+
+      highlightActiveCategory();
+      fetchProducts();
+    });
+
+    function setCategory(category) {
+      currentCategory = category;
+      highlightActiveCategory();
+      fetchProducts();
+    }
+
+    function highlightActiveCategory() {
+      document.querySelectorAll('#category-chips-container .chip').forEach(chip => {
+        if (chip.textContent.includes(currentCategory) || (currentCategory === 'All' && chip.textContent.includes('All'))) {
+          chip.classList.add('active');
+        } else {
+          chip.classList.remove('active');
+        }
+      });
+    }
+
+    function handleSearch() {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        fetchProducts();
+      }, 350);
+    }
+
+    function applyFilters() {
+      fetchProducts();
+    }
+
+    async function fetchProducts() {
+      const grid = document.getElementById('products-grid');
+      const countEl = document.getElementById('results-count');
+      const searchVal = document.getElementById('search-input').value.trim();
+      const sortVal = document.getElementById('sort-select').value;
+
+      grid.innerHTML = `<div class="card text-center" style="grid-column: 1/-1; padding: 3rem;"><p>Loading farm products...</p></div>`;
+
+      let url = `/api/products?sort=${sortVal}`;
+      if (currentCategory && currentCategory !== 'All') {
+        url += `&category=${encodeURIComponent(currentCategory)}`;
+      }
+      if (searchVal) {
+        url += `&search=${encodeURIComponent(searchVal)}`;
+      }
+
+      const res = await apiFetch(url);
+
+      if (res.success && res.products) {
+        countEl.textContent = `Showing ${res.products.length} grain ${res.products.length === 1 ? 'variety' : 'varieties'} direct from farmers`;
+
+        if (res.products.length === 0) {
+          grid.innerHTML = `
+            <div class="card text-center" style="grid-column: 1/-1; padding: 3rem;">
+              <span style="font-size: 3rem;">🔍</span>
+              <h3 class="mt-2">No Grains Found</h3>
+              <p style="color: var(--text-muted);">Try adjusting your search keywords or switching category filters.</p>
+              <button onclick="setCategory('All'); document.getElementById('search-input').value='';" class="btn btn-outline btn-sm">Clear Filters</button>
+            </div>
+          `;
+          return;
+        }
+
+        grid.innerHTML = res.products.map(p => `
+          <div class="product-card">
+            <a href="product-details.html?id=${p._id}">
+              <img src="${p.image || 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600'}" alt="${p.name}" class="product-card-img" onerror="this.src='https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600'">
+            </a>
+            <div class="product-card-body">
+              <div class="product-card-meta">
+                <span class="badge badge-grain">${p.category}</span>
+                <span class="rating-stars">★ ${p.ratingAvg > 0 ? p.ratingAvg : 'New'} <span style="font-size:0.75rem; color:#64748b;">(${p.ratingCount})</span></span>
+              </div>
+              
+              <h3 class="product-card-title">
+                <a href="product-details.html?id=${p._id}">${p.name}</a>
+              </h3>
+
+              <div class="product-card-farmer">
+                <span>📍 ${p.farmer ? p.farmer.location : 'Farm Origin'}</span> • 
+                <span>👤 ${p.farmer ? p.farmer.name : 'Farmer'}</span>
+              </div>
+
+              <div style="font-size: 0.82rem; color: #64748b; margin-bottom: 0.5rem;">
+                Stock Available: <strong>${p.stockKg} kg</strong>
+              </div>
+
+              <div class="product-card-footer">
+                <div class="product-price">
+                  ₹${p.pricePerKg} <span>/ kg</span>
+                </div>
+                <button onclick="handleAddToCart('${p._id}', '${p.name}', ${p.stockKg})" class="btn btn-sm btn-primary" ${p.stockKg <= 0 ? 'disabled' : ''}>
+                  ${p.stockKg > 0 ? '+ Add to Cart' : 'Out of Stock'}
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        grid.innerHTML = `<div class="card text-center" style="grid-column: 1/-1; padding: 2rem;"><p>Failed to load products.</p></div>`;
+      }
+    }
+
+    async function handleAddToCart(productId, productName, stock) {
+      if (stock <= 0) {
+        showToast('This product is out of stock.', 'error');
+        return;
+      }
+
+      const user = getStoredUser();
+      if (!user) {
+        showToast('Please login to add grains to your cart.', 'info');
+        setTimeout(() => window.location.href = 'login.html', 1000);
+        return;
+      }
+
+      if (user.role !== 'customer') {
+        showToast('Only Customer accounts can shop. Please use a Customer account.', 'error');
+        return;
+      }
+
+      const res = await apiFetch('/api/customers/cart', {
+        method: 'POST',
+        body: { productId, quantityKg: 1 }
+      });
+
+      if (res.success) {
+        showToast(res.message || `Added ${productName} (1 kg) to your cart!`, 'success');
+        updateCartCount();
+      } else {
+        showToast(res.message || 'Error adding to cart.', 'error');
+      }
+    }
+  </script>
+</body>
+</html>

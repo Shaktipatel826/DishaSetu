@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Customer Dashboard | Kisan Direct</title>
+  <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    .order-card {
+      background: #fff;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+    .star-rating-select {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 1.75rem;
+      cursor: pointer;
+      color: #cbd5e1;
+      margin: 0.5rem 0 1rem 0;
+    }
+    .star-rating-select span:hover,
+    .star-rating-select span.selected {
+      color: #f59e0b;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="main-content">
+    <div class="container">
+      
+      <div class="dashboard-layout">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+          <div class="sidebar-user">
+            <div class="user-avatar" id="cust-avatar">👤</div>
+            <h3 id="sidebar-cust-name" style="font-size: 1.15rem; margin-bottom: 0.2rem;">Customer</h3>
+            <span class="user-role-tag">Direct Buyer</span>
+          </div>
+
+          <ul class="sidebar-nav">
+            <li class="sidebar-nav-item active" onclick="switchCustTab('orders')">
+              <span>📦</span> My Orders & Tracking
+            </li>
+            <li class="sidebar-nav-item" onclick="window.location.href='cart.html'">
+              <span>🛒</span> View My Cart
+            </li>
+            <li class="sidebar-nav-item" onclick="switchCustTab('profile')">
+              <span>⚙️</span> Delivery Profile
+            </li>
+            <li class="sidebar-nav-item" onclick="handleLogout()" style="color: #dc2626;">
+              <span>🚪</span> Logout
+            </li>
+          </ul>
+        </aside>
+
+        <!-- Main Content Area -->
+        <section class="dashboard-main">
+
+          <!-- TAB 1: MY ORDERS & TRACKING -->
+          <div id="tab-orders" class="tab-pane">
+            <div class="flex-between mb-3">
+              <div>
+                <h2>Order History & Farm Tracking</h2>
+                <p style="color: var(--text-muted); margin: 0;">Track your grain shipments from the farm to your doorstep.</p>
+              </div>
+              <a href="products.html" class="btn btn-primary btn-sm">+ Buy More Grains</a>
+            </div>
+
+            <div id="customer-orders-container">
+              <div class="card text-center" style="padding: 3rem;">
+                <p>Loading your orders...</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- TAB 2: PROFILE -->
+          <div id="tab-profile" class="tab-pane" style="display: none;">
+            <div class="card" style="max-width: 600px; padding: 2rem;">
+              <h2 class="mb-2">Customer Profile & Address</h2>
+              <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Update your delivery information and contact phone.</p>
+
+              <form id="cust-profile-form">
+                <div class="form-group">
+                  <label class="form-label">Full Name</label>
+                  <input type="text" id="cust-prof-name" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Email Address (Read-only)</label>
+                  <input type="email" id="cust-prof-email" class="form-control" readonly style="background:#f1f5f9;">
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Contact Phone</label>
+                  <input type="tel" id="cust-prof-phone" class="form-control" required>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Default Delivery Address</label>
+                  <textarea id="cust-prof-address" class="form-control" rows="3" required></textarea>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Save Profile Changes</button>
+              </form>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- FEEDBACK / REVIEW MODAL -->
+  <div class="modal-overlay" id="feedback-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>Rate Farmer & Harvest Quality</h3>
+        <button class="modal-close-btn" onclick="closeFeedbackModal()">×</button>
+      </div>
+      <form id="feedback-form">
+        <input type="hidden" id="feedback-order-id" value="">
+        <input type="hidden" id="feedback-product-id" value="">
+        <input type="hidden" id="feedback-rating-val" value="5">
+
+        <div class="modal-body">
+          <p style="font-size: 0.92rem; color: #4b5563; margin-bottom: 1rem;">
+            Your feedback directly supports the farmer and helps other consumers choose authentic grains.
+          </p>
+
+          <label class="form-label">Select Your Star Rating:</label>
+          <div class="star-rating-select" id="star-picker">
+            <span onclick="setRating(1)">★</span>
+            <span onclick="setRating(2)">★</span>
+            <span onclick="setRating(3)">★</span>
+            <span onclick="setRating(4)">★</span>
+            <span onclick="setRating(5)">★</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="feedback-comment">Your Review & Comments *</label>
+            <textarea id="feedback-comment" class="form-control" placeholder="Share details about grain taste, aroma, purity, softness of rotis/rice, and packaging..." rows="4" required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeFeedbackModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary">Submit Rating & Feedback</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    let customerUser = null;
+    let customerOrders = [];
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      await renderNavbar();
+      customerUser = await requireRoleAuth('customer');
+      if (!customerUser) return;
+
+      // Fill Sidebar
+      document.getElementById('sidebar-cust-name').textContent = customerUser.name;
+      document.getElementById('cust-avatar').textContent = customerUser.name.charAt(0).toUpperCase();
+
+      // Fill Profile
+      document.getElementById('cust-prof-name').value = customerUser.name || '';
+      document.getElementById('cust-prof-email').value = customerUser.email || '';
+      document.getElementById('cust-prof-phone').value = customerUser.phone || '';
+      document.getElementById('cust-prof-address').value = customerUser.address || '';
+
+      loadCustomerOrders();
+      setRating(5);
+    });
+
+    function switchCustTab(tabId) {
+      document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
+      document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
+
+      const activePane = document.getElementById(`tab-${tabId}`);
+      if (activePane) activePane.style.display = 'block';
+
+      document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
+        if (btn.textContent.toLowerCase().includes(tabId)) {
+          btn.classList.add('active');
+        }
+      });
+    }
+
+    async function loadCustomerOrders() {
+      const container = document.getElementById('customer-orders-container');
+      const res = await apiFetch('/api/orders/my-orders');
+
+      if (res.success && res.orders) {
+        customerOrders = res.orders;
+
+        if (res.orders.length === 0) {
+          container.innerHTML = `
+            <div class="card text-center" style="padding: 4rem 1.5rem;">
+              <span style="font-size: 3.5rem;">🌾</span>
+              <h3 class="mt-2">No Direct Orders Yet</h3>
+              <p style="color: var(--text-muted); max-width: 450px; margin: 0.5rem auto 1.5rem auto;">
+                You haven't placed any grain orders yet. Support local farmers by browsing our farm catalog!
+              </p>
+              <a href="products.html" class="btn btn-primary">Browse Farm Harvests</a>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = res.orders.map(order => `
+          <div class="order-card">
+            <!-- Header Row -->
+            <div class="flex-between mb-2" style="flex-wrap: wrap; gap: 0.5rem;">
+              <div>
+                <span style="font-weight: 800; font-size: 1.15rem; color: var(--primary-dark);"># ${order.orderNumber}</span>
+                <span style="font-size: 0.85rem; color: var(--text-muted); margin-left: 0.5rem;">Ordered on ${formatDate(order.createdAt)}</span>
+              </div>
+              <div class="flex items-center gap-2">
+                <span style="font-size: 0.85rem;">Status:</span>
+                ${getStatusBadge(order.orderStatus)}
+              </div>
+            </div>
+
+            <!-- Farmer Origin Info -->
+            <div style="background: #f8fafc; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-size: 0.88rem; margin-bottom: 1.25rem;">
+              🧑‍🌾 <strong>Farmer:</strong> ${order.farmer ? order.farmer.name : 'Verified Farmer'} • 
+              📍 <strong>Location:</strong> ${order.farmer ? order.farmer.location : 'Direct Farm'}
+            </div>
+
+            <!-- 5-Stage Live Order Stepper -->
+            ${renderTimelineStepper(order.orderStatus)}
+
+            <!-- Items Ordered -->
+            <div style="margin: 1.25rem 0;">
+              <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem;">Grains in this Order:</h4>
+              <div style="background: #fff; border: 1px solid var(--border-color); border-radius: var(--radius-md); overflow: hidden;">
+                ${order.items.map(item => `
+                  <div style="display: flex; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid #f1f5f9; font-size: 0.9rem;">
+                    <div>
+                      <strong>${item.name}</strong> (${item.category})
+                      <div style="font-size: 0.78rem; color: var(--text-muted);">${item.quantityKg} kg × ₹${item.pricePerKg}/kg</div>
+                    </div>
+                    <div style="font-weight: 700; color: var(--primary-dark);">₹${item.subtotal}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+
+            <!-- Footer Breakdown & Feedback Action -->
+            <div class="flex-between" style="flex-wrap: wrap; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+              <div>
+                <div style="font-size: 0.82rem; color: var(--text-muted);">Payment Mode: <strong>${order.paymentMethod}</strong></div>
+                <div style="font-size: 1.15rem; font-weight: 800; color: var(--primary-dark);">
+                  Total Payout: ₹${order.totalAmount}
+                </div>
+              </div>
+
+              <div>
+                ${renderFeedbackButton(order)}
+              </div>
+            </div>
+          </div>
+        `).join('');
+      }
+    }
+
+    function renderTimelineStepper(status) {
+      if (status === 'rejected') {
+        return `
+          <div style="background: #fee2e2; color: #991b1b; padding: 0.75rem 1rem; border-radius: var(--radius-md); font-weight: 600; font-size: 0.9rem;">
+            ✕ This order was declined by the farmer due to seasonal stock limitations.
+          </div>
+        `;
+      }
+
+      const stages = ['pending', 'accepted', 'packed', 'shipped', 'delivered'];
+      const currentIndex = stages.indexOf(status.toLowerCase());
+
+      return `
+        <div class="order-stepper">
+          ${stages.map((stage, idx) => {
+            let stateClass = '';
+            if (idx < currentIndex) stateClass = 'completed';
+            else if (idx === currentIndex) stateClass = 'active';
+
+            return `
+              <div class="step-item ${stateClass}">
+                <div class="step-circle">${idx < currentIndex ? '✓' : idx + 1}</div>
+                <div class="step-title">${stage}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      `;
+    }
+
+    function renderFeedbackButton(order) {
+      if (order.orderStatus !== 'delivered') {
+        return `<span style="font-size: 0.85rem; color: var(--text-muted);">Tracking live shipment...</span>`;
+      }
+
+      if (order.hasFeedback) {
+        return `<span class="badge badge-delivered">✓ Feedback & Rating Submitted</span>`;
+      }
+
+      const firstProductId = order.items.length > 0 ? order.items[0].product : '';
+      return `
+        <button onclick="openFeedbackModal('${order._id}', '${firstProductId}')" class="btn btn-sm btn-primary" style="background-color: var(--accent-earth); border-color: var(--accent-earth);">
+          ⭐ Rate Farmer & Leave Feedback
+        </button>
+      `;
+    }
+
+    // Feedback Modal Handler
+    function openFeedbackModal(orderId, productId) {
+      document.getElementById('feedback-order-id').value = orderId;
+      document.getElementById('feedback-product-id').value = productId;
+      document.getElementById('feedback-comment').value = '';
+      setRating(5);
+      document.getElementById('feedback-modal').classList.add('open');
+    }
+
+    function closeFeedbackModal() {
+      document.getElementById('feedback-modal').classList.remove('open');
+    }
+
+    function setRating(rating) {
+      document.getElementById('feedback-rating-val').value = rating;
+      const stars = document.querySelectorAll('#star-picker span');
+      stars.forEach((star, idx) => {
+        if (idx < rating) star.classList.add('selected');
+        else star.classList.remove('selected');
+      });
+    }
+
+    document.getElementById('feedback-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const orderId = document.getElementById('feedback-order-id').value;
+      const productId = document.getElementById('feedback-product-id').value;
+      const rating = document.getElementById('feedback-rating-val').value;
+      const comment = document.getElementById('feedback-comment').value.trim();
+
+      const res = await apiFetch(`/api/orders/${orderId}/feedback`, {
+        method: 'POST',
+        body: { rating, comment, productId }
+      });
+
+      if (res.success) {
+        showToast(res.message || 'Feedback submitted successfully!', 'success');
+        closeFeedbackModal();
+        loadCustomerOrders();
+      } else {
+        showToast(res.message || 'Failed to submit feedback.', 'error');
+      }
+    });
+
+    // Profile Form
+    document.getElementById('cust-profile-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('cust-prof-name').value.trim();
+      const phone = document.getElementById('cust-prof-phone').value.trim();
+      const address = document.getElementById('cust-prof-address').value.trim();
+
+      const res = await apiFetch('/api/auth/profile', {
+        method: 'PUT',
+        body: { name, phone, address }
+      });
+
+      if (res.success && res.user) {
+        showToast('Profile updated successfully!', 'success');
+        localStorage.setItem('kisan_user', JSON.stringify(res.user));
+        document.getElementById('sidebar-cust-name').textContent = res.user.name;
+      } else {
+        showToast(res.message || 'Failed to update profile.', 'error');
+      }
+    });
+  </script>
+</body>
+</html>

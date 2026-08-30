@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kisan Direct | Direct Farmer-to-Consumer Grain Marketplace</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <!-- Dynamic Navbar -->
+  <div id="navbar-placeholder"></div>
+
+  <main class="main-content">
+    <div class="container">
+      
+      <!-- Hero Section -->
+      <section class="hero text-center">
+        <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
+          <span style="background: rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 9999px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
+            🌾 100% Direct From Indian Farms
+          </span>
+          <h1 class="mt-2">Pure Farm Grains, Directly From the Grower to Your Kitchen</h1>
+          <p style="margin: 0 auto 2rem auto;">
+            Say goodbye to middlemen, inflated prices, and mixed grains. Buy authentic unpolished wheat, basmati rice, pulses, and superfood millets directly from verified Indian farmers.
+          </p>
+          <div class="flex-center gap-2" style="flex-wrap: wrap;">
+            <a href="products.html" class="btn btn-lg btn-primary" style="background-color: var(--accent-earth); border-color: var(--accent-earth);">
+              🛒 Explore Fresh Grains
+            </a>
+            <a href="register.html?role=farmer" class="btn btn-lg btn-outline" style="color: #fff; border-color: #fff;">
+              🌱 Sell as a Farmer
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Problem vs Solution: Why Kisan Direct -->
+      <section id="benefits" class="mb-4">
+        <div class="text-center mb-3">
+          <h2>Why Direct Trade Matters</h2>
+          <p>We are transforming India's agricultural supply chain for fair trade and pure nutrition.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
+          <!-- Middleman Model -->
+          <div class="card" style="border-left: 4px solid #ef4444; background: #fffaf9;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+              <span style="font-size: 2rem;">❌</span>
+              <div>
+                <h3 style="color: #991b1b; font-size: 1.2rem;">Old Middleman System</h3>
+                <span style="font-size: 0.82rem; color: #7f1d1d;">Multi-tier brokers & mandi agents</span>
+              </div>
+            </div>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; color: #4b5563; font-size: 0.95rem;">
+              <li>⚠️ <strong>Farmers get underpaid</strong> (often 40-50% below real market value).</li>
+              <li>⚠️ <strong>Customers pay inflated rates</strong> due to commission markups.</li>
+              <li>⚠️ <strong>Chemical polishing & adulteration</strong> during storage.</li>
+              <li>⚠️ <strong>Zero traceability</strong> of where food was cultivated.</li>
+            </ul>
+          </div>
+
+          <!-- Kisan Direct Model -->
+          <div class="card" style="border-left: 4px solid var(--primary); background: #f4faf6;">
+            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+              <span style="font-size: 2rem;">✅</span>
+              <div>
+                <h3 style="color: var(--primary-dark); font-size: 1.2rem;">Kisan Direct Model</h3>
+                <span style="font-size: 0.82rem; color: var(--primary);">Direct farmer-to-consumer marketplace</span>
+              </div>
+            </div>
+            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; color: #1e293b; font-size: 0.95rem;">
+              <li>✨ <strong>Farmers earn 100%</strong> of the listed grain price directly.</li>
+              <li>✨ <strong>Customers save up to 30%</strong> compared to supermarket brands.</li>
+              <li>✨ <strong>Fresh, unpolished & single-origin</strong> harvest quality.</li>
+              <li>✨ <strong>Direct connection</strong>: Know the farmer, village, and harvest date.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- Grain Categories -->
+      <section class="mb-4">
+        <div class="flex-between mb-2" style="flex-wrap: wrap;">
+          <div>
+            <h2>Explore Grain Categories</h2>
+            <p>From staple rotis to nutritious khichdi and traditional millets.</p>
+          </div>
+          <a href="products.html" class="btn btn-outline btn-sm">View All Categories →</a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;" id="category-grid">
+          <!-- Rendered via JS -->
+        </div>
+      </section>
+
+      <!-- Featured Farm Grains -->
+      <section class="mb-4">
+        <div class="flex-between mb-2">
+          <div>
+            <h2>Featured Fresh Harvests</h2>
+            <p>Top-rated single-origin grains freshly harvested by verified farmers.</p>
+          </div>
+          <a href="products.html" class="btn btn-primary btn-sm">Browse Catalog →</a>
+        </div>
+
+        <div class="product-grid" id="featured-products-grid">
+          <!-- Rendered via JS -->
+          <div class="card text-center" style="grid-column: 1 / -1; padding: 2rem;">
+            <p>Loading fresh harvests from farmers...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works -->
+      <section id="how-it-works" class="mb-4 card" style="background: #ffffff; padding: 2.5rem 1.5rem;">
+        <div class="text-center mb-3">
+          <h2>How Kisan Direct Works</h2>
+          <p>Transparent, simple, and empowering for both farmers and households.</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
+          <div class="card" style="border: 1px dashed var(--primary); background: var(--bg-main);">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌾 1. Farm Listing</div>
+            <h4 class="mb-1">Farmer Lists Grains</h4>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">
+              Farmers register and list their harvest with price per kg, stock quantity, and farm location.
+            </p>
+          </div>
+
+          <div class="card" style="border: 1px dashed var(--primary); background: var(--bg-main);">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛒 2. Direct Order</div>
+            <h4 class="mb-1">Customer Orders</h4>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">
+              Consumers browse single-origin grains, add to cart, and order with Cash on Delivery.
+            </p>
+          </div>
+
+          <div class="card" style="border: 1px dashed var(--primary); background: var(--bg-main);">
+            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚚 3. Direct Delivery</div>
+            <h4 class="mb-1">Dispatch & Feedback</h4>
+            <p style="font-size: 0.9rem; color: var(--text-muted);">
+              Farmer packs and ships grains. Once delivered, customers rate and review the farmer directly!
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA Banner -->
+      <section class="card text-center" style="background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: #fff; padding: 3rem 1.5rem;">
+        <h2 style="color: #fff; margin-bottom: 0.75rem;">Are You a Farmer? Start Selling Directly Today</h2>
+        <p style="color: #d8f3dc; max-width: 600px; margin: 0 auto 1.5rem auto;">
+          Earn fair market prices for your hard work without broker deductions or delayed mandi payments.
+        </p>
+        <a href="register.html?role=farmer" class="btn btn-lg btn-accent">
+          Register Your Farm for Free
+        </a>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem;">
+        <div>
+          <div class="brand-logo" style="color: #fff; margin-bottom: 1rem;">
+            <span>🌾 Kisan<span style="color: var(--accent-earth);">Direct</span></span>
+          </div>
+          <p style="font-size: 0.9rem;">
+            Empowering Indian agriculture by connecting dedicated grain farmers directly to conscious consumers.
+          </p>
+        </div>
+
+        <div>
+          <h4>Marketplace</h4>
+          <ul class="footer-links">
+            <li><a href="products.html">All Grains</a></li>
+            <li><a href="products.html?category=Wheat">Sharbati Wheat</a></li>
+            <li><a href="products.html?category=Rice">Basmati Rice</a></li>
+            <li><a href="products.html?category=Dal">Organic Pulses</a></li>
+            <li><a href="products.html?category=Millets">Superfood Millets</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Portals</h4>
+          <ul class="footer-links">
+            <li><a href="login.html">Farmer Login</a></li>
+            <li><a href="login.html">Customer Login</a></li>
+            <li><a href="login.html">Admin Portal</a></li>
+            <li><a href="register.html">Create New Account</a></li>
+          </ul>
+        </div>
+
+        <div>
+          <h4>Platform Guarantee</h4>
+          <p style="font-size: 0.88rem; color: #94a3b8;">
+            ✔ 100% Single Origin<br>
+            ✔ Zero Chemical Polishing<br>
+            ✔ Fair Prices for Farmers<br>
+            ✔ Cash on Delivery Available
+          </p>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        © 2026 Kisan Direct - Farmer to Consumer Grain Marketplace. All rights reserved.
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', async () => {
+      await renderNavbar('home');
+      loadCategories();
+      loadFeaturedProducts();
+    });
+
+    async function loadCategories() {
+      const catGrid = document.getElementById('category-grid');
+      const catIcons = {
+        Wheat: '🌾',
+        Rice: '🍚',
+        Dal: '🥣',
+        Millets: '🥣',
+        Pulses: '🫘',
+        Oilseeds: '🌻',
+        Spices: '🌶️',
+        Barley: '🌾',
+        Corn: '🌽',
+        Oats: '🥣',
+        Other: '🌾'
+      };
+
+      const res = await apiFetch('/api/products/meta/categories');
+      if (res.success && res.categories) {
+        catGrid.innerHTML = res.categories.slice(0, 6).map(c => `
+          <a href="products.html?category=${encodeURIComponent(c.name)}" class="card card-hover text-center" style="padding: 1.25rem 0.75rem;">
+            <div style="font-size: 2.2rem; margin-bottom: 0.4rem;">${catIcons[c.name] || '🌾'}</div>
+            <h4 style="font-size: 1rem; margin-bottom: 0.2rem;">${c.name}</h4>
+            <span style="font-size: 0.78rem; color: var(--text-muted);">${c.count} Varieties</span>
+          </a>
+        `).join('');
+      }
+    }
+
+    async function loadFeaturedProducts() {
+      const grid = document.getElementById('featured-products-grid');
+      const res = await apiFetch('/api/products?sort=rating');
+
+      if (res.success && res.products && res.products.length > 0) {
+        grid.innerHTML = res.products.slice(0, 6).map(p => `
+          <div class="product-card">
+            <img src="${p.image || 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600'}" alt="${p.name}" class="product-card-img" onerror="this.src='https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600'">
+            <div class="product-card-body">
+              <div class="product-card-meta">
+                <span class="badge badge-grain">${p.category}</span>
+                <span class="rating-stars">★ ${p.ratingAvg > 0 ? p.ratingAvg : 'New'} <span style="font-size:0.75rem; color:#64748b;">(${p.ratingCount})</span></span>
+              </div>
+              <h3 class="product-card-title">
+                <a href="product-details.html?id=${p._id}">${p.name}</a>
+              </h3>
+              <div class="product-card-farmer">
+                <span>📍 ${p.farmer ? p.farmer.location : 'Direct Farm'}</span> • 
+                <span>👤 ${p.farmer ? p.farmer.name : 'Farmer'}</span>
+              </div>
+              <div class="product-card-footer">
+                <div class="product-price">
+                  ₹${p.pricePerKg} <span>/ kg</span>
+                </div>
+                <button onclick="handleQuickAddToCart('${p._id}', '${p.name}')" class="btn btn-sm btn-primary">
+                  + Add to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } else {
+        grid.innerHTML = `<div class="card text-center" style="grid-column: 1/-1; padding: 2rem;"><p>No products available yet.</p></div>`;
+      }
+    }
+
+    async function handleQuickAddToCart(productId, productName) {
+      const user = getStoredUser();
+      if (!user) {
+        showToast('Please login as customer to add items to cart.', 'info');
+        setTimeout(() => window.location.href = 'login.html', 1000);
+        return;
+      }
+      if (user.role !== 'customer') {
+        showToast('Farmer/Admin accounts cannot shop. Please use a Customer account.', 'error');
+        return;
+      }
+
+      const res = await apiFetch('/api/customers/cart', {
+        method: 'POST',
+        body: { productId, quantityKg: 1 }
+      });
+
+      if (res.success) {
+        showToast(res.message || `Added ${productName} to cart!`, 'success');
+        updateCartCount();
+      } else {
+        showToast(res.message || 'Failed to add item.', 'error');
+      }
+    }
+  </script>
+</body>
+</html>
