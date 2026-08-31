@@ -87,6 +87,8 @@ exports.createOrder = async (req, res) => {
       }
 
       // Create Order
+      const initialPaymentStatus = (paymentMethod !== 'Cash on Delivery') ? 'completed' : 'pending';
+
       const order = await Order.create({
         orderNumber,
         customer: req.user.id,
@@ -96,12 +98,12 @@ exports.createOrder = async (req, res) => {
         deliveryAddress: deliveryAddress.trim(),
         deliveryPhone: deliveryPhone.trim(),
         paymentMethod,
-        paymentStatus: 'pending',
+        paymentStatus: initialPaymentStatus,
         orderStatus: 'pending',
         statusHistory: [{
           status: 'pending',
           timestamp: new Date(),
-          note: 'Order placed by customer'
+          note: `Order placed by customer via ${paymentMethod} (${initialPaymentStatus})`
         }]
       });
 
@@ -126,7 +128,8 @@ exports.createOrder = async (req, res) => {
         customer: req.user.id,
         amount: totalAmount,
         method: paymentMethod,
-        status: 'pending'
+        status: initialPaymentStatus,
+        transactionDate: new Date()
       });
 
       createdOrders.push(order);

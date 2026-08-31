@@ -261,13 +261,21 @@
             <!-- Footer Breakdown & Feedback Action -->
             <div class="flex-between" style="flex-wrap: wrap; gap: 1rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
               <div>
-                <div style="font-size: 0.82rem; color: var(--text-muted);">Payment Mode: <strong>${order.paymentMethod}</strong></div>
+                <div style="font-size: 0.85rem; margin-bottom: 0.25rem;">
+                  Payment: <strong>${order.paymentMethod}</strong> 
+                  <span class="badge ${order.paymentStatus === 'completed' ? 'badge-delivered' : 'badge-pending'}" style="font-size:0.75rem; margin-left:4px;">
+                    ${order.paymentStatus === 'completed' ? '✓ Paid' : '⏳ COD Pending'}
+                  </span>
+                </div>
                 <div style="font-size: 1.15rem; font-weight: 800; color: var(--primary-dark);">
                   Total Payout: ₹${order.totalAmount}
                 </div>
               </div>
 
-              <div>
+              <div class="flex items-center gap-2">
+                <button onclick="window.print()" class="btn btn-sm btn-outline" style="border-color: #cbd5e1; color: #475569;">
+                  🖨️ Receipt
+                </button>
                 ${renderFeedbackButton(order)}
               </div>
             </div>
