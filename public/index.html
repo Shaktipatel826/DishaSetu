@@ -37,6 +37,117 @@
         </div>
       </section>
 
+      <!-- Featured From Indian Farms (Animated Image Showcase Carousel) -->
+      <section class="farm-showcase-section mb-4">
+        <div class="flex-between mb-2" style="flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <h2>🌾 Featured From Indian Farms</h2>
+            <p style="margin: 0; color: var(--text-muted);">
+              Authentic regional harvests & single-origin grain highlights, directly from verified growers.
+            </p>
+          </div>
+          <div class="farm-carousel-nav-arrows">
+            <button class="farm-nav-btn prev-btn" onclick="farmCarouselPrev()" aria-label="Previous Featured Farm Image">❮</button>
+            <button class="farm-nav-btn next-btn" onclick="farmCarouselNext()" aria-label="Next Featured Farm Image">❯</button>
+          </div>
+        </div>
+
+        <div class="farm-carousel-wrapper" id="farm-carousel-wrapper">
+          <div class="farm-carousel-stage" id="farm-carousel-stage">
+
+            <!-- Banner 1: Direct From Indian Farmers -->
+            <div class="farm-slide active" data-index="0">
+              <div class="farm-slide-card">
+                <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&auto=format&fit=crop&q=80" alt="Direct From Indian Farmers" class="farm-slide-img" loading="eager">
+                <div class="farm-slide-overlay">
+                  <div class="farm-slide-tag">🌱 100% Direct Trade</div>
+                  <h3 class="farm-slide-heading">Direct From Indian Farmers</h3>
+                  <p class="farm-slide-subtext">Pure unpolished single-origin harvests with zero middleman deductions.</p>
+                  <div class="farm-slide-footer">
+                    <span class="farm-location-badge">📍 Verified Pan-India Farms</span>
+                    <a href="products.html" class="farm-slide-cta">Explore Farm Grains →</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Banner 2: Fresh Grains From Punjab -->
+            <div class="farm-slide" data-index="1">
+              <div class="farm-slide-card">
+                <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=1200&auto=format&fit=crop&q=80" alt="Fresh Grains From Punjab" class="farm-slide-img" loading="lazy">
+                <div class="farm-slide-overlay">
+                  <div class="farm-slide-tag">🌾 Golden Harvests</div>
+                  <h3 class="farm-slide-heading">Fresh Grains From Punjab</h3>
+                  <p class="farm-slide-subtext">Authentic aromatic 1121 Basmati Rice & golden Sharbati wheat directly from lush fields.</p>
+                  <div class="farm-slide-footer">
+                    <span class="farm-location-badge">📍 Amritsar & Patiala, Punjab</span>
+                    <a href="products.html?search=Punjab" class="farm-slide-cta">Shop Punjab Harvests →</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Banner 3: Authentic Products From Bastar -->
+            <div class="farm-slide" data-index="2">
+              <div class="farm-slide-card">
+                <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=1200&auto=format&fit=crop&q=80" alt="Authentic Products From Bastar" class="farm-slide-img" loading="lazy">
+                <div class="farm-slide-overlay">
+                  <div class="farm-slide-tag">🥣 Superfood Millets</div>
+                  <h3 class="farm-slide-heading">Authentic Products From Bastar</h3>
+                  <p class="farm-slide-subtext">Naturally cultivated traditional tribal Millets, Kodo, Kutki, and organic Ragi.</p>
+                  <div class="farm-slide-footer">
+                    <span class="farm-location-badge">📍 Bastar Tribal Belts, Chhattisgarh</span>
+                    <a href="products.html?category=Millets" class="farm-slide-cta">Shop Bastar Millets →</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Banner 4: Farm Fresh From Rajasthan -->
+            <div class="farm-slide" data-index="3">
+              <div class="farm-slide-card">
+                <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=1200&auto=format&fit=crop&q=80" alt="Farm Fresh From Rajasthan" class="farm-slide-img" loading="lazy">
+                <div class="farm-slide-overlay">
+                  <div class="farm-slide-tag">🫘 Native Desi Crops</div>
+                  <h3 class="farm-slide-heading">Farm Fresh From Rajasthan</h3>
+                  <p class="farm-slide-subtext">Nutritious pearl millet (Bajra), cold-pressed mustard oilseeds, and organic Moong dal.</p>
+                  <div class="farm-slide-footer">
+                    <span class="farm-location-badge">📍 Nagaur & Bikaner, Rajasthan</span>
+                    <a href="products.html?search=Rajasthan" class="farm-slide-cta">Shop Rajasthan Grains →</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Banner 5: Pure Products, Direct From Growers -->
+            <div class="farm-slide" data-index="4">
+              <div class="farm-slide-card">
+                <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=1200&auto=format&fit=crop&q=80" alt="Pure Products, Direct From Growers" class="farm-slide-img" loading="lazy">
+                <div class="farm-slide-overlay">
+                  <div class="farm-slide-tag">✨ Unprocessed & Pure</div>
+                  <h3 class="farm-slide-heading">Pure Products, Direct From Growers</h3>
+                  <p class="farm-slide-subtext">Unpolished stone-ground flours, hand-pounded rice, and chemical-free pulses.</p>
+                  <div class="farm-slide-footer">
+                    <span class="farm-location-badge">📍 Malwa & Bundelkhand Farms</span>
+                    <a href="products.html" class="farm-slide-cta">Browse All Direct Grains →</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Navigation Dots -->
+        <div class="farm-carousel-dots" id="farm-carousel-dots">
+          <button class="farm-dot active" onclick="goToFarmSlide(0)" aria-label="Slide 1"></button>
+          <button class="farm-dot" onclick="goToFarmSlide(1)" aria-label="Slide 2"></button>
+          <button class="farm-dot" onclick="goToFarmSlide(2)" aria-label="Slide 3"></button>
+          <button class="farm-dot" onclick="goToFarmSlide(3)" aria-label="Slide 4"></button>
+          <button class="farm-dot" onclick="goToFarmSlide(4)" aria-label="Slide 5"></button>
+        </div>
+      </section>
+
       <!-- Problem vs Solution: Why Kisan Direct -->
       <section id="benefits" class="mb-4">
         <div class="text-center mb-3">
@@ -215,11 +326,98 @@
 
   <script src="script.js"></script>
   <script>
+    let farmCurrentSlide = 0;
+    const farmTotalSlides = 5;
+    let farmAutoplayTimer = null;
+
     document.addEventListener('DOMContentLoaded', async () => {
       await renderNavbar('home');
+      initFarmCarousel();
       loadCategories();
       loadFeaturedProducts();
     });
+
+    function initFarmCarousel() {
+      updateFarmCarousel();
+      startFarmAutoplay();
+
+      const wrapper = document.getElementById('farm-carousel-wrapper');
+      if (wrapper) {
+        wrapper.addEventListener('mouseenter', stopFarmAutoplay);
+        wrapper.addEventListener('mouseleave', startFarmAutoplay);
+
+        // Mobile touch swipe support
+        let startX = 0;
+        let endX = 0;
+        wrapper.addEventListener('touchstart', (e) => {
+          startX = e.touches[0].clientX;
+        }, { passive: true });
+
+        wrapper.addEventListener('touchend', (e) => {
+          endX = e.changedTouches[0].clientX;
+          if (startX - endX > 45) {
+            farmCarouselNext(); // swiped left -> go to next
+          } else if (endX - startX > 45) {
+            farmCarouselPrev(); // swiped right -> go to previous
+          }
+        }, { passive: true });
+      }
+    }
+
+    function updateFarmCarousel() {
+      const stage = document.getElementById('farm-carousel-stage');
+      const slides = document.querySelectorAll('.farm-slide');
+      const dots = document.querySelectorAll('.farm-dot');
+
+      if (!stage || slides.length === 0) return;
+
+      // Smooth horizontal translation Left -> Right motion
+      stage.style.transform = `translateX(-${farmCurrentSlide * 100}%)`;
+
+      slides.forEach((slide, idx) => {
+        if (idx === farmCurrentSlide) {
+          slide.classList.add('active');
+        } else {
+          slide.classList.remove('active');
+        }
+      });
+
+      dots.forEach((dot, idx) => {
+        if (idx === farmCurrentSlide) {
+          dot.classList.add('active');
+        } else {
+          dot.classList.remove('active');
+        }
+      });
+    }
+
+    function farmCarouselNext() {
+      farmCurrentSlide = (farmCurrentSlide + 1) % farmTotalSlides;
+      updateFarmCarousel();
+    }
+
+    function farmCarouselPrev() {
+      farmCurrentSlide = (farmCurrentSlide - 1 + farmTotalSlides) % farmTotalSlides;
+      updateFarmCarousel();
+    }
+
+    function goToFarmSlide(idx) {
+      farmCurrentSlide = idx;
+      updateFarmCarousel();
+      startFarmAutoplay(); // Reset timer on manual dot click
+    }
+
+    function startFarmAutoplay() {
+      stopFarmAutoplay();
+      farmAutoplayTimer = setInterval(farmCarouselNext, 4800);
+    }
+
+    function stopFarmAutoplay() {
+      if (farmAutoplayTimer) {
+        clearInterval(farmAutoplayTimer);
+        farmAutoplayTimer = null;
+      }
+    }
 
     async function loadCategories() {
       const catGrid = document.getElementById('category-grid');
