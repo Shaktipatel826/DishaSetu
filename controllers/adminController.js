@@ -319,6 +319,34 @@ exports.getAllFeedback = async (req, res) => {
 };
 
 /**
+ * @desc   Delete a feedback review (moderation)
+ * @route  DELETE /api/admin/feedback/:id
+ * @access Private (Admin)
+ */
+exports.deleteFeedback = async (req, res) => {
+  try {
+    const feedback = await Feedback.findByIdAndDelete(req.params.id);
+    if (!feedback) {
+      return res.status(404).json({
+        success: false,
+        message: 'Feedback not found.'
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Feedback removed successfully.'
+    });
+  } catch (error) {
+    console.error('Admin Delete Feedback Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error deleting feedback.'
+    });
+  }
+};
+
+/**
  * @desc   Get platform receiving payment and UPI settings (Admin)
  * @route  GET /api/admin/payment-settings
  * @access Private (Admin)
