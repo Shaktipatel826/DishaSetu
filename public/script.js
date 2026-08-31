@@ -129,6 +129,49 @@ async function renderNavbar(activePage = '') {
   }
 
   navContainer.innerHTML = `
+    <!-- Top Continuously Scrolling Announcement Bar -->
+    <div class="top-marquee-bar">
+      <div class="marquee-track">
+        <div class="marquee-content">
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+        </div>
+        <div class="marquee-content" aria-hidden="true">
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+          <span class="marquee-item">🌾 KISAAN DIRECT</span>
+          <span class="marquee-sep">•</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Navigation Bar -->
     <header class="navbar">
       <div class="container navbar-inner">
         <a href="index.html" class="brand-logo">
@@ -138,6 +181,54 @@ async function renderNavbar(activePage = '') {
 
         <ul class="nav-links">
           <li><a href="index.html" class="${activePage === 'home' ? 'active' : ''}">Home</a></li>
+          
+          <!-- SHOP BY CATEGORY Dropdown -->
+          <li class="nav-dropdown">
+            <a href="products.html" class="nav-dropdown-toggle">
+              SHOP BY CATEGORY <span class="dropdown-arrow">▾</span>
+            </a>
+            <div class="nav-dropdown-menu">
+              <a href="products.html?category=Wheat">🌾 Wheat (Gehu)</a>
+              <a href="products.html?category=Rice">🍚 Rice (Chawal & Basmati)</a>
+              <a href="products.html?category=Dal">🍲 Dal & Pulses (Lentils)</a>
+              <a href="products.html?category=Millets">🥣 Superfood Millets</a>
+              <a href="products.html?category=Oilseeds">🌻 Oilseeds & Mustard</a>
+              <a href="products.html?category=Spices">🌶️ Farm Fresh Spices</a>
+              <a href="products.html?category=Barley">🌾 Barley & Jau</a>
+              <a href="products.html?category=Corn">🌽 Maize & Corn</a>
+              <div class="dropdown-divider"></div>
+              <a href="products.html" style="font-weight: 700; color: var(--primary);">View All Categories →</a>
+            </div>
+          </li>
+
+          <!-- SHOP BY STATE Dropdown -->
+          <li class="nav-dropdown">
+            <a href="products.html" class="nav-dropdown-toggle">
+              SHOP BY STATE <span class="dropdown-arrow">▾</span>
+            </a>
+            <div class="nav-dropdown-menu states-dropdown-menu">
+              <a href="products.html?search=Punjab">📍 Punjab</a>
+              <a href="products.html?search=Madhya+Pradesh">📍 Madhya Pradesh</a>
+              <a href="products.html?search=Uttar+Pradesh">📍 Uttar Pradesh</a>
+              <a href="products.html?search=Rajasthan">📍 Rajasthan</a>
+              <a href="products.html?search=Haryana">📍 Haryana</a>
+              <a href="products.html?search=Maharashtra">📍 Maharashtra</a>
+              <a href="products.html?search=Gujarat">📍 Gujarat</a>
+              <a href="products.html?search=Karnataka">📍 Karnataka</a>
+              <a href="products.html?search=Andhra+Pradesh">📍 Andhra Pradesh</a>
+              <a href="products.html?search=Bihar">📍 Bihar</a>
+              <a href="products.html?search=Tamil+Nadu">📍 Tamil Nadu</a>
+              <a href="products.html?search=West+Bengal">📍 West Bengal</a>
+              <a href="products.html?search=Odisha">📍 Odisha</a>
+              <a href="products.html?search=Chhattisgarh">📍 Chhattisgarh</a>
+              <a href="products.html?search=Telangana">📍 Telangana</a>
+              <a href="products.html?search=Kerala">📍 Kerala</a>
+              <a href="products.html?search=Himachal+Pradesh">📍 Himachal Pradesh</a>
+              <a href="products.html?search=Uttarakhand">📍 Uttarakhand</a>
+              <a href="products.html?search=Assam">📍 Assam</a>
+            </div>
+          </li>
+
           <li><a href="products.html" class="${activePage === 'products' ? 'active' : ''}">All Grains</a></li>
           <li><a href="index.html#how-it-works">How It Works</a></li>
           <li><a href="index.html#benefits">Why Direct</a></li>
