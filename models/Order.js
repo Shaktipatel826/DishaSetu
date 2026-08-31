@@ -93,6 +93,18 @@ const OrderSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  payoutStatus: {
+    type: String,
+    enum: ['pending', 'settled'],
+    default: 'pending'
+  },
+  payoutUtr: {
+    type: String,
+    default: ''
+  },
+  payoutDate: {
+    type: Date
+  },
   createdAt: {
     type: Date,
     default: Date.now

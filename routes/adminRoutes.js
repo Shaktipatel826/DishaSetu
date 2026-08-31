@@ -11,15 +11,31 @@ const {
   getOrders,
   deleteOrder,
   getAllFeedback,
-  deleteFeedback
+  deleteFeedback,
+  getPaymentSettings,
+  updatePaymentSettings,
+  getPublicPaymentConfig,
+  getFarmerPayouts,
+  settleFarmerPayout
 } = require('../controllers/adminController');
 const { verifyToken, requireRole } = require('../middleware/auth');
 
-// Protect all admin routes
+// Public route for checkout page to load receiving UPI ID & Payee details
+router.get('/public/payment-config', getPublicPaymentConfig);
+
+// Protect all following admin routes
 router.use(verifyToken, requireRole('admin'));
 
 // Platform statistics
 router.get('/stats', getStats);
+
+// Farmer Payouts & Settlement (Admin transfers funds to Farmers)
+router.get('/payouts', getFarmerPayouts);
+router.post('/payouts/:farmerId/settle', settleFarmerPayout);
+
+// Payment Receiving & Bank Settings (Admin)
+router.get('/payment-settings', getPaymentSettings);
+router.put('/payment-settings', updatePaymentSettings);
 
 // Farmers management
 router.get('/farmers', getFarmers);

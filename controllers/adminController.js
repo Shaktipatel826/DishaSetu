@@ -319,29 +319,195 @@ exports.getAllFeedback = async (req, res) => {
 };
 
 /**
- * @desc   Delete a feedback review (moderation)
- * @route  DELETE /api/admin/feedback/:id
+ * @desc   Get platform receiving payment and UPI settings (Admin)
+ * @route  GET /api/admin/payment-settings
  * @access Private (Admin)
  */
-exports.deleteFeedback = async (req, res) => {
+exports.getPaymentSettings = async (req, res) => {
   try {
-    const feedback = await Feedback.findByIdAndDelete(req.params.id);
-    if (!feedback) {
-      return res.status(404).json({
-        success: false,
-        message: 'Feedback not found.'
-      });
+    const admin = await Admin.findById(req.user.id);
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Admin not found.' });
     }
 
     return res.status(200).json({
       success: true,
-      message: 'Feedback removed successfully.'
+      settings: {
+        upiId: admin.upiId || 'kisandirect@upi',
+        businessName: admin.businessName || 'Kisan Direct Marketplace',
+        bankAccount: admin.bankAccount || '',
+        bankIfsc: admin.bankIfsc || '',
+        bankName: admin.bankName || '',
+        accountHolderName: admin.accountHolderName || admin.name
+      }
     });
   } catch (error) {
-    console.error('Admin Delete Feedback Error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Server error deleting feedback.'
+    console.error('Get Payment Settings Error:', error);
+    return res.status(500).json({ success: false, message: 'Server error retrieving payment settings.' });
+  }
+};
+
+/**
+ * @desc   Update platform receiving payment and UPI settings (Admin)
+ * @route  PUT /api/admin/payment-settings
+ * @access Private (Admin)
+ */
+exports.updatePaymentSettings = async (req, res) => {
+  try {
+    const { upiId, businessName, bankAccount, bankIfsc, bankName, accountHolderName } = req.body;
+    const admin = await Admin.findById(req.user.id);
+
+    if (!admin) {
+      return res.status(404).json({ success: false, message: 'Admin not found.' });
+    }
+
+    if (upiId) admin.upiId = upiId.trim();
+    if (businessName) admin.businessName = businessName.trim();
+    if (bankAccount !== undefined) admin.bankAccount = bankAccount.trim();
+    if (bankIfsc !== undefined) admin.bankIfsc = bankIfsc.trim().toUpperCase();
+    if (bankName !== undefined) admin.bankName = bankName.trim();
+    if (accountHolderName !== undefined) admin.accountHolderName = accountHolderName.trim();
+
+    await admin.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Payment & Bank Receiving Settings saved successfully!',
+      settings: {
+        upiId: admin.upiId,
+        businessName: admin.businessName,
+        bankAccount: admin.bankAccount,
+        bankIfsc: admin.bankIfsc,
+        bankName: admin.bankName,
+        accountHolderName: admin.accountHolderName
+      }
+    });
+  } catch (error) {
+    console.error('Update Payment Settings Error:', error);
+    return res.status(500).json({ success: false, message: 'Server error saving payment settings.' });
+  }
+};
+
+/**
+ * @desc   Public config for checkout page to load active Admin UPI ID & QR Code
+ * @route  GET /api/admin/public/payment-config
+ * @access Public
+ */
+exports.getPublicPaymentConfig = async (req, res) => {
+  try {
+    const admin = await Admin.findOne().sort({ createdAt: 1 });
+    return res.status(200).json({
+      success: true,
+      config: {
+        upiId: admin ? (admin.upiId || 'kisandirect@upi') : 'kisandirect@upi',
+        businessName: admin ? (admin.businessName || 'Kisan Direct Marketplace') : 'Kisan Direct Marketplace'
+      }
+    });
+  } catch (error) {
+    return res.status(200).json({
+      success: true,
+      config: {
+        upiId: 'kisandirect@upi',
+        businessName: 'Kisan Direct Marketplace'
+      }
     });
   }
 };
+
+/**
+ * @desc   Get farmer payout settlements list (Admin)
+ * @route  GET /api/admin/payouts
+ * @access Private (Admin)
+ */
+exports.getFarmerPayouts = async (req, res) => {
+  try {
+    const farmers = await Farmer.find().select('-password').sort({ createdAt: -1 });
+
+    const payoutsList = await Promise.all(
+      farmers.map(async (farmer) => {
+        // Calculate all delivered orders for this farmer
+        const deliveredOrders = await Order.find({ farmer: farmer._id, orderStatus: 'delivered' });
+        const totalDeliveredSales = deliveredOrders.reduce((sum, o) => sum + (o.totalAmount || 0), 0);
+        const settledAmount = farmer.settledPayoutAmount || 0;
+        const pendingPayout = Math.max(0, totalDeliveredSales - settledAmount);
+
+        // Generate dynamic UPI QR Code URL for paying this farmer
+        const farmerUpi = farmer.upiId || '';
+        let qrUrl = '';
+        if (farmerUpi) {
+          qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=${encodeURIComponent(farmerUpi)}%26pn=${encodeURIComponent(farmer.name)}%26am=${pendingPayout}%26cu=INR`;
+        }
+
+        return {
+          farmerId: farmer._id,
+          name: farmer.name,
+          email: farmer.email,
+          phone: farmer.phone,
+          location: farmer.location,
+          upiId: farmer.upiId || 'Not Configured',
+          bankAccount: farmer.bankAccount || 'N/A',
+          bankIfsc: farmer.bankIfsc || 'N/A',
+          bankName: farmer.bankName || 'N/A',
+          accountHolderName: farmer.accountHolderName || farmer.name,
+          totalDeliveredSales,
+          settledAmount,
+          pendingPayout,
+          farmerQrCodeUrl: qrUrl
+        };
+      })
+    );
+
+    return res.status(200).json({
+      success: true,
+      count: payoutsList.length,
+      payouts: payoutsList
+    });
+  } catch (error) {
+    console.error('Get Farmer Payouts Error:', error);
+    return res.status(500).json({ success: false, message: 'Server error fetching farmer payouts.' });
+  }
+};
+
+/**
+ * @desc   Record settlement/payout transfer to farmer (Admin)
+ * @route  POST /api/admin/payouts/:farmerId/settle
+ * @access Private (Admin)
+ */
+exports.settleFarmerPayout = async (req, res) => {
+  try {
+    const { amount, utr, note } = req.body;
+    const settleAmt = Number(amount);
+
+    if (!settleAmt || settleAmt <= 0) {
+      return res.status(400).json({ success: false, message: 'Valid positive settlement amount required.' });
+    }
+
+    const farmer = await Farmer.findById(req.params.farmerId);
+    if (!farmer) {
+      return res.status(404).json({ success: false, message: 'Farmer not found.' });
+    }
+
+    farmer.settledPayoutAmount = (farmer.settledPayoutAmount || 0) + settleAmt;
+    await farmer.save();
+
+    // Mark pending delivered orders as settled
+    await Order.updateMany(
+      { farmer: farmer._id, orderStatus: 'delivered', payoutStatus: 'pending' },
+      { payoutStatus: 'settled', payoutUtr: utr || 'ADMIN_SETTLED', payoutDate: new Date() }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: `Successfully recorded payout settlement of ₹${settleAmt.toLocaleString('en-IN')} to farmer ${farmer.name}!`,
+      farmer: {
+        id: farmer._id,
+        name: farmer.name,
+        settledPayoutAmount: farmer.settledPayoutAmount
+      }
+    });
+  } catch (error) {
+    console.error('Settle Farmer Payout Error:', error);
+    return res.status(500).json({ success: false, message: 'Server error settling farmer payout.' });
+  }
+};
+

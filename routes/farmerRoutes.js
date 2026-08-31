@@ -7,7 +7,9 @@ const {
   deleteProduct,
   getMyOrders,
   updateOrderStatus,
-  getEarnings
+  getEarnings,
+  getBankDetails,
+  updateBankDetails
 } = require('../controllers/farmerController');
 const { verifyToken, requireRole } = require('../middleware/auth');
 
@@ -24,7 +26,9 @@ router.delete('/products/:id', deleteProduct);
 router.get('/orders', getMyOrders);
 router.put('/orders/:id/status', updateOrderStatus);
 
-// Earnings & Dashboard
+// Earnings & Bank Details
 router.get('/earnings', getEarnings);
+router.get('/bank-details', getBankDetails);
+router.put('/bank-details', updateBankDetails);
 
 module.exports = router;

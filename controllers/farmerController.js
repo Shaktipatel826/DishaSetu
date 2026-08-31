@@ -1,6 +1,7 @@
 const Product = require('../models/Product');
 const Order = require('../models/Order');
 const Payment = require('../models/Payment');
+const Farmer = require('../models/Farmer');
 
 /**
  * @desc   Get all products listed by the logged-in farmer
@@ -256,13 +257,14 @@ exports.updateOrderStatus = async (req, res) => {
 };
 
 /**
- * @desc   Get farmer earnings and dashboard summary statistics
+ * @desc   Get farmer earnings, payout status from Admin, and dashboard statistics
  * @route  GET /api/farmers/earnings
  * @access Private (Farmer)
  */
 exports.getEarnings = async (req, res) => {
   try {
     const farmerId = req.user.id;
+    const farmer = await Farmer.findById(farmerId);
 
     // Total products listed
     const totalProducts = await Product.countDocuments({ farmer: farmerId });
@@ -294,14 +296,20 @@ exports.getEarnings = async (req, res) => {
       }
     });
 
+    const settledPayoutAmount = farmer ? (farmer.settledPayoutAmount || 0) : 0;
+    const pendingPayoutFromAdmin = Math.max(0, totalEarnings - settledPayoutAmount);
+
     return res.status(200).json({
       success: true,
       stats: {
         totalEarnings,
         pendingEarnings,
+        settledPayoutAmount,
+        pendingPayoutFromAdmin,
         totalOrders: orders.length,
         totalProducts,
-        statusCounts
+        statusCounts,
+        upiId: farmer ? farmer.upiId : ''
       }
     });
   } catch (error) {
@@ -312,3 +320,72 @@ exports.getEarnings = async (req, res) => {
     });
   }
 };
+
+/**
+ * @desc   Get farmer personal payout UPI ID & Bank Details
+ * @route  GET /api/farmers/bank-details
+ * @access Private (Farmer)
+ */
+exports.getBankDetails = async (req, res) => {
+  try {
+    const farmer = await Farmer.findById(req.user.id);
+    if (!farmer) {
+      return res.status(404).json({ success: false, message: 'Farmer not found.' });
+    }
+
+    return res.status(200).json({
+      success: true,
+      bankDetails: {
+        upiId: farmer.upiId || '',
+        bankAccount: farmer.bankAccount || '',
+        bankIfsc: farmer.bankIfsc || '',
+        bankName: farmer.bankName || '',
+        accountHolderName: farmer.accountHolderName || farmer.name,
+        settledPayoutAmount: farmer.settledPayoutAmount || 0
+      }
+    });
+  } catch (error) {
+    console.error('Get Farmer Bank Details Error:', error);
+    return res.status(500).json({ success: false, message: 'Server error retrieving bank details.' });
+  }
+};
+
+/**
+ * @desc   Update farmer personal payout UPI ID & Bank Details
+ * @route  PUT /api/farmers/bank-details
+ * @access Private (Farmer)
+ */
+exports.updateBankDetails = async (req, res) => {
+  try {
+    const { upiId, bankAccount, bankIfsc, bankName, accountHolderName } = req.body;
+    const farmer = await Farmer.findById(req.user.id);
+
+    if (!farmer) {
+      return res.status(404).json({ success: false, message: 'Farmer not found.' });
+    }
+
+    if (upiId !== undefined) farmer.upiId = upiId.trim();
+    if (bankAccount !== undefined) farmer.bankAccount = bankAccount.trim();
+    if (bankIfsc !== undefined) farmer.bankIfsc = bankIfsc.trim().toUpperCase();
+    if (bankName !== undefined) farmer.bankName = bankName.trim();
+    if (accountHolderName !== undefined) farmer.accountHolderName = accountHolderName.trim();
+
+    await farmer.save();
+
+    return res.status(200).json({
+      success: true,
+      message: 'Your payout UPI ID & Bank Details saved successfully!',
+      bankDetails: {
+        upiId: farmer.upiId,
+        bankAccount: farmer.bankAccount,
+        bankIfsc: farmer.bankIfsc,
+        bankName: farmer.bankName,
+        accountHolderName: farmer.accountHolderName
+      }
+    });
+  } catch (error) {
+    console.error('Update Farmer Bank Details Error:', error);
+    return res.status(500).json({ success: false, message: 'Server error saving bank details.' });
+  }
+};
+

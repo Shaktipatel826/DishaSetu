@@ -32,6 +32,35 @@ const FarmerSchema = new mongoose.Schema({
     default: 'farmer',
     immutable: true
   },
+  upiId: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  bankAccount: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  bankIfsc: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  bankName: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  accountHolderName: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  settledPayoutAmount: {
+    type: Number,
+    default: 0
+  },
   createdAt: {
     type: Date,
     default: Date.now

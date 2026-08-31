@@ -36,6 +36,9 @@
             <li class="sidebar-nav-item" onclick="switchTab('orders')">
               <span>📦</span> Incoming Orders
             </li>
+            <li class="sidebar-nav-item" onclick="switchTab('bank')">
+              <span>🏦</span> Bank & UPI Payouts
+            </li>
             <li class="sidebar-nav-item" onclick="switchTab('profile')">
               <span>⚙️</span> Farm Profile
             </li>
@@ -64,23 +67,23 @@
                 <div class="stat-icon">💰</div>
                 <div>
                   <div class="stat-val" id="stat-earnings">₹0</div>
-                  <div class="stat-label">Total Realized Earnings</div>
+                  <div class="stat-label">Total Realized Sales</div>
+                </div>
+              </div>
+
+              <div class="stat-card">
+                <div class="stat-icon">✅</div>
+                <div>
+                  <div class="stat-val" id="stat-settled-payout" style="color: #059669;">₹0</div>
+                  <div class="stat-label">Settled by Admin</div>
                 </div>
               </div>
 
               <div class="stat-card">
                 <div class="stat-icon">⏳</div>
                 <div>
-                  <div class="stat-val" id="stat-pending-val">₹0</div>
-                  <div class="stat-label">Orders in Pipeline</div>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-icon">📦</div>
-                <div>
-                  <div class="stat-val" id="stat-total-orders">0</div>
-                  <div class="stat-label">Total Received Orders</div>
+                  <div class="stat-val" id="stat-pending-payout" style="color: #d97706;">₹0</div>
+                  <div class="stat-label">Awaiting Admin Payout</div>
                 </div>
               </div>
 
@@ -175,7 +178,58 @@
             </div>
           </div>
 
-          <!-- TAB 4: PROFILE -->
+          <!-- TAB 4: BANK & UPI PAYOUTS -->
+          <div id="tab-bank" class="tab-pane" style="display: none;">
+            <div class="card" style="max-width: 650px; padding: 2rem;">
+              <h2 class="mb-2">🏦 My Bank & UPI Payout Settings</h2>
+              <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                Configure your personal UPI ID and Bank Account. The Admin will release all your grain sales earnings directly to this account!
+              </p>
+
+              <form id="farmer-bank-form">
+                <div class="form-group">
+                  <label class="form-label" for="farmer-upi-id">Personal Payout UPI ID *</label>
+                  <input type="text" id="farmer-upi-id" class="form-control" placeholder="e.g. 9876543210@paytm or farmer@okaxis" required oninput="updateFarmerQrPreview()">
+                  <div class="input-help">Admin will scan or transfer payouts directly to this UPI address.</div>
+                </div>
+
+                <div style="background: #f8fafc; padding: 1.25rem; border: 1px dashed #cbd5e1; border-radius: var(--radius-md); margin-bottom: 1.5rem; text-align: center;">
+                  <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--primary-dark);">Your Payout Receiving QR Code:</h4>
+                  <img id="farmer-qr-preview" src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=farmer@upi&pn=Farmer&mc=5411&cu=INR" alt="Farmer QR Code" style="width: 130px; height: 130px; margin: 0 auto;">
+                  <div id="farmer-qr-label" style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-top: 6px;">UPI: Not Configured</div>
+                </div>
+
+                <h3 style="margin: 1.5rem 0 1rem 0; font-size: 1.15rem;">Bank Account Details (Optional / Direct NEFT)</h3>
+
+                <div class="form-group">
+                  <label class="form-label" for="farmer-acc-holder">Account Holder Name</label>
+                  <input type="text" id="farmer-acc-holder" class="form-control" placeholder="Name as in passbook">
+                </div>
+
+                <div class="flex gap-2">
+                  <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="farmer-bank-acc">Bank Account Number</label>
+                    <input type="text" id="farmer-bank-acc" class="form-control" placeholder="e.g. 30849201948">
+                  </div>
+                  <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="farmer-bank-ifsc">IFSC Code</label>
+                    <input type="text" id="farmer-bank-ifsc" class="form-control" placeholder="e.g. SBIN0002145" style="text-transform: uppercase;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="farmer-bank-name">Bank Name</label>
+                  <input type="text" id="farmer-bank-name" class="form-control" placeholder="e.g. State Bank of India">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-block mt-2">
+                  💾 Save Payout UPI & Bank Details
+                </button>
+              </form>
+            </div>
+          </div>
+
+          <!-- TAB 5: PROFILE -->
           <div id="tab-profile" class="tab-pane" style="display: none;">
             <div class="card" style="max-width: 600px; padding: 2rem;">
               <h2 class="mb-2">Farm & Personal Profile</h2>
@@ -319,16 +373,17 @@
 
       if (tabId === 'products') loadProducts();
       if (tabId === 'orders') loadOrders();
+      if (tabId === 'bank') loadBankDetails();
     }
 
     async function loadDashboardData() {
-      // 1. Earnings stats
+      // 1. Earnings & Payout stats
       const earningsRes = await apiFetch('/api/farmers/earnings');
       if (earningsRes.success && earningsRes.stats) {
         const s = earningsRes.stats;
         document.getElementById('stat-earnings').textContent = `₹${s.totalEarnings.toLocaleString('en-IN')}`;
-        document.getElementById('stat-pending-val').textContent = `₹${s.pendingEarnings.toLocaleString('en-IN')}`;
-        document.getElementById('stat-total-orders').textContent = s.totalOrders;
+        document.getElementById('stat-settled-payout').textContent = `₹${(s.settledPayoutAmount || 0).toLocaleString('en-IN')}`;
+        document.getElementById('stat-pending-payout').textContent = `₹${(s.pendingPayoutFromAdmin || 0).toLocaleString('en-IN')}`;
         document.getElementById('stat-products').textContent = s.totalProducts;
       }
 
@@ -337,6 +392,49 @@
       // 3. Load products
       loadProducts();
     }
+
+    async function loadBankDetails() {
+      const res = await apiFetch('/api/farmers/bank-details');
+      if (res.success && res.bankDetails) {
+        const b = res.bankDetails;
+        document.getElementById('farmer-upi-id').value = b.upiId || '';
+        document.getElementById('farmer-acc-holder').value = b.accountHolderName || '';
+        document.getElementById('farmer-bank-acc').value = b.bankAccount || '';
+        document.getElementById('farmer-bank-ifsc').value = b.bankIfsc || '';
+        document.getElementById('farmer-bank-name').value = b.bankName || '';
+        updateFarmerQrPreview();
+      }
+    }
+
+    function updateFarmerQrPreview() {
+      const upi = document.getElementById('farmer-upi-id').value.trim() || 'farmer@upi';
+      const name = (farmerUser && farmerUser.name) ? farmerUser.name : 'Farmer';
+      const qrImg = document.getElementById('farmer-qr-preview');
+      const qrLabel = document.getElementById('farmer-qr-label');
+
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=${encodeURIComponent(upi)}%26pn=${encodeURIComponent(name)}%26mc=5411%26cu=INR`;
+      qrLabel.textContent = `UPI: ${upi}`;
+    }
+
+    document.getElementById('farmer-bank-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const upiId = document.getElementById('farmer-upi-id').value.trim();
+      const accountHolderName = document.getElementById('farmer-acc-holder').value.trim();
+      const bankAccount = document.getElementById('farmer-bank-acc').value.trim();
+      const bankIfsc = document.getElementById('farmer-bank-ifsc').value.trim();
+      const bankName = document.getElementById('farmer-bank-name').value.trim();
+
+      const res = await apiFetch('/api/farmers/bank-details', {
+        method: 'PUT',
+        body: { upiId, accountHolderName, bankAccount, bankIfsc, bankName }
+      });
+
+      if (res.success) {
+        showToast(res.message || 'Payout UPI & Bank details saved!', 'success');
+      } else {
+        showToast(res.message || 'Failed to save bank details.', 'error');
+      }
+    });
 
     async function loadProducts() {
       const res = await apiFetch('/api/farmers/products');

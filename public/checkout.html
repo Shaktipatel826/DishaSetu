@@ -419,9 +419,24 @@
 
       cartSubtotal = res.cart.totalAmount;
 
-      // Update Dynamic QR code image with exact cart amount
+      // Fetch dynamic Admin receiving payment configuration
+      let receivingUpiId = 'kisandirect@upi';
+      let receivingPayeeName = 'Kisan Direct Marketplace';
+
+      const configRes = await apiFetch('/api/admin/public/payment-config');
+      if (configRes.success && configRes.config) {
+        if (configRes.config.upiId) receivingUpiId = configRes.config.upiId;
+        if (configRes.config.businessName) receivingPayeeName = configRes.config.businessName;
+      }
+
+      // Update Dynamic QR code image with exact cart amount & Admin receiving UPI ID
       const qrImg = document.getElementById('upi-qr-image');
-      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=kisandirect@upi%26pn=KisanDirectMarketplace%26mc=5411%26am=${cartSubtotal}%26cu=INR`;
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=${encodeURIComponent(receivingUpiId)}%26pn=${encodeURIComponent(receivingPayeeName)}%26mc=5411%26am=${cartSubtotal}%26cu=INR`;
+      
+      const upiLabel = document.querySelector('.qr-container span[style*="color: var(--primary)"]');
+      if (upiLabel) {
+        upiLabel.textContent = receivingUpiId;
+      }
 
       listEl.innerHTML = res.cart.items.map(item => `
         <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem;">

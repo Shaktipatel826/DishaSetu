@@ -23,6 +23,36 @@ const AdminSchema = new mongoose.Schema({
     default: 'admin',
     immutable: true
   },
+  upiId: {
+    type: String,
+    default: 'kisandirect@upi',
+    trim: true
+  },
+  businessName: {
+    type: String,
+    default: 'Kisan Direct Marketplace',
+    trim: true
+  },
+  bankAccount: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  bankIfsc: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  bankName: {
+    type: String,
+    default: '',
+    trim: true
+  },
+  accountHolderName: {
+    type: String,
+    default: '',
+    trim: true
+  },
   createdAt: {
     type: Date,
     default: Date.now

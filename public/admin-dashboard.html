@@ -42,6 +42,12 @@
             <li class="sidebar-nav-item" onclick="switchAdminTab('feedback')">
               <span>⭐</span> Moderate Feedback
             </li>
+            <li class="sidebar-nav-item" onclick="switchAdminTab('payment-settings')">
+              <span>💰</span> Receiving UPI & Bank
+            </li>
+            <li class="sidebar-nav-item" onclick="switchAdminTab('payouts')">
+              <span>💸</span> Farmer Payouts & QR
+            </li>
             <li class="sidebar-nav-item" onclick="handleLogout()" style="color: #dc2626;">
               <span>🚪</span> Logout
             </li>
@@ -260,12 +266,142 @@
             </div>
           </div>
 
+          <!-- TAB 7: BANK & UPI SETTINGS -->
+          <div id="tab-payment-settings" class="tab-pane" style="display: none;">
+            <div class="card" style="max-width: 680px; padding: 2rem;">
+              <h2>💰 Platform Payment & Bank Receiving Settings</h2>
+              <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
+                Set your personal or business UPI ID and Bank Account details. All customer online payments & QR Code scans will directly transfer funds into this account!
+              </p>
+
+              <form id="admin-payment-form">
+                <div class="form-group">
+                  <label class="form-label" for="setting-upi-id">Official Receiving UPI ID *</label>
+                  <input type="text" id="setting-upi-id" class="form-control" placeholder="e.g. 9876543210@paytm or yourname@okaxis" required oninput="updateQrPreview()">
+                  <div class="input-help">Customer QR Code and UPI payments will transfer money directly to this UPI address.</div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="setting-business-name">Payee / Business Name *</label>
+                  <input type="text" id="setting-business-name" class="form-control" placeholder="e.g. Kisan Direct Marketplace" required oninput="updateQrPreview()">
+                </div>
+
+                <div style="background: #f8fafc; padding: 1.25rem; border: 1px dashed #cbd5e1; border-radius: var(--radius-md); margin-bottom: 1.5rem; text-align: center;">
+                  <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--primary-dark);">Live Dynamic QR Code Preview:</h4>
+                  <img id="admin-qr-preview" src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=kisandirect@upi&pn=KisanDirectMarketplace&mc=5411&cu=INR" alt="QR Preview" style="width: 130px; height: 130px; margin: 0 auto;">
+                  <div id="admin-qr-label" style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-top: 6px;">UPI: kisandirect@upi</div>
+                </div>
+
+                <h3 style="margin: 1.5rem 0 1rem 0; font-size: 1.15rem;">Bank Account Settlement Details (Optional)</h3>
+
+                <div class="form-group">
+                  <label class="form-label" for="setting-account-holder">Account Holder Name</label>
+                  <input type="text" id="setting-account-holder" class="form-control" placeholder="Name as per bank records">
+                </div>
+
+                <div class="flex gap-2">
+                  <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="setting-bank-acc">Bank Account Number</label>
+                    <input type="text" id="setting-bank-acc" class="form-control" placeholder="e.g. 501004928192">
+                  </div>
+                  <div class="form-group" style="flex: 1;">
+                    <label class="form-label" for="setting-bank-ifsc">IFSC Code</label>
+                    <input type="text" id="setting-bank-ifsc" class="form-control" placeholder="e.g. SBIN0001234" style="text-transform: uppercase;">
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label" for="setting-bank-name">Bank Name</label>
+                  <input type="text" id="setting-bank-name" class="form-control" placeholder="e.g. State Bank of India">
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg btn-block mt-2" style="background-color: var(--accent-earth); border-color: var(--accent-earth);">
+                  💾 Save Receiving Payment Settings
+                </button>
+              </form>
+            </div>
+          <!-- TAB 8: FARMER PAYOUTS & SETTLEMENT -->
+          <div id="tab-payouts" class="tab-pane" style="display: none;">
+            <div class="mb-3">
+              <h2>💸 Farmer Payouts & Settlement Hub</h2>
+              <p style="color: var(--text-muted); margin: 0;">
+                Review all customer funds received by Admin, view each Farmer's UPI ID & QR Code, and record payout transfers.
+              </p>
+            </div>
+
+            <div class="table-responsive">
+              <table class="data-table">
+                <thead>
+                  <tr>
+                    <th>Farmer Name</th>
+                    <th>Contact & Location</th>
+                    <th>Customer Sales Received</th>
+                    <th>Settled Payouts</th>
+                    <th>Pending Due</th>
+                    <th>Payout UPI / Bank</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="payouts-table-body">
+                  <tr><td colspan="7" class="text-center">Loading farmer payouts...</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
         </section>
 
       </div>
 
     </div>
   </main>
+
+  <!-- FARMER PAYOUT SETTLEMENT MODAL -->
+  <div class="modal-overlay" id="settle-modal">
+    <div class="modal-card" style="max-width: 520px;">
+      <div class="modal-header">
+        <h3 id="settle-modal-title">💸 Settle Payout to Farmer</h3>
+        <button class="modal-close-btn" onclick="closeSettleModal()">×</button>
+      </div>
+      <form id="settle-form">
+        <input type="hidden" id="settle-farmer-id" value="">
+        <div class="modal-body">
+          
+          <div style="background: #f8fafc; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; font-size: 0.9rem;">
+            <div>🧑‍🌾 <strong>Farmer:</strong> <span id="settle-farmer-name">-</span></div>
+            <div style="margin-top: 4px;">📱 <strong>Farmer UPI ID:</strong> <span id="settle-farmer-upi" style="color: var(--primary-dark); font-weight: 700;">-</span></div>
+            <div style="margin-top: 4px;">🏦 <strong>Bank Account:</strong> <span id="settle-farmer-bank">-</span></div>
+            <div style="margin-top: 4px;">💰 <strong>Pending Due Amount:</strong> <span id="settle-pending-amt" style="font-weight: 800; color: #dc2626;">₹0</span></div>
+          </div>
+
+          <!-- Dynamic Farmer QR Code -->
+          <div id="settle-qr-box" style="text-align: center; background: #fff; border: 1px dashed #cbd5e1; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
+            <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 0.5rem;">
+              Scan to Pay Farmer via UPI (GPay / PhonePe / Paytm):
+            </div>
+            <img id="settle-farmer-qr" src="" alt="Farmer QR" style="width: 150px; height: 150px; margin: 0 auto; display: block;">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="settle-amount">Payout Amount to Transfer (₹) *</label>
+            <input type="number" id="settle-amount" class="form-control" required min="1">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="settle-utr">Bank / UPI Reference UTR Number (Optional)</label>
+            <input type="text" id="settle-utr" class="form-control" placeholder="e.g. 423910948201 or IMPS123456">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" onclick="closeSettleModal()">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="background-color: #059669; border-color: #059669;">
+            ✓ Confirm Payout Settled
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
 
   <script src="script.js"></script>
   <script>
@@ -298,7 +434,146 @@
       if (tabId === 'products') loadProducts();
       if (tabId === 'orders') loadOrders();
       if (tabId === 'feedback') loadFeedback();
+      if (tabId === 'payment-settings') loadPaymentSettings();
+      if (tabId === 'payouts') loadPayouts();
     }
+
+    let allPayouts = [];
+
+    async function loadPayouts() {
+      const res = await apiFetch('/api/admin/payouts');
+      const tbody = document.getElementById('payouts-table-body');
+
+      if (res.success && res.payouts) {
+        allPayouts = res.payouts;
+        if (res.payouts.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding: 2rem;">No registered farmers found.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = res.payouts.map(p => `
+          <tr>
+            <td><strong>${p.name}</strong></td>
+            <td>
+              <div>📞 ${p.phone}</div>
+              <div style="font-size: 0.8rem; color: var(--text-muted);">📍 ${p.location}</div>
+            </td>
+            <td><strong>₹${p.totalDeliveredSales.toLocaleString('en-IN')}</strong></td>
+            <td><span style="color: #059669; font-weight: 700;">₹${p.settledAmount.toLocaleString('en-IN')}</span></td>
+            <td>
+              <span style="font-weight: 800; color: ${p.pendingPayout > 0 ? '#dc2626' : '#64748b'}; font-size: 1.05rem;">
+                ₹${p.pendingPayout.toLocaleString('en-IN')}
+              </span>
+            </td>
+            <td>
+              <div>📱 <strong>${p.upiId}</strong></div>
+              ${p.bankAccount !== 'N/A' ? `<div style="font-size: 0.78rem; color: var(--text-muted);">A/C: ${p.bankAccount} (${p.bankIfsc})</div>` : ''}
+            </td>
+            <td>
+              <button onclick="openSettleModal('${p.farmerId}')" class="btn btn-sm btn-primary" style="background-color: var(--accent-earth); border-color: var(--accent-earth);">
+                💸 Settle Payout
+              </button>
+            </td>
+          </tr>
+        `).join('');
+      }
+    }
+
+    function openSettleModal(farmerId) {
+      const p = allPayouts.find(item => item.farmerId === farmerId);
+      if (!p) return;
+
+      document.getElementById('settle-farmer-id').value = p.farmerId;
+      document.getElementById('settle-farmer-name').textContent = p.name;
+      document.getElementById('settle-farmer-upi').textContent = p.upiId || 'Not Configured';
+      document.getElementById('settle-farmer-bank').textContent = p.bankAccount !== 'N/A' ? `${p.bankName} - ${p.bankAccount} (${p.bankIfsc})` : 'Not Provided';
+      document.getElementById('settle-pending-amt').textContent = `₹${p.pendingPayout.toLocaleString('en-IN')}`;
+      document.getElementById('settle-amount').value = p.pendingPayout > 0 ? p.pendingPayout : '';
+      document.getElementById('settle-utr').value = '';
+
+      const qrBox = document.getElementById('settle-qr-box');
+      const qrImg = document.getElementById('settle-farmer-qr');
+
+      if (p.upiId && p.upiId !== 'Not Configured') {
+        qrBox.style.display = 'block';
+        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=${encodeURIComponent(p.upiId)}%26pn=${encodeURIComponent(p.name)}%26am=${p.pendingPayout}%26cu=INR`;
+      } else {
+        qrBox.style.display = 'none';
+      }
+
+      document.getElementById('settle-modal').classList.add('open');
+    }
+
+    function closeSettleModal() {
+      document.getElementById('settle-modal').classList.remove('open');
+    }
+
+    document.getElementById('settle-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const farmerId = document.getElementById('settle-farmer-id').value;
+      const amount = document.getElementById('settle-amount').value;
+      const utr = document.getElementById('settle-utr').value.trim();
+
+      const res = await apiFetch(`/api/admin/payouts/${farmerId}/settle`, {
+        method: 'POST',
+        body: { amount, utr }
+      });
+
+      if (res.success) {
+        showToast(res.message || 'Payout recorded successfully!', 'success');
+        closeSettleModal();
+        loadPayouts();
+        loadAdminStats();
+      } else {
+        showToast(res.message || 'Failed to record payout settlement.', 'error');
+      }
+    });
+
+    async function loadPaymentSettings() {
+      const res = await apiFetch('/api/admin/payment-settings');
+      if (res.success && res.settings) {
+        const s = res.settings;
+        document.getElementById('setting-upi-id').value = s.upiId || '';
+        document.getElementById('setting-business-name').value = s.businessName || '';
+        document.getElementById('setting-bank-acc').value = s.bankAccount || '';
+        document.getElementById('setting-bank-ifsc').value = s.bankIfsc || '';
+        document.getElementById('setting-bank-name').value = s.bankName || '';
+        document.getElementById('setting-account-holder').value = s.accountHolderName || '';
+        updateQrPreview();
+      }
+    }
+
+    function updateQrPreview() {
+      const upi = document.getElementById('setting-upi-id').value.trim() || 'kisandirect@upi';
+      const name = document.getElementById('setting-business-name').value.trim() || 'Kisan Direct';
+      const qrImg = document.getElementById('admin-qr-preview');
+      const qrLabel = document.getElementById('admin-qr-label');
+
+      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=${encodeURIComponent(upi)}%26pn=${encodeURIComponent(name)}%26mc=5411%26cu=INR`;
+      qrLabel.textContent = `UPI: ${upi}`;
+    }
+
+    document.getElementById('admin-payment-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const upiId = document.getElementById('setting-upi-id').value.trim();
+      const businessName = document.getElementById('setting-business-name').value.trim();
+      const bankAccount = document.getElementById('setting-bank-acc').value.trim();
+      const bankIfsc = document.getElementById('setting-bank-ifsc').value.trim();
+      const bankName = document.getElementById('setting-bank-name').value.trim();
+      const accountHolderName = document.getElementById('setting-account-holder').value.trim();
+
+      const res = await apiFetch('/api/admin/payment-settings', {
+        method: 'PUT',
+        body: { upiId, businessName, bankAccount, bankIfsc, bankName, accountHolderName }
+      });
+
+      if (res.success) {
+        showToast(res.message || 'Payment receiving settings saved!', 'success');
+      } else {
+        showToast(res.message || 'Failed to save settings.', 'error');
+      }
+    });
 
     async function loadAdminStats() {
       const res = await apiFetch('/api/admin/stats');
