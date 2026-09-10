@@ -835,30 +835,6 @@ a:hover {
   max-width: 580px;
 }
 
-.testimonial-quote-box {
-  background: rgba(255, 255, 255, 0.96);
-  border: 1px solid var(--border-light);
-  border-radius: var(--radius-md);
-  padding: 1.6rem 1.8rem;
-  margin-bottom: 2rem;
-  box-shadow: var(--shadow-lg);
-}
-
-.testimonial-quote-box p {
-  color: var(--navy-dark);
-  font-size: 1.02rem;
-  font-style: italic;
-  line-height: 1.6;
-  margin-bottom: 0.8rem;
-}
-
-.testimonial-author {
-  font-style: normal;
-  font-weight: 700;
-  font-size: 0.88rem;
-  color: var(--text-muted);
-}
-
 /* Notification Bell & Drawer */
 .notification-bell-btn {
   position: relative;
