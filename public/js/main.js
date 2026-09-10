@@ -50,6 +50,8 @@ function initOrbitCarousel() {
   if (stage) {
     stage.addEventListener('mouseenter', () => { isHovered = true; });
     stage.addEventListener('mouseleave', () => { isHovered = false; });
+    stage.addEventListener('touchstart', () => { isHovered = true; }, { passive: true });
+    stage.addEventListener('touchend', () => { isHovered = false; }, { passive: true });
   }
 
   function step() {
@@ -58,13 +60,15 @@ function initOrbitCarousel() {
     }
 
     const total = cards.length;
-    const isMobile = window.innerWidth <= 640;
-    const isTablet = window.innerWidth <= 992;
+    const w = window.innerWidth;
+    const isSmallMobile = w <= 390;
+    const isMobile = w <= 640;
+    const isTablet = w <= 992;
     
-    // Elliptical Radius
-    const radiusX = isMobile ? 115 : (isTablet ? 155 : 210);
-    const radiusZ = isMobile ? 70 : (isTablet ? 95 : 130);
-    const radiusY = isMobile ? 18 : 32; // Slight 3D tilt
+    // Scaled Elliptical Radius for 3D Orbit Carousel
+    const radiusX = isSmallMobile ? 95 : (isMobile ? 115 : (isTablet ? 155 : 210));
+    const radiusZ = isSmallMobile ? 50 : (isMobile ? 65 : (isTablet ? 90 : 130));
+    const radiusY = isSmallMobile ? 12 : (isMobile ? 16 : (isTablet ? 22 : 32)); // 3D tilt angle
 
     cards.forEach((card, index) => {
       const angleDeg = currentAngle + (index * (360 / total));
@@ -77,8 +81,8 @@ function initOrbitCarousel() {
       // Normalize Z (0 = farthest back, 1 = closest front)
       const normZ = (z + radiusZ) / (2 * radiusZ);
 
-      // 3D Scale: 0.72 (back) -> 1.15 (front)
-      const scale = 0.72 + (normZ * 0.43);
+      // 3D Scale: 0.70 (back) -> 1.12 (front)
+      const scale = 0.70 + (normZ * 0.42);
 
       // Opacity: 0.45 (back) -> 1.0 (front)
       const opacity = 0.45 + (normZ * 0.55);

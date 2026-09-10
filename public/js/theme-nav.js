@@ -74,8 +74,15 @@ function renderNavbar() {
           <img src="assets/logo.png" alt="DishaSetu Logo" class="brand-logo-img" style="height: 44px; width: auto; object-fit: contain; filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.4));">
         </a>
 
+        <!-- Mobile Menu Toggle Button -->
+        <button class="mobile-nav-toggle" onclick="toggleMobileMenu()" aria-label="Toggle Navigation Menu">
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+          <span class="hamburger-bar"></span>
+        </button>
+
         <!-- Links -->
-        <ul class="nav-links">
+        <ul class="nav-links" id="main-nav-links">
           <li><a href="index.html" data-i18n="navHome">Home</a></li>
           <li><a href="opportunities.html" data-i18n="navOpportunities">Opportunities</a></li>
           <li><a href="schemes.html" data-i18n="navSchemes">Government Schemes</a></li>
@@ -123,6 +130,17 @@ function renderNavbar() {
 
   // Initialize lang state
   setLanguage(lang);
+}
+
+function toggleMobileMenu() {
+  const links = document.getElementById('main-nav-links');
+  const toggle = document.querySelector('.mobile-nav-toggle');
+  if (links) {
+    links.classList.toggle('mobile-open');
+  }
+  if (toggle) {
+    toggle.classList.toggle('is-active');
+  }
 }
 
 function toggleLanguage() {
