@@ -5,13 +5,15 @@ const cookieParser = require('cookie-parser');
 const cors = require('cors');
 
 const connectDB = require('./config/db');
+const { initDeadlineCron } = require('./services/deadlineCron');
 
 // Route Imports
 const authRoutes = require('./routes/authRoutes');
-const productRoutes = require('./routes/productRoutes');
-const farmerRoutes = require('./routes/farmerRoutes');
-const customerRoutes = require('./routes/customerRoutes');
-const orderRoutes = require('./routes/orderRoutes');
+const opportunityRoutes = require('./routes/opportunityRoutes');
+const schemeRoutes = require('./routes/schemeRoutes');
+const savedRoutes = require('./routes/savedRoutes');
+const notificationRoutes = require('./routes/notificationRoutes');
+const submissionRoutes = require('./routes/submissionRoutes');
 const adminRoutes = require('./routes/adminRoutes');
 
 const app = express();
@@ -33,17 +35,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // API Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/products', productRoutes);
-app.use('/api/farmers', farmerRoutes);
-app.use('/api/customers', customerRoutes);
-app.use('/api/orders', orderRoutes);
+app.use('/api/opportunities', opportunityRoutes);
+app.use('/api/schemes', schemeRoutes);
+app.use('/api/saved', savedRoutes);
+app.use('/api/notifications', notificationRoutes);
+app.use('/api/submissions', submissionRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
   res.status(200).json({
     status: 'online',
-    platform: 'Kisan Direct - Farmer to Consumer Grain Marketplace',
+    platform: 'DishaSetu — Right Opportunity → Right Person → Right Time',
     timestamp: new Date()
   });
 });
@@ -60,6 +63,7 @@ app.use('/api/{*splat}', (req, res) => {
 app.get('/{*splat}', (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
+
 // Global Centralized Error Handler
 app.use((err, req, res, next) => {
   console.error('[Server Error]:', err.stack || err.message);
@@ -72,7 +76,10 @@ app.use((err, req, res, next) => {
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () =>  {
   console.log(`====================================================`);
-  console.log(`🌾 Kisan Direct Server running on http://localhost:${PORT}`);
-  console.log(`🌾 Environment: ${process.env.NODE_ENV || 'development'}`);
+  console.log(`✨ DishaSetu Server running on http://localhost:${PORT}`);
+  console.log(`✨ Tagline: "Right Opportunity → Right Person → Right Time"`);
   console.log(`====================================================`);
+
+  // Start Background Deadline Cron Scheduler
+  initDeadlineCron();
 });

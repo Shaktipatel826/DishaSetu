@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Saved Opportunities & Reminders | DishaSetu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <div id="ticker-placeholder"></div>
+
+  <main class="main-content container py-4" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+    <div style="margin-bottom: 2rem;">
+      <h1 style="color: #fff; font-size: 2.2rem; margin-bottom: 0.5rem;" data-i18n="navSaved">Saved Items</h1>
+      <p style="color: var(--text-muted); font-size: 1rem;">
+        Track your bookmarked student opportunities and government schemes with active deadline reminders.
+      </p>
+    </div>
+
+    <div id="saved-loading" style="text-align: center; padding: 3rem 0; color: var(--text-muted);">
+      <div style="font-size: 2.5rem; margin-bottom: 1rem;">🔖</div>
+      <p>Loading your saved items...</p>
+    </div>
+
+    <div id="saved-grid" class="cards-grid" style="display: none;">
+      <!-- Dynamically Populated -->
+    </div>
+
+    <div id="saved-empty" style="display: none; text-align: center; padding: 4rem 0;">
+      <div style="font-size: 3.5rem; margin-bottom: 1rem;">🔖</div>
+      <h3 style="color: #fff; margin-bottom: 0.5rem;">No saved items yet</h3>
+      <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Explore scholarships and government schemes and click Save to set deadline reminders.</p>
+      <a href="opportunities.html" class="btn btn-primary">Browse Opportunities →</a>
+    </div>
+  </main>
+
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    async function loadSavedItems() {
+      const userStr = localStorage.getItem('dishasetu_user');
+      if (!userStr) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      const loading = document.getElementById('saved-loading');
+      const grid = document.getElementById('saved-grid');
+      const empty = document.getElementById('saved-empty');
+
+      try {
+        const res = await fetch('/api/saved', { credentials: 'include' });
+        const data = await res.json();
+
+        loading.style.display = 'none';
+
+        if (!data.success || !data.savedItems || data.savedItems.length === 0) {
+          empty.style.display = 'block';
+          return;
+        }
+
+        const lang = getCurrentLanguage();
+        grid.innerHTML = data.savedItems.map(saved => {
+          const item = saved.opportunityId || saved.schemeId;
+          if (!item) return '';
+
+          const isOpp = saved.itemType === 'Opportunity';
+          const title = getLocalized(item.title, lang);
+          const lastDateStr = item.lastDate ? new Date(item.lastDate).toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : 'N/A';
+          const detailsUrl = isOpp ? `opportunity-details.html?id=${item._id}` : `scheme-details.html?id=${item._id}`;
+
+          let prefLabel = '🔕 No reminder set';
+          if (saved.reminderPreference === '7_days') prefLabel = '🔔 Reminder set: 7 days before';
+          if (saved.reminderPreference === '3_days') prefLabel = '🔔 Reminder set: 3 days before';
+          if (saved.reminderPreference === '1_day') prefLabel = '🔔 Reminder set: 1 day before';
+          if (saved.reminderPreference === 'deadline_day') prefLabel = '🔔 Reminder set: On deadline day';
+
+          return `
+            <div class="glass-card ${!isOpp ? 'scheme-card' : ''}" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                  <span class="card-badge ${isOpp ? 'badge-open' : 'badge-scheme'}">${saved.itemType}</span>
+                  <span style="font-size: 0.8rem; color: var(--text-muted);">Saved ${new Date(saved.createdAt).toLocaleDateString()}</span>
+                </div>
+
+                <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem;">${title}</h3>
+                
+                <div style="font-size: 0.85rem; color: var(--primary-cyan); font-weight: 700; margin-bottom: 0.8rem;">
+                  📅 Deadline: ${lastDateStr}
+                </div>
+
+                <div style="background: rgba(255,255,255,0.05); padding: 0.5rem 0.8rem; border-radius: var(--radius-sm); font-size: 0.82rem; color: #fef3c7; margin-bottom: 1.2rem;">
+                  ${prefLabel}
+                </div>
+              </div>
+
+              <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <a href="${item.applyUrl}" target="_blank" class="btn ${isOpp ? 'btn-primary' : 'btn-scheme'}" style="justify-content: center; padding: 0.5rem;">
+                  🚀 Apply Now (Official Portal)
+                </a>
+                <div style="display: flex; gap: 0.5rem;">
+                  <a href="${detailsUrl}" class="btn btn-outline" style="flex:1; justify-content: center; padding: 0.4rem; font-size: 0.8rem;">
+                    View Details
+                  </a>
+                  <button class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.8rem; color: #f87171;" onclick="removeSavedRecord('${saved._id}')">
+                    Remove
+                  </button>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        grid.style.display = 'grid';
+      } catch (err) {
+        console.error('Load Saved Items Error:', err);
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+      }
+    }
+
+    async function removeSavedRecord(id) {
+      if (!confirm('Are you sure you want to remove this item from your saved list?')) return;
+      try {
+        const res = await fetch(`/api/saved/${id}`, { method: 'DELETE', credentials: 'include' });
+        const data = await res.json();
+        if (data.success) {
+          loadSavedItems();
+        } else {
+          alert(data.message);
+        }
+      } catch (err) {
+        console.error('Remove Error:', err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadSavedItems);
+  </script>
+</body>
+</html>

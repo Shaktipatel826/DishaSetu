@@ -3,510 +3,379 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kisan Direct | Direct Farmer-to-Consumer Grain Marketplace</title>
+  <title>DishaSetu | Right Opportunity → Right Person → Right Time</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-  <!-- Dynamic Navbar -->
+  <!-- Dynamic Navbar Placeholder -->
   <div id="navbar-placeholder"></div>
 
+  <!-- FRAME 2: Dynamic Latest Updates Marquee Ticker (Left -> Right) -->
+  <div id="ticker-placeholder"></div>
+
   <main class="main-content">
-    <div class="container">
-      
-      <!-- Hero Section -->
-      <section class="hero text-center">
-        <div style="max-width: 800px; margin: 0 auto; padding: 0 1rem;">
-          <span style="background: rgba(255,255,255,0.2); padding: 4px 14px; border-radius: 9999px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;">
-            🌾 100% Direct From Indian Farms
-          </span>
-          <h1 class="mt-2">Pure Farm Grains, Directly From the Grower to Your Kitchen</h1>
-          <p style="margin: 0 auto 2rem auto;">
-            Say goodbye to middlemen, inflated prices, and mixed grains. Buy authentic unpolished wheat, basmati rice, pulses, and superfood millets directly from verified Indian farmers.
+    
+    <!-- FRAME 1: HERO SECTION WITH STUDENT BACKPACK SILHOUETTE & CURVED GLOWING LIGHT ROAD -->
+    <section class="hero-section">
+      <div class="hero-bg-particles"></div>
+      <div class="container hero-grid">
+        <!-- Left Hero Text & CTA -->
+        <div>
+          <div class="hero-tagline">
+            <span>✨</span> <span data-i18n="heroLabel">Your Digital Guide to Opportunities</span>
+          </div>
+          <h1 class="hero-heading">
+            <span data-i18n="heroHeading">Find What's Meant for You.</span><br>
+            <span class="gradient-text">Right Time. Right Person.</span>
+          </h1>
+          <p class="hero-description" data-i18n="heroSubtext">
+            Discover scholarships, government schemes, competitions, exams, hackathons and skill programs — all in one place.
           </p>
-          <div class="flex-center gap-2" style="flex-wrap: wrap;">
-            <a href="products.html" class="btn btn-lg btn-primary" style="background-color: var(--accent-earth); border-color: var(--accent-earth);">
-              🛒 Explore Fresh Grains
+          <div class="hero-actions">
+            <a href="opportunities.html" class="btn btn-primary" data-i18n="btnFindOpportunities">
+              🎓 Find Opportunities →
             </a>
-            <a href="register.html?role=farmer" class="btn btn-lg btn-outline" style="color: #fff; border-color: #fff;">
-              🌱 Sell as a Farmer
+            <a href="schemes.html" class="btn btn-scheme" data-i18n="btnGovernmentSchemes">
+              🏛️ Government Schemes
             </a>
           </div>
         </div>
-      </section>
 
-      <!-- Featured From Indian Farms (Animated Image Showcase Carousel) -->
-      <section class="farm-showcase-section mb-4">
-        <div class="flex-between mb-2" style="flex-wrap: wrap; gap: 0.5rem;">
-          <div>
-            <h2>🌾 Featured From Indian Farms</h2>
-            <p style="margin: 0; color: var(--text-muted);">
-              Authentic regional harvests & single-origin grain highlights, directly from verified growers.
-            </p>
-          </div>
-          <div class="farm-carousel-nav-arrows">
-            <button class="farm-nav-btn prev-btn" onclick="farmCarouselPrev()" aria-label="Previous Featured Farm Image">❮</button>
-            <button class="farm-nav-btn next-btn" onclick="farmCarouselNext()" aria-label="Next Featured Farm Image">❯</button>
-          </div>
-        </div>
-
-        <div class="farm-carousel-wrapper" id="farm-carousel-wrapper">
-          <div class="farm-carousel-stage" id="farm-carousel-stage">
-
-            <!-- Banner 1: Direct From Indian Farmers -->
-            <div class="farm-slide active" data-index="0">
-              <div class="farm-slide-card">
-                <img src="https://images.unsplash.com/photo-1500937386664-56d1dfef3854?w=1200&auto=format&fit=crop&q=80" alt="Direct From Indian Farmers" class="farm-slide-img" loading="eager">
-                <div class="farm-slide-overlay">
-                  <div class="farm-slide-tag">🌱 100% Direct Trade</div>
-                  <h3 class="farm-slide-heading">Direct From Indian Farmers</h3>
-                  <p class="farm-slide-subtext">Pure unpolished single-origin harvests with zero middleman deductions.</p>
-                  <div class="farm-slide-footer">
-                    <span class="farm-location-badge">📍 Verified Pan-India Farms</span>
-                    <a href="products.html" class="farm-slide-cta">Explore Farm Grains →</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Banner 2: Fresh Grains From Punjab -->
-            <div class="farm-slide" data-index="1">
-              <div class="farm-slide-card">
-                <img src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=1200&auto=format&fit=crop&q=80" alt="Fresh Grains From Punjab" class="farm-slide-img" loading="lazy">
-                <div class="farm-slide-overlay">
-                  <div class="farm-slide-tag">🌾 Golden Harvests</div>
-                  <h3 class="farm-slide-heading">Fresh Grains From Punjab</h3>
-                  <p class="farm-slide-subtext">Authentic aromatic 1121 Basmati Rice & golden Sharbati wheat directly from lush fields.</p>
-                  <div class="farm-slide-footer">
-                    <span class="farm-location-badge">📍 Amritsar & Patiala, Punjab</span>
-                    <a href="products.html?search=Punjab" class="farm-slide-cta">Shop Punjab Harvests →</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Banner 3: Authentic Products From Bastar -->
-            <div class="farm-slide" data-index="2">
-              <div class="farm-slide-card">
-                <img src="https://images.unsplash.com/photo-1586201375761-83865001e31c?w=1200&auto=format&fit=crop&q=80" alt="Authentic Products From Bastar" class="farm-slide-img" loading="lazy">
-                <div class="farm-slide-overlay">
-                  <div class="farm-slide-tag">🥣 Superfood Millets</div>
-                  <h3 class="farm-slide-heading">Authentic Products From Bastar</h3>
-                  <p class="farm-slide-subtext">Naturally cultivated traditional tribal Millets, Kodo, Kutki, and organic Ragi.</p>
-                  <div class="farm-slide-footer">
-                    <span class="farm-location-badge">📍 Bastar Tribal Belts, Chhattisgarh</span>
-                    <a href="products.html?category=Millets" class="farm-slide-cta">Shop Bastar Millets →</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Banner 4: Farm Fresh From Rajasthan -->
-            <div class="farm-slide" data-index="3">
-              <div class="farm-slide-card">
-                <img src="https://images.unsplash.com/photo-1592982537447-7440770cbfc9?w=1200&auto=format&fit=crop&q=80" alt="Farm Fresh From Rajasthan" class="farm-slide-img" loading="lazy">
-                <div class="farm-slide-overlay">
-                  <div class="farm-slide-tag">🫘 Native Desi Crops</div>
-                  <h3 class="farm-slide-heading">Farm Fresh From Rajasthan</h3>
-                  <p class="farm-slide-subtext">Nutritious pearl millet (Bajra), cold-pressed mustard oilseeds, and organic Moong dal.</p>
-                  <div class="farm-slide-footer">
-                    <span class="farm-location-badge">📍 Nagaur & Bikaner, Rajasthan</span>
-                    <a href="products.html?search=Rajasthan" class="farm-slide-cta">Shop Rajasthan Grains →</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- Banner 5: Pure Products, Direct From Growers -->
-            <div class="farm-slide" data-index="4">
-              <div class="farm-slide-card">
-                <img src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5?w=1200&auto=format&fit=crop&q=80" alt="Pure Products, Direct From Growers" class="farm-slide-img" loading="lazy">
-                <div class="farm-slide-overlay">
-                  <div class="farm-slide-tag">✨ Unprocessed & Pure</div>
-                  <h3 class="farm-slide-heading">Pure Products, Direct From Growers</h3>
-                  <p class="farm-slide-subtext">Unpolished stone-ground flours, hand-pounded rice, and chemical-free pulses.</p>
-                  <div class="farm-slide-footer">
-                    <span class="farm-location-badge">📍 Malwa & Bundelkhand Farms</span>
-                    <a href="products.html" class="farm-slide-cta">Browse All Direct Grains →</a>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-          </div>
-        </div>
-
-        <!-- Navigation Dots -->
-        <div class="farm-carousel-dots" id="farm-carousel-dots">
-          <button class="farm-dot active" onclick="goToFarmSlide(0)" aria-label="Slide 1"></button>
-          <button class="farm-dot" onclick="goToFarmSlide(1)" aria-label="Slide 2"></button>
-          <button class="farm-dot" onclick="goToFarmSlide(2)" aria-label="Slide 3"></button>
-          <button class="farm-dot" onclick="goToFarmSlide(3)" aria-label="Slide 4"></button>
-          <button class="farm-dot" onclick="goToFarmSlide(4)" aria-label="Slide 5"></button>
-        </div>
-      </section>
-
-      <!-- Problem vs Solution: Why Kisan Direct -->
-      <section id="benefits" class="mb-4">
-        <div class="text-center mb-3">
-          <h2>Why Direct Trade Matters</h2>
-          <p>We are transforming India's agricultural supply chain for fair trade and pure nutrition.</p>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
-          <!-- Middleman Model -->
-          <div class="card" style="border-left: 4px solid #ef4444; background: #fffaf9;">
-            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-              <span style="font-size: 2rem;">❌</span>
-              <div>
-                <h3 style="color: #991b1b; font-size: 1.2rem;">Old Middleman System</h3>
-                <span style="font-size: 0.82rem; color: #7f1d1d;">Multi-tier brokers & mandi agents</span>
-              </div>
-            </div>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; color: #4b5563; font-size: 0.95rem;">
-              <li>⚠️ <strong>Farmers get underpaid</strong> (often 40-50% below real market value).</li>
-              <li>⚠️ <strong>Customers pay inflated rates</strong> due to commission markups.</li>
-              <li>⚠️ <strong>Chemical polishing & adulteration</strong> during storage.</li>
-              <li>⚠️ <strong>Zero traceability</strong> of where food was cultivated.</li>
-            </ul>
+        <!-- Right Hero Visual Stage: Realistic Student with Backpack & Future Cyan Light Road (Behind 3D Orbit Carousel) -->
+        <div class="hero-visual-stage">
+          <!-- Realistic Student & Future Light Road Central Visual -->
+          <div class="hero-center-realistic-visual">
+            <img src="assets/hero-golden-hour.jpg" alt="Realistic Student Walking Along Golden Hour Light Road" class="hero-student-road-img">
           </div>
 
-          <!-- Kisan Direct Model -->
-          <div class="card" style="border-left: 4px solid var(--primary); background: #f4faf6;">
-            <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
-              <span style="font-size: 2rem;">✅</span>
-              <div>
-                <h3 style="color: var(--primary-dark); font-size: 1.2rem;">Kisan Direct Model</h3>
-                <span style="font-size: 0.82rem; color: var(--primary);">Direct farmer-to-consumer marketplace</span>
-              </div>
-            </div>
-            <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.6rem; color: #1e293b; font-size: 0.95rem;">
-              <li>✨ <strong>Farmers earn 100%</strong> of the listed grain price directly.</li>
-              <li>✨ <strong>Customers save up to 30%</strong> compared to supermarket brands.</li>
-              <li>✨ <strong>Fresh, unpolished & single-origin</strong> harvest quality.</li>
-              <li>✨ <strong>Direct connection</strong>: Know the farmer, village, and harvest date.</li>
-            </ul>
-          </div>
-        </div>
-      </section>
+          <!-- 3D Circular / Elliptical Orbit Carousel Cards -->
+          <a href="opportunities.html?type=Scholarship" class="orbit-card" data-index="0">
+            <span class="orbit-icon">🎓</span>
+            <span class="orbit-title">Scholarships</span>
+          </a>
 
-      <!-- Grain Categories -->
-      <section class="mb-4">
-        <div class="flex-between mb-2" style="flex-wrap: wrap;">
-          <div>
-            <h2>Explore Grain Categories</h2>
-            <p>From staple rotis to nutritious khichdi and traditional millets.</p>
-          </div>
-          <a href="products.html" class="btn btn-outline btn-sm">View All Categories →</a>
-        </div>
+          <a href="opportunities.html?type=Quiz Competition" class="orbit-card" data-index="1">
+            <span class="orbit-icon">🏆</span>
+            <span class="orbit-title">Competitions</span>
+          </a>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1rem;" id="category-grid">
-          <!-- Rendered via JS -->
-        </div>
-      </section>
+          <a href="schemes.html" class="orbit-card" data-index="2">
+            <span class="orbit-icon">🏛️</span>
+            <span class="orbit-title">Government Schemes</span>
+          </a>
 
-      <!-- Featured Farm Grains -->
-      <section class="mb-4">
-        <div class="flex-between mb-2">
-          <div>
-            <h2>Featured Fresh Harvests</h2>
-            <p>Top-rated single-origin grains freshly harvested by verified farmers.</p>
-          </div>
-          <a href="products.html" class="btn btn-primary btn-sm">Browse Catalog →</a>
-        </div>
+          <a href="opportunities.html?type=Hackathon" class="orbit-card" data-index="3">
+            <span class="orbit-icon">💻</span>
+            <span class="orbit-title">Hackathons</span>
+          </a>
 
-        <div class="product-grid" id="featured-products-grid">
-          <!-- Rendered via JS -->
-          <div class="card text-center" style="grid-column: 1 / -1; padding: 2rem;">
-            <p>Loading fresh harvests from farmers...</p>
-          </div>
+          <a href="opportunities.html?type=Skill Development Program" class="orbit-card" data-index="4">
+            <span class="orbit-icon">⚙️</span>
+            <span class="orbit-title">Skill Programs</span>
+          </a>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- How It Works -->
-      <section id="how-it-works" class="mb-4 card" style="background: #ffffff; padding: 2.5rem 1.5rem;">
-        <div class="text-center mb-3">
-          <h2>How Kisan Direct Works</h2>
-          <p>Transparent, simple, and empowering for both farmers and households.</p>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem;">
-          <div class="card" style="border: 1px dashed var(--primary); background: var(--bg-main);">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🌾 1. Farm Listing</div>
-            <h4 class="mb-1">Farmer Lists Grains</h4>
-            <p style="font-size: 0.9rem; color: var(--text-muted);">
-              Farmers register and list their harvest with price per kg, stock quantity, and farm location.
-            </p>
+    <!-- QUICK ELIGIBILITY FINDER PANEL -->
+    <section class="container mb-5">
+      <div class="glass-panel eligibility-panel">
+        <h3 style="color: var(--navy-dark); font-size: 1.3rem; margin-bottom: 1.2rem;" data-i18n="finderTitle">
+          Find Opportunities For You
+        </h3>
+        <form onsubmit="handleEligibilityCheck(event)" class="finder-form-grid">
+          <div class="form-group">
+            <label data-i18n="labelAge">Age</label>
+            <input type="number" id="finder-age" class="form-control" placeholder="e.g. 21" min="10" max="80" value="21">
           </div>
 
-          <div class="card" style="border: 1px dashed var(--primary); background: var(--bg-main);">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🛒 2. Direct Order</div>
-            <h4 class="mb-1">Customer Orders</h4>
-            <p style="font-size: 0.9rem; color: var(--text-muted);">
-              Consumers browse single-origin grains, add to cart, and order with Cash on Delivery.
-            </p>
+          <div class="form-group">
+            <label data-i18n="labelEducation">Education</label>
+            <select id="finder-education" class="form-control">
+              <option value="Graduate">Graduate</option>
+              <option value="12th">12th Pass</option>
+              <option value="10th">10th Pass</option>
+              <option value="Post Graduate">Post Graduate</option>
+              <option value="Diploma">Diploma</option>
+              <option value="ITI">ITI</option>
+            </select>
           </div>
 
-          <div class="card" style="border: 1px dashed var(--primary); background: var(--bg-main);">
-            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🚚 3. Direct Delivery</div>
-            <h4 class="mb-1">Dispatch & Feedback</h4>
-            <p style="font-size: 0.9rem; color: var(--text-muted);">
-              Farmer packs and ships grains. Once delivered, customers rate and review the farmer directly!
-            </p>
+          <div class="form-group">
+            <label data-i18n="labelState">State</label>
+            <select id="finder-state" class="form-control">
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Delhi">Delhi</option>
+              <option value="Punjab">Punjab</option>
+              <option value="All India">All India</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label data-i18n="labelCategory">Category</label>
+            <select id="finder-category" class="form-control">
+              <option value="General">General</option>
+              <option value="OBC">OBC</option>
+              <option value="SC">SC</option>
+              <option value="ST">ST</option>
+              <option value="EWS">EWS</option>
+              <option value="Women">Women</option>
+            </select>
+          </div>
+
+          <button type="submit" class="btn btn-primary" style="height: 44px;" data-i18n="btnSearchNow">
+            Find Opportunities →
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- FRAME 3: HOW IT WORKS SECTION - ANIMATED STEPS -->
+    <section id="how-it-works" class="container mb-5" style="padding-top: 2rem;">
+      <div class="section-title-box">
+        <h2 data-i18n="howItWorksTitle">Your Journey to a Better Future</h2>
+        <p>Follow the path to discover, verify eligibility, and apply</p>
+      </div>
+
+      <div class="how-it-works-timeline">
+        <div class="timeline-path-line"></div>
+        <div id="timeline-active-line" class="timeline-path-line-active"></div>
+
+        <div class="steps-grid">
+          <div class="step-card active">
+            <div class="step-icon-circle">👤</div>
+            <div style="font-size:0.75rem; color:var(--primary-teal); font-weight:800; text-transform:uppercase; margin-bottom:0.3rem;">01</div>
+            <h4 style="color:var(--navy-dark); margin-bottom:0.4rem;" data-i18n="step1Title">Tell Us About You</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem;" data-i18n="step1Desc">Provide your age, education, state, and category.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-icon-circle">🔍</div>
+            <div style="font-size:0.75rem; color:var(--primary-teal); font-weight:800; text-transform:uppercase; margin-bottom:0.3rem;">02</div>
+            <h4 style="color:var(--navy-dark); margin-bottom:0.4rem;" data-i18n="step2Title">We Find Matches</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem;" data-i18n="step2Desc">DishaSetu scans opportunities relevant to your profile.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-icon-circle">✓</div>
+            <div style="font-size:0.75rem; color:var(--primary-teal); font-weight:800; text-transform:uppercase; margin-bottom:0.3rem;">03</div>
+            <h4 style="color:var(--navy-dark); margin-bottom:0.4rem;" data-i18n="step3Title">Check Eligibility</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem;" data-i18n="step3Desc">Instantly see itemized pass/fail criteria.</p>
+          </div>
+
+          <div class="step-card">
+            <div class="step-icon-circle">🚀</div>
+            <div style="font-size:0.75rem; color:var(--primary-teal); font-weight:800; text-transform:uppercase; margin-bottom:0.3rem;">04</div>
+            <h4 style="color:var(--navy-dark); margin-bottom:0.4rem;" data-i18n="step4Title">Apply & Grow</h4>
+            <p style="color:var(--text-muted); font-size:0.85rem;" data-i18n="step4Desc">Direct links to official application portals.</p>
           </div>
         </div>
-      </section>
+      </div>
+    </section>
 
-      <!-- CTA Banner -->
-      <section class="card text-center" style="background: linear-gradient(135deg, var(--primary-dark), var(--primary)); color: #fff; padding: 3rem 1.5rem;">
-        <h2 style="color: #fff; margin-bottom: 0.75rem;">Are You a Farmer? Start Selling Directly Today</h2>
-        <p style="color: #d8f3dc; max-width: 600px; margin: 0 auto 1.5rem auto;">
-          Earn fair market prices for your hard work without broker deductions or delayed mandi payments.
+    <!-- FRAME 4: FRESH OPPORTUNITIES FOR YOU SECTION -->
+    <section class="container mb-5">
+      <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 2rem;">
+        <div>
+          <span class="card-badge badge-open" style="margin-bottom: 0.4rem;">Latest Opportunities</span>
+          <h2 style="color: var(--navy-dark); font-size: 2.2rem; margin: 0;">Fresh Opportunities <span style="color: var(--primary-blue)">For You</span></h2>
+        </div>
+        <a href="opportunities.html" class="btn btn-outline" style="padding: 0.5rem 1.2rem; font-size: 0.88rem;">View All →</a>
+      </div>
+
+      <div id="fresh-opportunities-grid" class="cards-grid">
+        <!-- Dynamically Populated via JS -->
+      </div>
+    </section>
+
+    <!-- FRAME 5: GOVERNMENT SCHEMES SECTION - ANIMATED VISUAL WITH PARLIAMENT & BUBBLES -->
+    <section class="container mb-5">
+      <!-- Mandatory Government Disclaimer Banner -->
+      <div class="govt-disclaimer-banner">
+        <div class="icon">🏛️</div>
+        <p data-i18n="govtDisclaimer">
+          This platform is an information and discovery portal. It is not an official government website. Always verify eligibility, dates and application details on the official website before applying.
         </p>
-        <a href="register.html?role=farmer" class="btn btn-lg btn-accent">
-          Register Your Farm for Free
-        </a>
-      </section>
+      </div>
 
-    </div>
+      <div class="schemes-section-stage">
+        <!-- Left Text & CTA -->
+        <div>
+          <span class="card-badge badge-scheme" style="margin-bottom: 0.6rem;">Government Schemes</span>
+          <h2 style="color: var(--navy-dark); font-size: 2.4rem; line-height: 1.2; margin-bottom: 1rem;">
+            Schemes for a <span style="color: var(--accent-amber)">Stronger Tomorrow</span>
+          </h2>
+          <p style="color: var(--text-muted); font-size: 1.05rem; margin-bottom: 1.8rem;" data-i18n="exploreSchemesSubtext">
+            Discover Central and State Government schemes designed to support education, employment, health, housing, skills and more.
+          </p>
+          <a href="schemes.html" class="btn btn-scheme" data-i18n="btnGovernmentSchemes">
+            Explore Schemes →
+          </a>
+        </div>
+
+        <!-- Right Visual: Parliament Building Silhouette with Orbiting Category Bubbles -->
+        <div class="parliament-landmark-box">
+          <div class="parliament-building-icon">🏛️</div>
+          
+          <div class="orbit-bubble bubble-1">🎓 Education</div>
+          <div class="orbit-bubble bubble-2">💼 Employment</div>
+          <div class="orbit-bubble bubble-3">👩 Women</div>
+          <div class="orbit-bubble bubble-4">🌾 Farmers</div>
+          <div class="orbit-bubble bubble-5">🏥 Health</div>
+          <div class="orbit-bubble bubble-6">🏠 Housing</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FRAME 6: CINEMATIC FINAL MOTIVATIONAL CTA SECTION -->
+    <section class="final-cta-wrapper">
+      <div class="container final-cta-container">
+        <!-- Left Area: Real HTML Testimonial, Branding, Tagline & Button -->
+        <div class="final-cta-left">
+          <div class="testimonial-quote-box">
+            <p>"DishaSetu helped me find the right scholarship at the right time. It made my dream of higher education possible."</p>
+            <div class="testimonial-author">
+              — Priya Sharma, <span style="color: var(--primary-cyan);">Student, Uttar Pradesh</span>
+            </div>
+          </div>
+
+          <a href="index.html" class="brand-logo" style="margin-bottom: 1rem; display: inline-block;">
+            <img src="assets/logo.png" alt="DishaSetu Logo" style="height: 44px; width: auto; object-fit: contain; filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.4));">
+          </a>
+          
+          <p style="color: #cbd5e1; font-weight: 700; font-size: 1.05rem; margin-bottom: 1.8rem;" data-i18n="brandTagline">
+            Right Opportunity → Right Person → Right Time
+          </p>
+
+          <a href="opportunities.html" class="btn btn-primary" style="padding: 0.95rem 2.4rem; font-size: 1.08rem;">
+            Get Started Now →
+          </a>
+        </div>
+
+        <!-- Right Side: Visually open to showcase the realistic student standing on mountain cliff looking at cyan horizon -->
+        <div></div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Footer -->
   <footer class="footer">
-    <div class="container">
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 2rem;">
-        <div>
-          <div class="brand-logo" style="color: #fff; margin-bottom: 1rem;">
-            <span>🌾 Kisan<span style="color: var(--accent-earth);">Direct</span></span>
-          </div>
-          <p style="font-size: 0.9rem;">
-            Empowering Indian agriculture by connecting dedicated grain farmers directly to conscious consumers.
-          </p>
-        </div>
-
-        <div>
-          <h4>Marketplace</h4>
-          <ul class="footer-links">
-            <li><a href="products.html">All Grains</a></li>
-            <li><a href="products.html?category=Wheat">Sharbati Wheat</a></li>
-            <li><a href="products.html?category=Rice">Basmati Rice</a></li>
-            <li><a href="products.html?category=Dal">Organic Pulses</a></li>
-            <li><a href="products.html?category=Millets">Superfood Millets</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4>Portals</h4>
-          <ul class="footer-links">
-            <li><a href="login.html">Farmer Login</a></li>
-            <li><a href="login.html">Customer Login</a></li>
-            <li><a href="login.html">Admin Portal</a></li>
-            <li><a href="register.html">Create New Account</a></li>
-          </ul>
-        </div>
-
-        <div>
-          <h4>Platform Guarantee</h4>
-          <p style="font-size: 0.88rem; color: #94a3b8;">
-            ✔ 100% Single Origin<br>
-            ✔ Zero Chemical Polishing<br>
-            ✔ Fair Prices for Farmers<br>
-            ✔ Cash on Delivery Available
-          </p>
-        </div>
+    <div class="container footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="brand-logo">
+          <img src="assets/logo.png" alt="DishaSetu Logo" style="height: 40px; width: auto; object-fit: contain;">
+        </a>
+        <p data-i18n="brandTagline">Right Opportunity → Right Person → Right Time</p>
+        <p style="font-size: 0.82rem; color: var(--text-subtle); margin-top: 0.5rem;">
+          Your Digital Guide to Opportunities & Government Schemes
+        </p>
       </div>
 
-      <div class="footer-bottom">
-        © 2026 Kisan Direct - Farmer to Consumer Grain Marketplace. All rights reserved.
+      <div class="footer-col">
+        <h4 data-i18n="navOpportunities">Opportunities</h4>
+        <ul>
+          <li><a href="opportunities.html?type=Scholarship">Scholarships</a></li>
+          <li><a href="opportunities.html?type=Hackathon">Hackathons</a></li>
+          <li><a href="opportunities.html?type=Quiz Competition">Quiz Competitions</a></li>
+          <li><a href="opportunities.html?type=Skill Development Program">Skill Programs</a></li>
+        </ul>
       </div>
+
+      <div class="footer-col">
+        <h4 data-i18n="navSchemes">Government Schemes</h4>
+        <ul>
+          <li><a href="schemes.html?governmentType=Central">Central Schemes</a></li>
+          <li><a href="schemes.html?governmentType=State">State Schemes</a></li>
+          <li><a href="schemes.html?sector=Education">Education Schemes</a></li>
+          <li><a href="schemes.html?sector=Skill Development">Skill Schemes</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h4>Legal & Portal Info</h4>
+        <ul>
+          <li><a href="#how-it-works">How It Works</a></li>
+          <li><a href="index.html">Disclaimer</a></li>
+          <li><a href="login.html">Student Portal</a></li>
+          <li><a href="admin-dashboard.html">Admin Console</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <span>© 2026 DishaSetu. All rights reserved.</span>
+      <span>Designed for Student Empowerment & Guidance</span>
     </div>
   </footer>
 
-  <script src="script.js"></script>
+  <!-- Modular Scripts -->
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+  <script src="js/eligibility.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/main.js"></script>
+
   <script>
-    let farmCurrentSlide = 0;
-    const farmTotalSlides = 5;
-    let farmAutoplayTimer = null;
+    // Load Frame 4 Fresh Opportunities For You
+    async function loadFreshOpportunities() {
+      const grid = document.getElementById('fresh-opportunities-grid');
+      if (!grid) return;
 
-    document.addEventListener('DOMContentLoaded', async () => {
-      await renderNavbar('home');
-      initFarmCarousel();
-      loadCategories();
-      loadFeaturedProducts();
-    });
+      try {
+        const res = await fetch('/api/opportunities?limit=3');
+        const data = await res.json();
+        if (!data.success || !data.opportunities) return;
 
-    function initFarmCarousel() {
-      updateFarmCarousel();
-      startFarmAutoplay();
+        const lang = getCurrentLanguage();
+        grid.innerHTML = data.opportunities.map(op => {
+          const title = getLocalized(op.title, lang);
+          const lastDateStr = op.lastDate ? new Date(op.lastDate).toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+          const isClosing = op.status === 'CLOSING SOON';
 
-      const wrapper = document.getElementById('farm-carousel-wrapper');
-      if (wrapper) {
-        wrapper.addEventListener('mouseenter', stopFarmAutoplay);
-        wrapper.addEventListener('mouseleave', startFarmAutoplay);
-
-        // Mobile touch swipe support
-        let startX = 0;
-        let endX = 0;
-        wrapper.addEventListener('touchstart', (e) => {
-          startX = e.touches[0].clientX;
-        }, { passive: true });
-
-        wrapper.addEventListener('touchend', (e) => {
-          endX = e.changedTouches[0].clientX;
-          if (startX - endX > 45) {
-            farmCarouselNext(); // swiped left -> go to next
-          } else if (endX - startX > 45) {
-            farmCarouselPrev(); // swiped right -> go to previous
-          }
-        }, { passive: true });
-      }
-    }
-
-    function updateFarmCarousel() {
-      const stage = document.getElementById('farm-carousel-stage');
-      const slides = document.querySelectorAll('.farm-slide');
-      const dots = document.querySelectorAll('.farm-dot');
-
-      if (!stage || slides.length === 0) return;
-
-      // Smooth horizontal translation Left -> Right motion
-      stage.style.transform = `translateX(-${farmCurrentSlide * 100}%)`;
-
-      slides.forEach((slide, idx) => {
-        if (idx === farmCurrentSlide) {
-          slide.classList.add('active');
-        } else {
-          slide.classList.remove('active');
-        }
-      });
-
-      dots.forEach((dot, idx) => {
-        if (idx === farmCurrentSlide) {
-          dot.classList.add('active');
-        } else {
-          dot.classList.remove('active');
-        }
-      });
-    }
-
-    function farmCarouselNext() {
-      farmCurrentSlide = (farmCurrentSlide + 1) % farmTotalSlides;
-      updateFarmCarousel();
-    }
-
-    function farmCarouselPrev() {
-      farmCurrentSlide = (farmCurrentSlide - 1 + farmTotalSlides) % farmTotalSlides;
-      updateFarmCarousel();
-    }
-
-    function goToFarmSlide(idx) {
-      farmCurrentSlide = idx;
-      updateFarmCarousel();
-      startFarmAutoplay(); // Reset timer on manual dot click
-    }
-
-    function startFarmAutoplay() {
-      stopFarmAutoplay();
-      farmAutoplayTimer = setInterval(farmCarouselNext, 4800);
-    }
-
-    function stopFarmAutoplay() {
-      if (farmAutoplayTimer) {
-        clearInterval(farmAutoplayTimer);
-        farmAutoplayTimer = null;
-      }
-    }
-
-    async function loadCategories() {
-      const catGrid = document.getElementById('category-grid');
-      const catIcons = {
-        Wheat: '🌾',
-        Rice: '🍚',
-        Dal: '🥣',
-        Millets: '🥣',
-        Pulses: '🫘',
-        Oilseeds: '🌻',
-        Spices: '🌶️',
-        Barley: '🌾',
-        Corn: '🌽',
-        Oats: '🥣',
-        Other: '🌾'
-      };
-
-      const res = await apiFetch('/api/products/meta/categories');
-      if (res.success && res.categories) {
-        catGrid.innerHTML = res.categories.slice(0, 6).map(c => `
-          <a href="products.html?category=${encodeURIComponent(c.name)}" class="card card-hover text-center" style="padding: 1.25rem 0.75rem;">
-            <div style="font-size: 2.2rem; margin-bottom: 0.4rem;">${catIcons[c.name] || '🌾'}</div>
-            <h4 style="font-size: 1rem; margin-bottom: 0.2rem;">${c.name}</h4>
-            <span style="font-size: 0.78rem; color: var(--text-muted);">${c.count} Varieties</span>
-          </a>
-        `).join('');
-      }
-    }
-
-    async function loadFeaturedProducts() {
-      const grid = document.getElementById('featured-products-grid');
-      const res = await apiFetch('/api/products?sort=rating');
-
-      if (res.success && res.products && res.products.length > 0) {
-        grid.innerHTML = res.products.slice(0, 6).map(p => `
-          <div class="product-card">
-            <img src="${p.image || 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600'}" alt="${p.name}" class="product-card-img" onerror="this.src='https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600'">
-            <div class="product-card-body">
-              <div class="product-card-meta">
-                <span class="badge badge-grain">${p.category}</span>
-                <span class="rating-stars">★ ${p.ratingAvg > 0 ? p.ratingAvg : 'New'} <span style="font-size:0.75rem; color:#64748b;">(${p.ratingCount})</span></span>
-              </div>
-              <h3 class="product-card-title">
-                <a href="product-details.html?id=${p._id}">${p.name}</a>
-              </h3>
-              <div class="product-card-farmer">
-                <span>📍 ${p.farmer ? p.farmer.location : 'Direct Farm'}</span> • 
-                <span>👤 ${p.farmer ? p.farmer.name : 'Farmer'}</span>
-              </div>
-              <div class="product-card-footer">
-                <div class="product-price">
-                  ₹${p.pricePerKg} <span>/ kg</span>
+          return `
+            <div class="glass-card" style="padding: 1.6rem; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                  <span class="card-badge ${isClosing ? 'badge-closing' : 'badge-open'}">${op.type}</span>
+                  <span class="card-badge ${isClosing ? 'badge-closing' : 'badge-open'}">${op.status}</span>
                 </div>
-                <button onclick="handleQuickAddToCart('${p._id}', '${p.name}')" class="btn btn-sm btn-primary">
-                  + Add to Cart
-                </button>
+
+                <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem;">${title}</h3>
+                
+                <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.8rem;">
+                  🎯 For: Students | State: ${(op.eligibility.state || ['All India']).join(', ')}
+                </div>
+
+                <div style="font-size: 0.82rem; color: var(--text-subtle); margin-bottom: 0.8rem;">
+                  🎓 Min. ${(op.eligibility.education || ['12th Pass'])[0]} | 🎂 Max. ${op.eligibility.maxAge || 25} Years
+                </div>
+
+                ${op.prizeAmount ? `<div style="font-size: 0.92rem; font-weight: 800; color: var(--primary-cyan); margin-bottom: 0.6rem;">💰 Prize: ${op.prizeAmount}</div>` : ''}
+                
+                <div style="font-size: 0.82rem; color: var(--text-subtle); margin-bottom: 1rem;">
+                  📅 Last Date: <strong>${lastDateStr}</strong>
+                </div>
+              </div>
+
+              <div style="display: flex; justify-content: space-between; align-items: center; pt-3; border-top: 1px solid var(--border-light);">
+                <span class="card-badge badge-open" style="font-size: 0.72rem;">Eligible for You ✓</span>
+                <a href="opportunity-details.html?id=${op._id}" class="btn btn-primary" style="padding: 0.4rem 0.9rem; font-size: 0.82rem;">
+                  View →
+                </a>
               </div>
             </div>
-          </div>
-        `).join('');
-      } else {
-        grid.innerHTML = `<div class="card text-center" style="grid-column: 1/-1; padding: 2rem;"><p>No products available yet.</p></div>`;
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('Load Fresh Opportunities Error:', err);
       }
     }
 
-    async function handleQuickAddToCart(productId, productName) {
-      const user = getStoredUser();
-      if (!user) {
-        showToast('Please login as customer to add items to cart.', 'info');
-        setTimeout(() => window.location.href = 'login.html', 1000);
-        return;
-      }
-      if (user.role !== 'customer') {
-        showToast('Farmer/Admin accounts cannot shop. Please use a Customer account.', 'error');
-        return;
-      }
-
-      const res = await apiFetch('/api/customers/cart', {
-        method: 'POST',
-        body: { productId, quantityKg: 1 }
-      });
-
-      if (res.success) {
-        showToast(res.message || `Added ${productName} to cart!`, 'success');
-        updateCartCount();
-      } else {
-        showToast(res.message || 'Failed to add item.', 'error');
-      }
-    }
+    document.addEventListener('DOMContentLoaded', loadFreshOpportunities);
   </script>
 </body>
 </html>

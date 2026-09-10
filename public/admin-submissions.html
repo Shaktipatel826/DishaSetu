@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Review Submissions | DishaSetu</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .status-badge {
+      display: inline-block;
+      padding: 0.25rem 0.65rem;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .status-pending { background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
+    .status-under-review { background: rgba(59, 130, 246, 0.2); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .status-changes-requested { background: rgba(249, 115, 22, 0.2); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
+    .status-approved { background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .status-rejected { background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+    .modal-content {
+      background: #0f172a;
+      border: 1px solid var(--border-light);
+      border-radius: 14px;
+      max-width: 650px;
+      width: 100%;
+      padding: 2rem;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="main-content container py-4" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+    <!-- Console Title -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <span class="card-badge badge-closing" style="margin-bottom: 0.4rem;">Admin Control Center</span>
+        <h1 style="color: #fff; font-size: 2rem; font-weight: 800; margin-bottom: 0.2rem;">Student Submissions Review Console</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Verify uploaded documents, test source links, and approve student-submitted opportunities to publish them live.</p>
+      </div>
+
+      <a href="admin-dashboard.html" class="btn btn-outline">Back to Admin Dashboard</a>
+    </div>
+
+    <!-- Filters & Search Bar -->
+    <div class="glass-panel" style="padding: 1.2rem; margin-bottom: 2rem; display: flex; gap: 1rem; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; flex: 1;">
+        <select id="statusFilter" class="form-select" style="max-width: 220px; padding: 0.6rem 1rem;" onchange="loadAdminSubmissions()">
+          <option value="All">All Submissions</option>
+          <option value="Pending Review" selected>Pending Review</option>
+          <option value="Under Review">Under Review</option>
+          <option value="Changes Requested">Changes Requested</option>
+          <option value="Approved">Approved & Live</option>
+          <option value="Rejected">Rejected</option>
+        </select>
+
+        <input type="text" id="searchInput" class="form-input" style="max-width: 300px; padding: 0.6rem 1rem;" placeholder="Search title or organization..." onkeyup="loadAdminSubmissions()">
+      </div>
+
+      <div style="color: var(--text-muted); font-size: 0.88rem;" id="totalCountBadge">
+        Showing 0 submissions
+      </div>
+    </div>
+
+    <!-- Submissions Table -->
+    <div class="glass-panel" style="padding: 1.5rem;">
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; color: var(--text-main); font-size: 0.88rem;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border-light); text-align: left; color: var(--text-muted);">
+              <th style="padding: 0.8rem;">Submission Details</th>
+              <th style="padding: 0.8rem;">Submitted By</th>
+              <th style="padding: 0.8rem;">Proof & Link</th>
+              <th style="padding: 0.8rem;">Deadline</th>
+              <th style="padding: 0.8rem;">Status</th>
+              <th style="padding: 0.8rem; text-align: right;">Review Action</th>
+            </tr>
+          </thead>
+          <tbody id="admin-submissions-tbody">
+            <!-- Populated via JS -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Review Modal -->
+  <div id="reviewModal" class="modal-backdrop">
+    <div class="modal-content">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
+        <h3 style="color: #fff; font-size: 1.3rem; margin: 0;" id="modalTitle">Review Opportunity</h3>
+        <button onclick="closeReviewModal()" style="background: none; border: none; color: var(--text-muted); font-size: 1.5rem; cursor: pointer;">✕</button>
+      </div>
+
+      <div id="modalDetails" style="background: rgba(15, 23, 42, 0.8); border: 1px solid var(--border-light); padding: 1rem; border-radius: 8px; margin-bottom: 1.2rem; font-size: 0.88rem; color: #cbd5e1;">
+        <!-- Details injected via JS -->
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.2rem;">
+        <label style="display: block; color: #e2e8f0; font-size: 0.88rem; margin-bottom: 0.4rem;">Update Status</label>
+        <select id="modalStatusSelect" class="form-select">
+          <option value="Approved">✅ Approve & Auto-Publish Live</option>
+          <option value="Under Review">🔍 Mark Under Review</option>
+          <option value="Changes Requested">⚠️ Request Changes from Student</option>
+          <option value="Rejected">❌ Reject Submission</option>
+        </select>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 1.5rem;">
+        <label style="display: block; color: #e2e8f0; font-size: 0.88rem; margin-bottom: 0.4rem;">Admin Feedback / Note for Student</label>
+        <textarea id="modalFeedbackText" class="form-textarea" rows="3" placeholder="Provide reason or feedback note visible to the student..."></textarea>
+      </div>
+
+      <div style="display: flex; gap: 0.8rem; justify-content: flex-end;">
+        <button onclick="closeReviewModal()" class="btn btn-outline">Cancel</button>
+        <button onclick="submitReviewAction()" class="btn btn-primary" id="saveReviewBtn">Save & Apply Status</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/reminders.js"></script>
+
+  <script>
+    let currentSubmissions = [];
+    let selectedSubmissionId = null;
+
+    async function loadAdminSubmissions() {
+      const tbody = document.getElementById('admin-submissions-tbody');
+      const statusFilter = document.getElementById('statusFilter').value;
+      const searchInput = document.getElementById('searchInput').value;
+
+      try {
+        const url = `/api/submissions/admin?status=${encodeURIComponent(statusFilter)}&search=${encodeURIComponent(searchInput)}`;
+        const res = await fetch(url, { credentials: 'include' });
+        const data = await res.json();
+
+        if (!data.success) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#f87171; padding:2rem;">${data.message}</td></tr>`;
+          return;
+        }
+
+        currentSubmissions = data.data || [];
+        document.getElementById('totalCountBadge').innerText = `Showing ${currentSubmissions.length} submissions`;
+
+        if (currentSubmissions.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-muted); padding:3rem;">No submissions found for selected criteria.</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = currentSubmissions.map(sub => {
+          let badgeClass = 'status-pending';
+          if (sub.status === 'Under Review') badgeClass = 'status-under-review';
+          if (sub.status === 'Changes Requested') badgeClass = 'status-changes-requested';
+          if (sub.status === 'Approved') badgeClass = 'status-approved';
+          if (sub.status === 'Rejected') badgeClass = 'status-rejected';
+
+          const studentName = sub.submittedBy ? sub.submittedBy.name : 'Unknown';
+          const studentEmail = sub.submittedBy ? sub.submittedBy.email : '';
+          const lastDateStr = new Date(sub.lastDate).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' });
+
+          return `
+            <tr style="border-bottom: 1px solid var(--border-light);">
+              <td style="padding: 0.8rem;">
+                <strong style="color:#fff;">${sub.title}</strong>
+                <div style="font-size:0.78rem; color:var(--primary-cyan); font-weight:600; margin-top:2px;">${sub.type} (${sub.categoryType})</div>
+                ${sub.organization ? `<div style="font-size:0.75rem; color:var(--text-muted);">Org: ${sub.organization}</div>` : ''}
+              </td>
+
+              <td style="padding: 0.8rem;">
+                <div style="color:#e2e8f0; font-weight:600;">${studentName}</div>
+                <div style="font-size:0.75rem; color:var(--text-muted);">${studentEmail}</div>
+              </td>
+
+              <td style="padding: 0.8rem;">
+                <a href="${sub.sourceUrl}" target="_blank" style="color:var(--primary-cyan); text-decoration:underline; font-size:0.8rem; display:block;">🔗 Source URL</a>
+                <a href="${sub.proofUrl}" target="_blank" style="color:#4ade80; text-decoration:underline; font-size:0.8rem; display:block; margin-top:2px;">📄 View Proof</a>
+              </td>
+
+              <td style="padding: 0.8rem; color:#f87171; font-weight:600;">
+                ${lastDateStr}
+              </td>
+
+              <td style="padding: 0.8rem;">
+                <span class="status-badge ${badgeClass}">${sub.status}</span>
+              </td>
+
+              <td style="padding: 0.8rem; text-align: right;">
+                <button class="btn btn-outline" style="padding: 0.35rem 0.75rem; font-size: 0.8rem;" onclick="openReviewModal('${sub._id}')">
+                  Review & Action
+                </button>
+              </td>
+            </tr>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error('Admin Submissions Load Error:', err);
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:#f87171; padding:2rem;">Failed to load submissions. Check server connection.</td></tr>`;
+      }
+    }
+
+    function openReviewModal(id) {
+      const sub = currentSubmissions.find(s => s._id === id);
+      if (!sub) return;
+
+      selectedSubmissionId = id;
+      document.getElementById('modalTitle').innerText = `Review: ${sub.title}`;
+      
+      const modalDetails = document.getElementById('modalDetails');
+      modalDetails.innerHTML = `
+        <div style="margin-bottom:0.4rem;"><strong>Category:</strong> ${sub.categoryType} • <strong>Type:</strong> ${sub.type}</div>
+        <div style="margin-bottom:0.4rem;"><strong>Submitted By:</strong> ${sub.submittedBy ? sub.submittedBy.name : 'Student'} (${sub.submittedBy ? sub.submittedBy.email : ''})</div>
+        <div style="margin-bottom:0.4rem;"><strong>Source Verification URL:</strong> <a href="${sub.sourceUrl}" target="_blank" style="color:var(--primary-cyan);">${sub.sourceUrl}</a></div>
+        <div style="margin-bottom:0.4rem;"><strong>Uploaded Proof:</strong> <a href="${sub.proofUrl}" target="_blank" style="color:#4ade80;">${sub.proofOriginalName || 'Uploaded Document File'}</a></div>
+        ${sub.description ? `<div style="margin-top:0.4rem; padding-top:0.4rem; border-top:1px solid rgba(255,255,255,0.1);"><strong>Description:</strong> ${sub.description}</div>` : ''}
+      `;
+
+      document.getElementById('modalStatusSelect').value = sub.status === 'Pending Review' ? 'Approved' : sub.status;
+      document.getElementById('modalFeedbackText').value = sub.adminFeedback || '';
+      document.getElementById('reviewModal').style.display = 'flex';
+    }
+
+    function closeReviewModal() {
+      document.getElementById('reviewModal').style.display = 'none';
+      selectedSubmissionId = null;
+    }
+
+    async function submitReviewAction() {
+      if (!selectedSubmissionId) return;
+
+      const status = document.getElementById('modalStatusSelect').value;
+      const adminFeedback = document.getElementById('modalFeedbackText').value;
+      const saveBtn = document.getElementById('saveReviewBtn');
+
+      saveBtn.disabled = true;
+      saveBtn.innerText = 'Updating status...';
+
+      try {
+        const res = await fetch(`/api/submissions/admin/${selectedSubmissionId}/status`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status, adminFeedback }),
+          credentials: 'include'
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert(`Status updated to "${status}" successfully! ${status === 'Approved' ? 'Published live to public listings!' : ''}`);
+          closeReviewModal();
+          loadAdminSubmissions();
+        } else {
+          alert('Error: ' + data.message);
+        }
+      } catch (err) {
+        console.error('Update Status Error:', err);
+        alert('Server error updating status.');
+      } finally {
+        saveBtn.disabled = false;
+        saveBtn.innerText = 'Save & Apply Status';
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadAdminSubmissions);
+  </script>
+</body>
+</html>

@@ -3,180 +3,126 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Register | Kisan Direct Marketplace</title>
+  <title>Student Registration | DishaSetu</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
-<body>
-  <div id="navbar-placeholder"></div>
+<body style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh;">
+  <div id="navbar-placeholder" style="width: 100%; position: absolute; top: 0;"></div>
 
-  <main class="main-content flex-center">
-    <div class="container" style="max-width: 540px;">
-      
-      <div class="card" style="padding: 2.25rem;">
-        <div class="text-center mb-3">
-          <span style="font-size: 2.5rem;">🌾</span>
-          <h2 class="mt-1">Create Your Account</h2>
-          <p style="font-size: 0.92rem; color: var(--text-muted);">
-            Join the direct grain revolution today.
-          </p>
+  <main class="container" style="max-width: 520px; width: 100%; padding: 4rem 1rem 2rem 1rem;">
+    <div class="glass-panel" style="padding: 2.5rem;">
+      <div style="text-align: center; margin-bottom: 1.8rem;">
+        <a href="index.html" class="brand-logo" style="justify-content: center; margin-bottom: 0.5rem;">
+          <div class="logo-icon">✨</div>
+          <span>Disha<span style="color: var(--primary-cyan)">Setu</span></span>
+        </a>
+        <h2 style="color: #fff; font-size: 1.5rem; margin-top: 0.5rem;">Create Student Profile</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem;">Start discovering personalized opportunities & government schemes</p>
+      </div>
+
+      <form onsubmit="handleRegister(event)">
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Full Name</label>
+          <input type="text" id="reg-name" class="form-control" placeholder="Rahul Verma" required>
         </div>
 
-        <form id="register-form">
-          <!-- Role Selector -->
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Email Address</label>
+          <input type="email" id="reg-email" class="form-control" placeholder="rahul@example.com" required>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1rem;">
+          <label>Password</label>
+          <input type="password" id="reg-password" class="form-control" placeholder="••••••••" required>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem;">
           <div class="form-group">
-            <label class="form-label" for="role-select">Select Your Role</label>
-            <select id="role-select" class="form-select" onchange="toggleRoleFields()" required>
-              <option value="customer">🛒 Customer (Buy Direct Grains)</option>
-              <option value="farmer">🌱 Farmer (Sell Harvested Crops)</option>
+            <label>Age</label>
+            <input type="number" id="reg-age" class="form-control" placeholder="21" required value="21">
+          </div>
+
+          <div class="form-group">
+            <label>Education</label>
+            <select id="reg-edu" class="form-control">
+              <option value="Graduate">Graduate</option>
+              <option value="12th">12th Pass</option>
+              <option value="10th">10th Pass</option>
+              <option value="Post Graduate">Post Graduate</option>
+              <option value="Diploma">Diploma</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
+          <div class="form-group">
+            <label>State</label>
+            <select id="reg-state" class="form-control">
+              <option value="Uttar Pradesh">Uttar Pradesh</option>
+              <option value="Madhya Pradesh">Madhya Pradesh</option>
+              <option value="Maharashtra">Maharashtra</option>
+              <option value="Delhi">Delhi</option>
+              <option value="All India">All India</option>
             </select>
           </div>
 
-          <!-- Full Name -->
           <div class="form-group">
-            <label class="form-label" for="name" id="name-label">Full Name</label>
-            <input type="text" id="name" class="form-control" placeholder="e.g. Ramesh Patel" required>
+            <label>Category</label>
+            <select id="reg-cat" class="form-control">
+              <option value="General">General</option>
+              <option value="OBC">OBC</option>
+              <option value="SC">SC</option>
+              <option value="ST">ST</option>
+              <option value="EWS">EWS</option>
+              <option value="Women">Women</option>
+            </select>
           </div>
-
-          <!-- Email Address -->
-          <div class="form-group">
-            <label class="form-label" for="email">Email Address</label>
-            <input type="email" id="email" class="form-control" placeholder="name@example.com" required>
-          </div>
-
-          <!-- Phone Number -->
-          <div class="form-group">
-            <label class="form-label" for="phone">Phone / Mobile Number</label>
-            <input type="tel" id="phone" class="form-control" placeholder="+91 98765 43210" required>
-          </div>
-
-          <!-- Dynamic Field: Location for Farmer -->
-          <div class="form-group" id="farmer-location-group" style="display: none;">
-            <label class="form-label" for="location">Farm / Village Location</label>
-            <input type="text" id="location" class="form-control" placeholder="e.g. Sehore, Madhya Pradesh">
-            <div class="input-help">Where your crops are cultivated and packed.</div>
-          </div>
-
-          <!-- Dynamic Field: Address for Customer -->
-          <div class="form-group" id="customer-address-group">
-            <label class="form-label" for="address">Delivery Address</label>
-            <textarea id="address" class="form-control" placeholder="Flat No, Building, Street, City, State, PIN Code" rows="2"></textarea>
-            <div class="input-help">Where grains will be delivered.</div>
-          </div>
-
-          <!-- Password -->
-          <div class="form-group">
-            <label class="form-label" for="password">Password</label>
-            <input type="password" id="password" class="form-control" placeholder="Create a secure password" required minlength="6">
-          </div>
-
-          <!-- Confirm Password -->
-          <div class="form-group">
-            <label class="form-label" for="confirm-password">Confirm Password</label>
-            <input type="password" id="confirm-password" class="form-control" placeholder="Re-type password" required minlength="6">
-          </div>
-
-          <button type="submit" id="submit-btn" class="btn btn-primary btn-block mt-2">
-            Create Account
-          </button>
-        </form>
-
-        <div class="text-center mt-3" style="font-size: 0.9rem; color: var(--text-muted);">
-          Already have an account? <a href="login.html" style="font-weight: 600;">Sign in here</a>
         </div>
-      </div>
 
+        <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center;">
+          Register Profile →
+        </button>
+      </form>
+
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.88rem; color: var(--text-muted);">
+        Already registered? <a href="login.html" style="color: var(--primary-cyan); font-weight: 700;">Login Here</a>
+      </div>
     </div>
   </main>
 
-  <script src="script.js"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      await renderNavbar();
+    async function handleRegister(e) {
+      e.preventDefault();
+      const name = document.getElementById('reg-name').value;
+      const email = document.getElementById('reg-email').value;
+      const password = document.getElementById('reg-password').value;
+      const age = document.getElementById('reg-age').value;
+      const education = document.getElementById('reg-edu').value;
+      const state = document.getElementById('reg-state').value;
+      const category = document.getElementById('reg-cat').value;
 
-      // Check URL parameters for preset role
-      const params = new URLSearchParams(window.location.search);
-      const presetRole = params.get('role');
-      if (presetRole === 'farmer') {
-        document.getElementById('role-select').value = 'farmer';
-      }
-      toggleRoleFields();
-    });
+      try {
+        const res = await fetch('/api/auth/register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, password, age, education, state, category }),
+          credentials: 'include'
+        });
 
-    function toggleRoleFields() {
-      const role = document.getElementById('role-select').value;
-      const farmerLoc = document.getElementById('farmer-location-group');
-      const custAddr = document.getElementById('customer-address-group');
-      const nameLabel = document.getElementById('name-label');
-
-      if (role === 'farmer') {
-        farmerLoc.style.display = 'block';
-        custAddr.style.display = 'none';
-        document.getElementById('location').required = true;
-        document.getElementById('address').required = false;
-        nameLabel.textContent = 'Farmer Full Name';
-      } else {
-        farmerLoc.style.display = 'none';
-        custAddr.style.display = 'block';
-        document.getElementById('location').required = false;
-        document.getElementById('address').required = true;
-        nameLabel.textContent = 'Customer Full Name';
+        const data = await res.json();
+        if (data.success && data.user) {
+          localStorage.setItem('dishasetu_user', JSON.stringify(data.user));
+          window.location.href = 'dashboard.html';
+        } else {
+          alert(data.message || 'Registration failed');
+        }
+      } catch (err) {
+        console.error('Registration error:', err);
       }
     }
-
-    document.getElementById('register-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const role = document.getElementById('role-select').value;
-      const name = document.getElementById('name').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const password = document.getElementById('password').value;
-      const confirmPassword = document.getElementById('confirm-password').value;
-      const submitBtn = document.getElementById('submit-btn');
-
-      if (password !== confirmPassword) {
-        showToast('Passwords do not match. Please verify.', 'error');
-        return;
-      }
-
-      submitBtn.disabled = true;
-      submitBtn.textContent = 'Creating Account...';
-
-      let endpoint = '/api/auth/register-customer';
-      let payload = { name, email, phone, password };
-
-      if (role === 'farmer') {
-        endpoint = '/api/auth/register-farmer';
-        payload.location = document.getElementById('location').value.trim();
-      } else {
-        payload.address = document.getElementById('address').value.trim();
-      }
-
-      const res = await apiFetch(endpoint, {
-        method: 'POST',
-        body: payload
-      });
-
-      if (res.success) {
-        showToast(res.message || 'Registration successful!', 'success');
-        if (res.user) {
-          localStorage.setItem('kisan_user', JSON.stringify(res.user));
-        }
-
-        setTimeout(() => {
-          if (role === 'farmer') {
-            window.location.href = 'farmer-dashboard.html';
-          } else {
-            window.location.href = 'customer-dashboard.html';
-          }
-        }, 1000);
-      } else {
-        showToast(res.message || 'Registration failed.', 'error');
-        submitBtn.disabled = false;
-        submitBtn.textContent = 'Create Account';
-      }
-    });
   </script>
 </body>
 </html>

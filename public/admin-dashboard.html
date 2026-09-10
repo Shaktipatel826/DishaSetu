@@ -3,786 +3,232 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Dashboard | Kisan Direct Marketplace</title>
+  <title>Admin Dashboard | DishaSetu</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <div id="navbar-placeholder"></div>
 
-  <main class="main-content">
-    <div class="container">
-      
-      <div class="dashboard-layout">
-        
-        <!-- Admin Sidebar -->
-        <aside class="sidebar">
-          <div class="sidebar-user">
-            <div class="user-avatar" style="background: linear-gradient(135deg, #1e293b, #475569);">🛡️</div>
-            <h3 id="admin-name" style="font-size: 1.15rem; margin-bottom: 0.2rem;">Administrator</h3>
-            <span class="user-role-tag" style="background-color: #334155;">Platform Admin</span>
-          </div>
-
-          <ul class="sidebar-nav">
-            <li class="sidebar-nav-item active" onclick="switchAdminTab('overview')">
-              <span>📊</span> Statistics Overview
-            </li>
-            <li class="sidebar-nav-item" onclick="switchAdminTab('farmers')">
-              <span>🌱</span> Manage Farmers
-            </li>
-            <li class="sidebar-nav-item" onclick="switchAdminTab('customers')">
-              <span>🛒</span> Manage Customers
-            </li>
-            <li class="sidebar-nav-item" onclick="switchAdminTab('products')">
-              <span>🌾</span> Manage Products
-            </li>
-            <li class="sidebar-nav-item" onclick="switchAdminTab('orders')">
-              <span>📦</span> Manage Orders
-            </li>
-            <li class="sidebar-nav-item" onclick="switchAdminTab('feedback')">
-              <span>⭐</span> Moderate Feedback
-            </li>
-            <li class="sidebar-nav-item" onclick="switchAdminTab('payment-settings')">
-              <span>💰</span> Receiving UPI & Bank
-            </li>
-            <li class="sidebar-nav-item" onclick="switchAdminTab('payouts')">
-              <span>💸</span> Farmer Payouts & QR
-            </li>
-            <li class="sidebar-nav-item" onclick="handleLogout()" style="color: #dc2626;">
-              <span>🚪</span> Logout
-            </li>
-          </ul>
-        </aside>
-
-        <!-- Main Content Area -->
-        <section class="dashboard-main">
-
-          <!-- TAB 1: OVERVIEW -->
-          <div id="tab-overview" class="tab-pane">
-            <div class="mb-3">
-              <h2>Platform Analytics & Overview</h2>
-              <p style="color: var(--text-muted); margin: 0;">Real-time metrics for Kisan Direct direct grain marketplace.</p>
-            </div>
-
-            <!-- Stats Grid -->
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="stat-icon">🌱</div>
-                <div>
-                  <div class="stat-val" id="stat-farmers">0</div>
-                  <div class="stat-label">Total Farmers</div>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-icon">👥</div>
-                <div>
-                  <div class="stat-val" id="stat-customers">0</div>
-                  <div class="stat-label">Total Customers</div>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-icon">🌾</div>
-                <div>
-                  <div class="stat-val" id="stat-products">0</div>
-                  <div class="stat-label">Total Grain Listings</div>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-icon">📦</div>
-                <div>
-                  <div class="stat-val" id="stat-orders">0</div>
-                  <div class="stat-label">Total Orders Placed</div>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-icon">⏳</div>
-                <div>
-                  <div class="stat-val" id="stat-pending-orders">0</div>
-                  <div class="stat-label">Pending Orders</div>
-                </div>
-              </div>
-
-              <div class="stat-card">
-                <div class="stat-icon">💰</div>
-                <div>
-                  <div class="stat-val" id="stat-volume">₹0</div>
-                  <div class="stat-label">Delivered Volume</div>
-                </div>
-              </div>
-            </div>
-
-            <div class="card mt-3">
-              <h3>System Control & Quick Navigation</h3>
-              <p style="color: var(--text-muted); font-size: 0.92rem;">
-                Use the left navigation sidebar to view, inspect, or remove platform records across farmers, customers, grain catalogs, orders, and customer feedback.
-              </p>
-              <div class="flex gap-2 mt-2" style="flex-wrap: wrap;">
-                <button onclick="switchAdminTab('farmers')" class="btn btn-outline btn-sm">Manage Farmers</button>
-                <button onclick="switchAdminTab('products')" class="btn btn-outline btn-sm">Manage Products</button>
-                <button onclick="switchAdminTab('orders')" class="btn btn-outline btn-sm">Manage Orders</button>
-                <button onclick="switchAdminTab('feedback')" class="btn btn-outline btn-sm">Moderate Feedback</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- TAB 2: FARMERS TABLE -->
-          <div id="tab-farmers" class="tab-pane" style="display: none;">
-            <div class="flex-between mb-3">
-              <div>
-                <h2>Registered Farmers</h2>
-                <p style="color: var(--text-muted); margin: 0;">List of verified grain producers on Kisan Direct.</p>
-              </div>
-            </div>
-
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Farmer Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Farm Location</th>
-                    <th>Products</th>
-                    <th>Orders</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="farmers-table-body">
-                  <tr><td colspan="7" class="text-center">Loading farmers...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- TAB 3: CUSTOMERS TABLE -->
-          <div id="tab-customers" class="tab-pane" style="display: none;">
-            <div class="mb-3">
-              <h2>Registered Customers</h2>
-              <p style="color: var(--text-muted); margin: 0;">Direct grain buyers across India.</p>
-            </div>
-
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Customer Name</th>
-                    <th>Email</th>
-                    <th>Phone</th>
-                    <th>Default Address</th>
-                    <th>Orders Placed</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="customers-table-body">
-                  <tr><td colspan="6" class="text-center">Loading customers...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- TAB 4: PRODUCTS TABLE -->
-          <div id="tab-products" class="tab-pane" style="display: none;">
-            <div class="mb-3">
-              <h2>Marketplace Products</h2>
-              <p style="color: var(--text-muted); margin: 0;">All grain varieties currently listed by farmers.</p>
-            </div>
-
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Image</th>
-                    <th>Grain Name</th>
-                    <th>Category</th>
-                    <th>Price / kg</th>
-                    <th>Stock (kg)</th>
-                    <th>Farmer</th>
-                    <th>Rating</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="products-table-body">
-                  <tr><td colspan="8" class="text-center">Loading products...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- TAB 5: ORDERS TABLE -->
-          <div id="tab-orders" class="tab-pane" style="display: none;">
-            <div class="mb-3">
-              <h2>All Marketplace Orders</h2>
-              <p style="color: var(--text-muted); margin: 0;">Order transactions between consumers and farmers.</p>
-            </div>
-
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Order #</th>
-                    <th>Date</th>
-                    <th>Customer</th>
-                    <th>Farmer</th>
-                    <th>Amount</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="orders-table-body">
-                  <tr><td colspan="7" class="text-center">Loading orders...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- TAB 6: FEEDBACK MODERATION TABLE -->
-          <div id="tab-feedback" class="tab-pane" style="display: none;">
-            <div class="mb-3">
-              <h2>Customer Ratings & Feedback Moderation</h2>
-              <p style="color: var(--text-muted); margin: 0;">Inspect and moderate customer reviews.</p>
-            </div>
-
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Product</th>
-                    <th>Customer</th>
-                    <th>Farmer</th>
-                    <th>Rating</th>
-                    <th>Review Comment</th>
-                    <th>Date</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="feedback-table-body">
-                  <tr><td colspan="7" class="text-center">Loading feedback...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <!-- TAB 7: BANK & UPI SETTINGS -->
-          <div id="tab-payment-settings" class="tab-pane" style="display: none;">
-            <div class="card" style="max-width: 680px; padding: 2rem;">
-              <h2>💰 Platform Payment & Bank Receiving Settings</h2>
-              <p style="color: var(--text-muted); margin-bottom: 1.5rem;">
-                Set your personal or business UPI ID and Bank Account details. All customer online payments & QR Code scans will directly transfer funds into this account!
-              </p>
-
-              <form id="admin-payment-form">
-                <div class="form-group">
-                  <label class="form-label" for="setting-upi-id">Official Receiving UPI ID *</label>
-                  <input type="text" id="setting-upi-id" class="form-control" placeholder="e.g. 9876543210@paytm or yourname@okaxis" required oninput="updateQrPreview()">
-                  <div class="input-help">Customer QR Code and UPI payments will transfer money directly to this UPI address.</div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="setting-business-name">Payee / Business Name *</label>
-                  <input type="text" id="setting-business-name" class="form-control" placeholder="e.g. Kisan Direct Marketplace" required oninput="updateQrPreview()">
-                </div>
-
-                <div style="background: #f8fafc; padding: 1.25rem; border: 1px dashed #cbd5e1; border-radius: var(--radius-md); margin-bottom: 1.5rem; text-align: center;">
-                  <h4 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--primary-dark);">Live Dynamic QR Code Preview:</h4>
-                  <img id="admin-qr-preview" src="https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=kisandirect@upi&pn=KisanDirectMarketplace&mc=5411&cu=INR" alt="QR Preview" style="width: 130px; height: 130px; margin: 0 auto;">
-                  <div id="admin-qr-label" style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-top: 6px;">UPI: kisandirect@upi</div>
-                </div>
-
-                <h3 style="margin: 1.5rem 0 1rem 0; font-size: 1.15rem;">Bank Account Settlement Details (Optional)</h3>
-
-                <div class="form-group">
-                  <label class="form-label" for="setting-account-holder">Account Holder Name</label>
-                  <input type="text" id="setting-account-holder" class="form-control" placeholder="Name as per bank records">
-                </div>
-
-                <div class="flex gap-2">
-                  <div class="form-group" style="flex: 1;">
-                    <label class="form-label" for="setting-bank-acc">Bank Account Number</label>
-                    <input type="text" id="setting-bank-acc" class="form-control" placeholder="e.g. 501004928192">
-                  </div>
-                  <div class="form-group" style="flex: 1;">
-                    <label class="form-label" for="setting-bank-ifsc">IFSC Code</label>
-                    <input type="text" id="setting-bank-ifsc" class="form-control" placeholder="e.g. SBIN0001234" style="text-transform: uppercase;">
-                  </div>
-                </div>
-
-                <div class="form-group">
-                  <label class="form-label" for="setting-bank-name">Bank Name</label>
-                  <input type="text" id="setting-bank-name" class="form-control" placeholder="e.g. State Bank of India">
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-lg btn-block mt-2" style="background-color: var(--accent-earth); border-color: var(--accent-earth);">
-                  💾 Save Receiving Payment Settings
-                </button>
-              </form>
-            </div>
-          <!-- TAB 8: FARMER PAYOUTS & SETTLEMENT -->
-          <div id="tab-payouts" class="tab-pane" style="display: none;">
-            <div class="mb-3">
-              <h2>💸 Farmer Payouts & Settlement Hub</h2>
-              <p style="color: var(--text-muted); margin: 0;">
-                Review all customer funds received by Admin, view each Farmer's UPI ID & QR Code, and record payout transfers.
-              </p>
-            </div>
-
-            <div class="table-responsive">
-              <table class="data-table">
-                <thead>
-                  <tr>
-                    <th>Farmer Name</th>
-                    <th>Contact & Location</th>
-                    <th>Customer Sales Received</th>
-                    <th>Settled Payouts</th>
-                    <th>Pending Due</th>
-                    <th>Payout UPI / Bank</th>
-                    <th>Actions</th>
-                  </tr>
-                </thead>
-                <tbody id="payouts-table-body">
-                  <tr><td colspan="7" class="text-center">Loading farmer payouts...</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-        </section>
-
+  <main class="main-content container py-4" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+    <!-- Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <span class="card-badge badge-closing" style="margin-bottom: 0.4rem;">Admin Control Console</span>
+        <h1 style="color: #fff; font-size: 2rem; font-weight: 800; margin-bottom: 0.2rem;">DishaSetu Administration</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Manage student opportunities, government schemes, student submissions, and student directory.</p>
       </div>
 
+      <div style="display: flex; gap: 0.8rem; flex-wrap: wrap;">
+        <a href="admin-submissions.html" class="btn btn-outline" style="border-color: #4ade80; color: #4ade80;">
+          📥 Review Submissions (<span id="btn-pending-count">0</span>)
+        </a>
+        <a href="admin-students.html" class="btn btn-outline">
+          👥 Registered Students
+        </a>
+        <button class="btn btn-primary" onclick="openCreateOpportunityModal()">+ Add Opportunity</button>
+        <button class="btn btn-scheme" onclick="openCreateSchemeModal()">+ Add Govt Scheme</button>
+      </div>
+    </div>
+
+    <!-- Live Database Stats Cards -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; margin-bottom: 3rem;">
+      <div class="glass-panel" style="padding: 1.4rem; text-align: center;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Registered Students</div>
+        <div id="stat-students" style="font-size: 2.2rem; font-weight: 800; color: var(--primary-cyan); margin-top: 0.3rem;">0</div>
+      </div>
+
+      <div class="glass-panel" style="padding: 1.4rem; text-align: center;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Total Opportunities</div>
+        <div id="stat-opps" style="font-size: 2.2rem; font-weight: 800; color: #38bdf8; margin-top: 0.3rem;">0</div>
+      </div>
+
+      <div class="glass-panel" style="padding: 1.4rem; text-align: center;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Government Schemes</div>
+        <div id="stat-schemes" style="font-size: 2.2rem; font-weight: 800; color: var(--scheme-amber); margin-top: 0.3rem;">0</div>
+      </div>
+
+      <div class="glass-panel" style="padding: 1.4rem; text-align: center;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Pending Submissions</div>
+        <div id="stat-pending" style="font-size: 2.2rem; font-weight: 800; color: #facc15; margin-top: 0.3rem;">0</div>
+      </div>
+
+      <div class="glass-panel" style="padding: 1.4rem; text-align: center;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Approved & Live</div>
+        <div id="stat-approved" style="font-size: 2.2rem; font-weight: 800; color: #4ade80; margin-top: 0.3rem;">0</div>
+      </div>
+    </div>
+
+    <!-- Admin Manage Opportunities Table -->
+    <div class="glass-panel" style="padding: 1.8rem; margin-bottom: 3rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; flex-wrap: wrap; gap: 1rem;">
+        <h3 style="color: #fff; font-size: 1.3rem; margin: 0;">🎓 Student Opportunities Management</h3>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">Toggle checkbox to show item on front-page ticker</span>
+      </div>
+      
+      <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; color: var(--text-main); font-size: 0.9rem;">
+          <thead>
+            <tr style="border-bottom: 1px solid var(--border-light); text-align: left; color: var(--text-muted);">
+              <th style="padding: 0.8rem;">Title</th>
+              <th style="padding: 0.8rem;">Type</th>
+              <th style="padding: 0.8rem;">Last Date</th>
+              <th style="padding: 0.8rem;">Latest Ticker</th>
+              <th style="padding: 0.8rem; text-align: right;">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-opps-list">
+            <!-- Dynamically Populated -->
+          </tbody>
+        </table>
+      </div>
     </div>
   </main>
 
-  <!-- FARMER PAYOUT SETTLEMENT MODAL -->
-  <div class="modal-overlay" id="settle-modal">
-    <div class="modal-card" style="max-width: 520px;">
-      <div class="modal-header">
-        <h3 id="settle-modal-title">💸 Settle Payout to Farmer</h3>
-        <button class="modal-close-btn" onclick="closeSettleModal()">×</button>
-      </div>
-      <form id="settle-form">
-        <input type="hidden" id="settle-farmer-id" value="">
-        <div class="modal-body">
-          
-          <div style="background: #f8fafc; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem; font-size: 0.9rem;">
-            <div>🧑‍🌾 <strong>Farmer:</strong> <span id="settle-farmer-name">-</span></div>
-            <div style="margin-top: 4px;">📱 <strong>Farmer UPI ID:</strong> <span id="settle-farmer-upi" style="color: var(--primary-dark); font-weight: 700;">-</span></div>
-            <div style="margin-top: 4px;">🏦 <strong>Bank Account:</strong> <span id="settle-farmer-bank">-</span></div>
-            <div style="margin-top: 4px;">💰 <strong>Pending Due Amount:</strong> <span id="settle-pending-amt" style="font-weight: 800; color: #dc2626;">₹0</span></div>
-          </div>
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/main.js"></script>
 
-          <!-- Dynamic Farmer QR Code -->
-          <div id="settle-qr-box" style="text-align: center; background: #fff; border: 1px dashed #cbd5e1; padding: 1rem; border-radius: var(--radius-md); margin-bottom: 1.25rem;">
-            <div style="font-size: 0.85rem; font-weight: 700; color: var(--primary-dark); margin-bottom: 0.5rem;">
-              Scan to Pay Farmer via UPI (GPay / PhonePe / Paytm):
-            </div>
-            <img id="settle-farmer-qr" src="" alt="Farmer QR" style="width: 150px; height: 150px; margin: 0 auto; display: block;">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="settle-amount">Payout Amount to Transfer (₹) *</label>
-            <input type="number" id="settle-amount" class="form-control" required min="1">
-          </div>
-
-          <div class="form-group">
-            <label class="form-label" for="settle-utr">Bank / UPI Reference UTR Number (Optional)</label>
-            <input type="text" id="settle-utr" class="form-control" placeholder="e.g. 423910948201 or IMPS123456">
-          </div>
-        </div>
-
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" onclick="closeSettleModal()">Cancel</button>
-          <button type="submit" class="btn btn-primary" style="background-color: #059669; border-color: #059669;">
-            ✓ Confirm Payout Settled
-          </button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <script src="script.js"></script>
   <script>
-    let adminUser = null;
-
-    document.addEventListener('DOMContentLoaded', async () => {
-      await renderNavbar();
-      adminUser = await requireRoleAuth('admin');
-      if (!adminUser) return;
-
-      document.getElementById('admin-name').textContent = adminUser.name;
-      loadAdminStats();
-    });
-
-    function switchAdminTab(tabId) {
-      document.querySelectorAll('.tab-pane').forEach(el => el.style.display = 'none');
-      document.querySelectorAll('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
-
-      const activePane = document.getElementById(`tab-${tabId}`);
-      if (activePane) activePane.style.display = 'block';
-
-      document.querySelectorAll('.sidebar-nav-item').forEach(btn => {
-        if (btn.textContent.toLowerCase().includes(tabId)) {
-          btn.classList.add('active');
-        }
-      });
-
-      if (tabId === 'farmers') loadFarmers();
-      if (tabId === 'customers') loadCustomers();
-      if (tabId === 'products') loadProducts();
-      if (tabId === 'orders') loadOrders();
-      if (tabId === 'feedback') loadFeedback();
-      if (tabId === 'payment-settings') loadPaymentSettings();
-      if (tabId === 'payouts') loadPayouts();
-    }
-
-    let allPayouts = [];
-
-    async function loadPayouts() {
-      const res = await apiFetch('/api/admin/payouts');
-      const tbody = document.getElementById('payouts-table-body');
-
-      if (res.success && res.payouts) {
-        allPayouts = res.payouts;
-        if (res.payouts.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="text-center" style="padding: 2rem;">No registered farmers found.</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = res.payouts.map(p => `
-          <tr>
-            <td><strong>${p.name}</strong></td>
-            <td>
-              <div>📞 ${p.phone}</div>
-              <div style="font-size: 0.8rem; color: var(--text-muted);">📍 ${p.location}</div>
-            </td>
-            <td><strong>₹${p.totalDeliveredSales.toLocaleString('en-IN')}</strong></td>
-            <td><span style="color: #059669; font-weight: 700;">₹${p.settledAmount.toLocaleString('en-IN')}</span></td>
-            <td>
-              <span style="font-weight: 800; color: ${p.pendingPayout > 0 ? '#dc2626' : '#64748b'}; font-size: 1.05rem;">
-                ₹${p.pendingPayout.toLocaleString('en-IN')}
-              </span>
-            </td>
-            <td>
-              <div>📱 <strong>${p.upiId}</strong></div>
-              ${p.bankAccount !== 'N/A' ? `<div style="font-size: 0.78rem; color: var(--text-muted);">A/C: ${p.bankAccount} (${p.bankIfsc})</div>` : ''}
-            </td>
-            <td>
-              <button onclick="openSettleModal('${p.farmerId}')" class="btn btn-sm btn-primary" style="background-color: var(--accent-earth); border-color: var(--accent-earth);">
-                💸 Settle Payout
-              </button>
-            </td>
-          </tr>
-        `).join('');
-      }
-    }
-
-    function openSettleModal(farmerId) {
-      const p = allPayouts.find(item => item.farmerId === farmerId);
-      if (!p) return;
-
-      document.getElementById('settle-farmer-id').value = p.farmerId;
-      document.getElementById('settle-farmer-name').textContent = p.name;
-      document.getElementById('settle-farmer-upi').textContent = p.upiId || 'Not Configured';
-      document.getElementById('settle-farmer-bank').textContent = p.bankAccount !== 'N/A' ? `${p.bankName} - ${p.bankAccount} (${p.bankIfsc})` : 'Not Provided';
-      document.getElementById('settle-pending-amt').textContent = `₹${p.pendingPayout.toLocaleString('en-IN')}`;
-      document.getElementById('settle-amount').value = p.pendingPayout > 0 ? p.pendingPayout : '';
-      document.getElementById('settle-utr').value = '';
-
-      const qrBox = document.getElementById('settle-qr-box');
-      const qrImg = document.getElementById('settle-farmer-qr');
-
-      if (p.upiId && p.upiId !== 'Not Configured') {
-        qrBox.style.display = 'block';
-        qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay?pa=${encodeURIComponent(p.upiId)}%26pn=${encodeURIComponent(p.name)}%26am=${p.pendingPayout}%26cu=INR`;
-      } else {
-        qrBox.style.display = 'none';
-      }
-
-      document.getElementById('settle-modal').classList.add('open');
-    }
-
-    function closeSettleModal() {
-      document.getElementById('settle-modal').classList.remove('open');
-    }
-
-    document.getElementById('settle-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const farmerId = document.getElementById('settle-farmer-id').value;
-      const amount = document.getElementById('settle-amount').value;
-      const utr = document.getElementById('settle-utr').value.trim();
-
-      const res = await apiFetch(`/api/admin/payouts/${farmerId}/settle`, {
-        method: 'POST',
-        body: { amount, utr }
-      });
-
-      if (res.success) {
-        showToast(res.message || 'Payout recorded successfully!', 'success');
-        closeSettleModal();
-        loadPayouts();
-        loadAdminStats();
-      } else {
-        showToast(res.message || 'Failed to record payout settlement.', 'error');
-      }
-    });
-
-    async function loadPaymentSettings() {
-      const res = await apiFetch('/api/admin/payment-settings');
-      if (res.success && res.settings) {
-        const s = res.settings;
-        document.getElementById('setting-upi-id').value = s.upiId || '';
-        document.getElementById('setting-business-name').value = s.businessName || '';
-        document.getElementById('setting-bank-acc').value = s.bankAccount || '';
-        document.getElementById('setting-bank-ifsc').value = s.bankIfsc || '';
-        document.getElementById('setting-bank-name').value = s.bankName || '';
-        document.getElementById('setting-account-holder').value = s.accountHolderName || '';
-        updateQrPreview();
-      }
-    }
-
-    function updateQrPreview() {
-      const upi = document.getElementById('setting-upi-id').value.trim() || 'kisandirect@upi';
-      const name = document.getElementById('setting-business-name').value.trim() || 'Kisan Direct';
-      const qrImg = document.getElementById('admin-qr-preview');
-      const qrLabel = document.getElementById('admin-qr-label');
-
-      qrImg.src = `https://api.qrserver.com/v1/create-qr-code/?size=140x140&data=upi://pay?pa=${encodeURIComponent(upi)}%26pn=${encodeURIComponent(name)}%26mc=5411%26cu=INR`;
-      qrLabel.textContent = `UPI: ${upi}`;
-    }
-
-    document.getElementById('admin-payment-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const upiId = document.getElementById('setting-upi-id').value.trim();
-      const businessName = document.getElementById('setting-business-name').value.trim();
-      const bankAccount = document.getElementById('setting-bank-acc').value.trim();
-      const bankIfsc = document.getElementById('setting-bank-ifsc').value.trim();
-      const bankName = document.getElementById('setting-bank-name').value.trim();
-      const accountHolderName = document.getElementById('setting-account-holder').value.trim();
-
-      const res = await apiFetch('/api/admin/payment-settings', {
-        method: 'PUT',
-        body: { upiId, businessName, bankAccount, bankIfsc, bankName, accountHolderName }
-      });
-
-      if (res.success) {
-        showToast(res.message || 'Payment receiving settings saved!', 'success');
-      } else {
-        showToast(res.message || 'Failed to save settings.', 'error');
-      }
-    });
-
     async function loadAdminStats() {
-      const res = await apiFetch('/api/admin/stats');
-      if (res.success && res.stats) {
-        const s = res.stats;
-        document.getElementById('stat-farmers').textContent = s.totalFarmers;
-        document.getElementById('stat-customers').textContent = s.totalCustomers;
-        document.getElementById('stat-products').textContent = s.totalProducts;
-        document.getElementById('stat-orders').textContent = s.totalOrders;
-        document.getElementById('stat-pending-orders').textContent = s.pendingOrders;
-        document.getElementById('stat-volume').textContent = `₹${s.totalMarketplaceVolume.toLocaleString('en-IN')}`;
-      }
-    }
-
-    async function loadFarmers() {
-      const res = await apiFetch('/api/admin/farmers');
-      const tbody = document.getElementById('farmers-table-body');
-
-      if (res.success && res.farmers) {
-        if (res.farmers.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="text-center">No farmers registered yet.</td></tr>`;
-          return;
+      try {
+        // Fetch dashboard statistics from real backend endpoint
+        const resStats = await fetch('/api/admin/dashboard-stats', { credentials: 'include' });
+        const dataStats = await resStats.json();
+        if (dataStats.success) {
+          const s = dataStats.stats;
+          document.getElementById('stat-students').innerText = s.totalStudents || 0;
+          document.getElementById('stat-opps').innerText = s.totalOpportunities || 0;
+          document.getElementById('stat-schemes').innerText = s.totalSchemes || 0;
+          document.getElementById('stat-pending').innerText = s.pendingSubmissions || 0;
+          document.getElementById('stat-approved').innerText = s.approvedSubmissions || 0;
+          document.getElementById('btn-pending-count').innerText = s.pendingSubmissions || 0;
         }
 
-        tbody.innerHTML = res.farmers.map(f => `
-          <tr>
-            <td><strong>${f.name}</strong></td>
-            <td>${f.email}</td>
-            <td>${f.phone}</td>
-            <td>📍 ${f.location}</td>
-            <td><span class="badge badge-grain">${f.productCount} Grains</span></td>
-            <td>${f.orderCount} Orders</td>
-            <td>
-              <button onclick="deleteFarmer('${f._id}', '${f.name}')" class="btn btn-sm btn-danger">Delete</button>
-            </td>
-          </tr>
-        `).join('');
+        const resOpp = await fetch('/api/opportunities');
+        const dataOpp = await resOpp.json();
+        if (dataOpp.success) {
+          renderAdminOppsList(dataOpp.opportunities);
+        }
+      } catch (err) {
+        console.error('Admin Load Error:', err);
       }
     }
 
-    async function deleteFarmer(id, name) {
-      if (!confirm(`Are you sure you want to remove farmer "${name}" and all their products?`)) return;
+    function renderAdminOppsList(items) {
+      const tbody = document.getElementById('admin-opps-list');
+      if (!tbody || !items) return;
 
-      const res = await apiFetch(`/api/admin/farmers/${id}`, { method: 'DELETE' });
-      if (res.success) {
-        showToast(res.message || 'Farmer removed.', 'info');
-        loadFarmers();
+      tbody.innerHTML = items.map(op => {
+        const titleEn = op.title ? (op.title.en || op.title) : '';
+        const titleHi = op.title ? (op.title.hi || '') : '';
+        const lastDateStr = op.lastDate ? new Date(op.lastDate).toLocaleDateString('en-IN') : 'N/A';
+
+        return `
+          <tr style="border-bottom: 1px solid var(--border-light);">
+            <td style="padding: 0.8rem;">
+              <strong style="color:#fff;">${titleEn}</strong>
+              ${titleHi && titleHi !== titleEn ? `<br><span style="font-size:0.8rem; color:var(--text-muted);">${titleHi}</span>` : ''}
+            </td>
+            <td style="padding: 0.8rem;"><span class="card-badge badge-open">${op.type}</span></td>
+            <td style="padding: 0.8rem; color:#f87171;">${lastDateStr}</td>
+            <td style="padding: 0.8rem;">
+              <input type="checkbox" ${op.showInLatestUpdates ? 'checked' : ''} onchange="toggleTickerFlag('${op._id}', this.checked)">
+              <span style="font-size:0.8rem; margin-left:4px; color:${op.showInLatestUpdates ? '#4ade80' : 'var(--text-muted)'};">${op.showInLatestUpdates ? 'Active' : 'Hidden'}</span>
+            </td>
+            <td style="padding: 0.8rem; text-align: right;">
+              <button class="btn btn-outline" style="padding: 0.3rem 0.6rem; font-size: 0.78rem; color: #f87171;" onclick="deleteOpportunity('${op._id}')">Delete</button>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    async function toggleTickerFlag(id, show) {
+      try {
+        await fetch(`/api/opportunities/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ showInLatestUpdates: show }),
+          credentials: 'include'
+        });
         loadAdminStats();
-      } else {
-        showToast(res.message || 'Error deleting farmer.', 'error');
+      } catch (err) {
+        console.error('Toggle Error:', err);
       }
     }
 
-    async function loadCustomers() {
-      const res = await apiFetch('/api/admin/customers');
-      const tbody = document.getElementById('customers-table-body');
-
-      if (res.success && res.customers) {
-        if (res.customers.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="6" class="text-center">No customers registered yet.</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = res.customers.map(c => `
-          <tr>
-            <td><strong>${c.name}</strong></td>
-            <td>${c.email}</td>
-            <td>${c.phone}</td>
-            <td style="max-width: 250px;">${c.address}</td>
-            <td>${c.orderCount} Orders</td>
-            <td>
-              <button onclick="deleteCustomer('${c._id}', '${c.name}')" class="btn btn-sm btn-danger">Delete</button>
-            </td>
-          </tr>
-        `).join('');
-      }
-    }
-
-    async function deleteCustomer(id, name) {
-      if (!confirm(`Are you sure you want to remove customer "${name}"?`)) return;
-
-      const res = await apiFetch(`/api/admin/customers/${id}`, { method: 'DELETE' });
-      if (res.success) {
-        showToast(res.message || 'Customer removed.', 'info');
-        loadCustomers();
+    async function deleteOpportunity(id) {
+      if (!confirm('Are you sure you want to delete this opportunity?')) return;
+      try {
+        await fetch(`/api/opportunities/${id}`, { method: 'DELETE', credentials: 'include' });
         loadAdminStats();
-      } else {
-        showToast(res.message || 'Error deleting customer.', 'error');
+      } catch (err) {
+        console.error('Delete Error:', err);
       }
     }
 
-    async function loadProducts() {
-      const res = await apiFetch('/api/admin/products');
-      const tbody = document.getElementById('products-table-body');
+    function openCreateOpportunityModal() {
+      const titleEn = prompt('Opportunity Title (English):', 'National AI & Coding Challenge 2026');
+      const titleHi = prompt('Opportunity Title (Hindi - Optional):', 'राष्ट्रीय एआई एवं कोडिंग चुनौती 2026');
+      const type = prompt('Type (Scholarship, Hackathon, Quiz Competition, Essay Competition, Competitive Exam, Skill Development Program, Internship):', 'Hackathon');
+      const applyUrl = prompt('Official Application Link (applyUrl):', 'https://sih.gov.in');
 
-      if (res.success && res.products) {
-        if (res.products.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="8" class="text-center">No products found.</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = res.products.map(p => `
-          <tr>
-            <td>
-              <img src="${p.image || 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600'}" alt="${p.name}" style="width: 45px; height: 45px; border-radius: var(--radius-sm); object-fit: cover;">
-            </td>
-            <td><strong>${p.name}</strong></td>
-            <td><span class="badge badge-grain">${p.category}</span></td>
-            <td>₹${p.pricePerKg} / kg</td>
-            <td>${p.stockKg} kg</td>
-            <td>${p.farmer ? p.farmer.name : 'Unknown'}</td>
-            <td>★ ${p.ratingAvg} (${p.ratingCount})</td>
-            <td>
-              <button onclick="deleteProduct('${p._id}', '${p.name}')" class="btn btn-sm btn-danger">Delete</button>
-            </td>
-          </tr>
-        `).join('');
+      if (titleEn && applyUrl) {
+        fetch('/api/opportunities', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: { en: titleEn, hi: titleHi },
+            type,
+            applyUrl,
+            lastDate: new Date('2026-11-30'),
+            showInLatestUpdates: true
+          }),
+          credentials: 'include'
+        }).then(res => res.json()).then(data => {
+          if (data.success) {
+            alert('Opportunity created successfully!');
+            loadAdminStats();
+          } else {
+            alert(data.message);
+          }
+        });
       }
     }
 
-    async function deleteProduct(id, name) {
-      if (!confirm(`Are you sure you want to remove product "${name}"?`)) return;
+    function openCreateSchemeModal() {
+      const titleEn = prompt('Government Scheme Title (English):', 'PM Vocational Skill Scheme 2026');
+      const titleHi = prompt('Government Scheme Title (Hindi):', 'पीएम व्यावसायिक कौशल योजना 2026');
+      const sector = prompt('Sector (Education, Employment, Women, Farmers, Health, Skill Development):', 'Skill Development');
+      const applyUrl = prompt('Official Government Portal Link:', 'https://pmkvyofficial.org');
 
-      const res = await apiFetch(`/api/admin/products/${id}`, { method: 'DELETE' });
-      if (res.success) {
-        showToast(res.message || 'Product removed.', 'info');
-        loadProducts();
-        loadAdminStats();
-      } else {
-        showToast(res.message || 'Error deleting product.', 'error');
+      if (titleEn && applyUrl) {
+        fetch('/api/schemes', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: { en: titleEn, hi: titleHi },
+            sector,
+            governmentType: 'Central',
+            applyUrl,
+            lastDate: new Date('2026-12-31'),
+            showInLatestUpdates: true
+          }),
+          credentials: 'include'
+        }).then(res => res.json()).then(data => {
+          if (data.success) {
+            alert('Government Scheme created successfully!');
+            loadAdminStats();
+          } else {
+            alert(data.message);
+          }
+        });
       }
     }
 
-    async function loadOrders() {
-      const res = await apiFetch('/api/admin/orders');
-      const tbody = document.getElementById('orders-table-body');
-
-      if (res.success && res.orders) {
-        if (res.orders.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="text-center">No orders found.</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = res.orders.map(o => `
-          <tr>
-            <td><strong>${o.orderNumber}</strong></td>
-            <td>${formatDate(o.createdAt)}</td>
-            <td>${o.customer ? o.customer.name : 'Customer'}</td>
-            <td>${o.farmer ? o.farmer.name : 'Farmer'}</td>
-            <td><strong>₹${o.totalAmount}</strong></td>
-            <td>${getStatusBadge(o.orderStatus)}</td>
-            <td>
-              <button onclick="deleteOrder('${o._id}', '${o.orderNumber}')" class="btn btn-sm btn-danger">Delete</button>
-            </td>
-          </tr>
-        `).join('');
-      }
-    }
-
-    async function deleteOrder(id, orderNumber) {
-      if (!confirm(`Are you sure you want to delete order #${orderNumber}?`)) return;
-
-      const res = await apiFetch(`/api/admin/orders/${id}`, { method: 'DELETE' });
-      if (res.success) {
-        showToast(res.message || 'Order removed.', 'info');
-        loadOrders();
-        loadAdminStats();
-      } else {
-        showToast(res.message || 'Error deleting order.', 'error');
-      }
-    }
-
-    async function loadFeedback() {
-      const res = await apiFetch('/api/admin/feedback');
-      const tbody = document.getElementById('feedback-table-body');
-
-      if (res.success && res.feedback) {
-        if (res.feedback.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" class="text-center">No feedback records found.</td></tr>`;
-          return;
-        }
-
-        tbody.innerHTML = res.feedback.map(fb => `
-          <tr>
-            <td><strong>${fb.product ? fb.product.name : 'Grain Product'}</strong></td>
-            <td>${fb.customer ? fb.customer.name : 'Customer'}</td>
-            <td>${fb.farmer ? fb.farmer.name : 'Farmer'}</td>
-            <td><span class="rating-stars">★ ${fb.rating}</span></td>
-            <td style="max-width: 300px;">"${fb.comment}"</td>
-            <td>${formatDate(fb.createdAt)}</td>
-            <td>
-              <button onclick="deleteFeedback('${fb._id}')" class="btn btn-sm btn-danger">Remove</button>
-            </td>
-          </tr>
-        `).join('');
-      }
-    }
-
-    async function deleteFeedback(id) {
-      if (!confirm('Are you sure you want to remove this feedback review?')) return;
-
-      const res = await apiFetch(`/api/admin/feedback/${id}`, { method: 'DELETE' });
-      if (res.success) {
-        showToast(res.message || 'Feedback review removed.', 'info');
-        loadFeedback();
-      } else {
-        showToast(res.message || 'Error deleting feedback.', 'error');
-      }
-    }
+    document.addEventListener('DOMContentLoaded', loadAdminStats);
   </script>
 </body>
 </html>

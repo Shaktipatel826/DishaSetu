@@ -3,186 +3,201 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login | Kisan Direct Marketplace</title>
+  <title>Login | DishaSetu</title>
   <link rel="stylesheet" href="style.css">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     .role-tabs {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
+      display: flex;
       gap: 0.5rem;
-      background: var(--bg-muted);
-      padding: 0.4rem;
-      border-radius: var(--radius-md);
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-light);
+      padding: 0.35rem;
+      border-radius: 10px;
       margin-bottom: 1.5rem;
     }
-    .role-tab-btn {
-      padding: 0.6rem;
+    .role-tab {
+      flex: 1;
+      text-align: center;
+      padding: 0.6rem 0.8rem;
+      border-radius: 8px;
+      color: var(--text-muted);
       font-size: 0.88rem;
-      font-weight: 700;
-      border-radius: var(--radius-sm);
-      border: none;
-      background: transparent;
-      color: #64748b;
+      font-weight: 600;
       cursor: pointer;
-      transition: var(--transition);
+      transition: background 0.2s, color 0.2s;
     }
-    .role-tab-btn.active {
-      background: #fff;
-      color: var(--primary-dark);
-      box-shadow: var(--shadow-sm);
+    .role-tab.active {
+      background: var(--primary-cyan);
+      color: #090d16;
+      box-shadow: 0 0 12px rgba(6, 182, 212, 0.4);
     }
-    .demo-box {
-      margin-top: 1.5rem;
-      padding: 1rem;
-      background: #f8fafc;
-      border: 1px dashed #cbd5e1;
-      border-radius: var(--radius-md);
-    }
-    .demo-btn {
-      font-size: 0.78rem;
-      padding: 0.35rem 0.65rem;
-      margin: 0.2rem;
+    .role-tab-admin.active {
+      background: #4ade80;
+      color: #090d16;
+      box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
     }
   </style>
 </head>
-<body>
-  <div id="navbar-placeholder"></div>
+<body style="display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; padding-top: 5rem; padding-bottom: 3rem;">
+  <div id="navbar-placeholder" style="width: 100%; position: fixed; top: 0; z-index: 100;"></div>
 
-  <main class="main-content flex-center">
-    <div class="container" style="max-width: 500px;">
-      
-      <div class="card" style="padding: 2.25rem;">
-        <div class="text-center mb-3">
-          <span style="font-size: 2.5rem;">🌾</span>
-          <h2 class="mt-1">Sign In to Kisan Direct</h2>
-          <p style="font-size: 0.92rem; color: var(--text-muted);">
-            Access your grains, sales orders, or platform portal.
-          </p>
+  <main class="container" style="max-width: 460px; width: 100%; padding: 1rem;">
+    <div class="glass-panel" style="padding: 2.2rem; border-radius: 16px;">
+      <!-- Logo -->
+      <div style="text-align: center; margin-bottom: 1.5rem;">
+        <a href="index.html" class="brand-logo" style="justify-content: center; margin-bottom: 0.4rem;">
+          <img src="assets/logo.png" alt="DishaSetu Logo" style="height: 42px; width: auto; filter: drop-shadow(0 0 10px rgba(6, 182, 212, 0.4));">
+        </a>
+        <h2 style="color: #fff; font-size: 1.5rem; margin-top: 0.5rem;" id="login-heading">Login to DishaSetu</h2>
+        <p style="color: var(--text-muted); font-size: 0.88rem; margin-top: 0.2rem;" id="login-subtext">Access saved opportunities & student portal</p>
+      </div>
+
+      <!-- Role Selector Tabs: Student vs Admin -->
+      <div class="role-tabs">
+        <div id="tab-student" class="role-tab active" onclick="switchLoginRole('student')">
+          🎓 Student Portal
         </div>
-
-        <!-- Role Selector Tabs -->
-        <div class="role-tabs">
-          <button type="button" class="role-tab-btn active" onclick="setRole('customer')">🛒 Customer</button>
-          <button type="button" class="role-tab-btn" onclick="setRole('farmer')">🌱 Farmer</button>
-          <button type="button" class="role-tab-btn" onclick="setRole('admin')">⚙️ Admin</button>
-        </div>
-
-        <form id="login-form">
-          <input type="hidden" id="selected-role" value="customer">
-
-          <!-- Email -->
-          <div class="form-group">
-            <label class="form-label" for="login-email">Email Address</label>
-            <input type="email" id="login-email" class="form-control" placeholder="name@example.com" required>
-          </div>
-
-          <!-- Password -->
-          <div class="form-group">
-            <label class="form-label" for="login-password">Password</label>
-            <input type="password" id="login-password" class="form-control" placeholder="Enter your password" required>
-          </div>
-
-          <button type="submit" id="login-btn" class="btn btn-primary btn-block mt-2">
-            Sign In
-          </button>
-        </form>
-
-        <!-- Quick Demo Login Helpers -->
-        <div class="demo-box text-center">
-          <div style="font-size: 0.8rem; font-weight: 700; color: #475569; margin-bottom: 0.5rem;">
-            ⚡ Quick 1-Click Demo Logins:
-          </div>
-          <div class="flex-center" style="flex-wrap: wrap;">
-            <button class="btn btn-secondary demo-btn" onclick="fillCredentials('customer', 'priya.customer@kisandirect.com', 'Kisan@123')">
-              👤 Demo Customer
-            </button>
-            <button class="btn btn-secondary demo-btn" onclick="fillCredentials('farmer', 'ramesh.farmer@kisandirect.com', 'Kisan@123')">
-              🌱 Demo Farmer
-            </button>
-            <button class="btn btn-secondary demo-btn" onclick="fillCredentials('admin', 'admin@kisandirect.com', 'AdminPassword123')">
-              🛡️ Demo Admin
-            </button>
-          </div>
-        </div>
-
-        <div class="text-center mt-3" style="font-size: 0.9rem; color: var(--text-muted);">
-          New to Kisan Direct? <a href="register.html" style="font-weight: 600;">Create an account</a>
+        <div id="tab-admin" class="role-tab role-tab-admin" onclick="switchLoginRole('admin')">
+          🛡️ Admin Console
         </div>
       </div>
 
+      <div id="login-alert" style="display: none; padding: 0.8rem; border-radius: 8px; margin-bottom: 1.2rem; font-size: 0.85rem;"></div>
+
+      <form onsubmit="handleLogin(event)">
+        <input type="hidden" id="login-role" value="student">
+
+        <div class="form-group" style="margin-bottom: 1.2rem;">
+          <label style="display: block; color: #e2e8f0; font-size: 0.88rem; margin-bottom: 0.4rem;" id="email-label">Student Email Address</label>
+          <input type="email" id="login-email" class="form-control" placeholder="student.demo@dishasetu.in" required value="student.demo@dishasetu.in">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label style="display: block; color: #e2e8f0; font-size: 0.88rem; margin-bottom: 0.4rem;">Password</label>
+          <input type="password" id="login-password" class="form-control" placeholder="••••••••" required value="Student@123">
+        </div>
+
+        <button type="submit" id="login-submit-btn" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 0.8rem; font-size: 1rem;">
+          Login to Student Portal →
+        </button>
+      </form>
+
+      <!-- Quick Demo Credentials Box -->
+      <div style="margin-top: 1.5rem; background: rgba(15, 23, 42, 0.7); border: 1px dashed var(--border-light); padding: 0.8rem 1rem; border-radius: 8px; font-size: 0.82rem; color: var(--text-muted);" id="demo-credentials-box">
+        <strong style="color: var(--primary-cyan); display: block; margin-bottom: 0.2rem;">🔑 Demo Student Credentials:</strong>
+        Email: <code style="color:#fff;">student.demo@dishasetu.in</code> | Password: <code style="color:#fff;">Student@123</code>
+      </div>
+
+      <div style="text-align: center; margin-top: 1.5rem; font-size: 0.88rem; color: var(--text-muted);">
+        Don't have a student account? <a href="register.html" style="color: var(--primary-cyan); font-weight: 700;">Register Here</a>
+      </div>
     </div>
   </main>
 
-  <script src="script.js"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+
   <script>
-    document.addEventListener('DOMContentLoaded', async () => {
-      await renderNavbar();
+    let currentRole = 'student';
 
-      const params = new URLSearchParams(window.location.search);
-      const roleParam = params.get('role');
-      if (roleParam && ['customer', 'farmer', 'admin'].includes(roleParam)) {
-        setRole(roleParam);
-      }
-    });
+    function switchLoginRole(role) {
+      currentRole = role;
+      document.getElementById('login-role').value = role;
 
-    function setRole(role) {
-      document.getElementById('selected-role').value = role;
-      document.querySelectorAll('.role-tab-btn').forEach(btn => {
-        btn.classList.remove('active');
-        if (btn.textContent.toLowerCase().includes(role)) {
-          btn.classList.add('active');
-        }
-      });
-    }
+      const tabStudent = document.getElementById('tab-student');
+      const tabAdmin = document.getElementById('tab-admin');
+      const heading = document.getElementById('login-heading');
+      const subtext = document.getElementById('login-subtext');
+      const emailLabel = document.getElementById('email-label');
+      const submitBtn = document.getElementById('login-submit-btn');
+      const demoBox = document.getElementById('demo-credentials-box');
 
-    function fillCredentials(role, email, password) {
-      setRole(role);
-      document.getElementById('login-email').value = email;
-      document.getElementById('login-password').value = password;
-      showToast(`Filled ${role} demo credentials! Click Sign In.`, 'info');
-    }
-
-    document.getElementById('login-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-
-      const role = document.getElementById('selected-role').value;
-      const email = document.getElementById('login-email').value.trim();
-      const password = document.getElementById('login-password').value;
-      const loginBtn = document.getElementById('login-btn');
-
-      loginBtn.disabled = true;
-      loginBtn.textContent = 'Authenticating...';
-
-      const res = await apiFetch('/api/auth/login', {
-        method: 'POST',
-        body: { role, email, password }
-      });
-
-      if (res.success && res.user) {
-        showToast(res.message || 'Login successful!', 'success');
-        localStorage.setItem('kisan_user', JSON.stringify(res.user));
-
-        const params = new URLSearchParams(window.location.search);
-        const redirect = params.get('redirect');
-
-        setTimeout(() => {
-          if (redirect) {
-            window.location.href = redirect;
-          } else if (res.user.role === 'farmer') {
-            window.location.href = 'farmer-dashboard.html';
-          } else if (res.user.role === 'admin') {
-            window.location.href = 'admin-dashboard.html';
-          } else {
-            window.location.href = 'customer-dashboard.html';
-          }
-        }, 800);
+      if (role === 'admin') {
+        tabAdmin.classList.add('active');
+        tabStudent.classList.remove('active');
+        heading.innerText = 'Admin Control Console';
+        subtext.innerText = 'Manage opportunities, schemes & review student submissions';
+        emailLabel.innerText = 'Administrator Email';
+        document.getElementById('login-email').value = 'admin@dishasetu.in';
+        document.getElementById('login-password').value = 'Admin@123';
+        submitBtn.className = 'btn btn-scheme';
+        submitBtn.style.background = '#4ade80';
+        submitBtn.style.color = '#090d16';
+        submitBtn.innerText = 'Login to Admin Control Console →';
+        
+        demoBox.innerHTML = `
+          <strong style="color: #4ade80; display: block; margin-bottom: 0.2rem;">🛡️ Admin Credentials options:</strong>
+          Option 1: <code style="color:#fff;">admin@dishasetu.in</code> / <code style="color:#fff;">Admin@123</code><br>
+          Option 2: <code style="color:#fff;">shivamkumarmzp2@gmail.com</code> / <code style="color:#fff;">Shakti@826</code>
+        `;
       } else {
-        showToast(res.message || 'Login failed. Please check credentials.', 'error');
-        loginBtn.disabled = false;
-        loginBtn.textContent = 'Sign In';
+        tabStudent.classList.add('active');
+        tabAdmin.classList.remove('active');
+        heading.innerText = 'Login to Student Portal';
+        subtext.innerText = 'Access saved opportunities & personalized recommendations';
+        emailLabel.innerText = 'Student Email Address';
+        document.getElementById('login-email').value = 'student.demo@dishasetu.in';
+        document.getElementById('login-password').value = 'Student@123';
+        submitBtn.className = 'btn btn-primary';
+        submitBtn.style.background = '';
+        submitBtn.style.color = '';
+        submitBtn.innerText = 'Login to Student Portal →';
+
+        demoBox.innerHTML = `
+          <strong style="color: var(--primary-cyan); display: block; margin-bottom: 0.2rem;">🔑 Demo Student Credentials:</strong>
+          Email: <code style="color:#fff;">student.demo@dishasetu.in</code> | Password: <code style="color:#fff;">Student@123</code>
+        `;
       }
-    });
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('login-email').value;
+      const password = document.getElementById('login-password').value;
+      const role = document.getElementById('login-role').value;
+      const alertBox = document.getElementById('login-alert');
+
+      try {
+        const res = await fetch('/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, role }),
+          credentials: 'include'
+        });
+
+        const data = await res.json();
+        if (data.success && data.user) {
+          localStorage.setItem('dishasetu_user', JSON.stringify(data.user));
+          
+          alertBox.style.display = 'block';
+          alertBox.style.background = 'rgba(34, 197, 94, 0.2)';
+          alertBox.style.border = '1px solid #22c55e';
+          alertBox.style.color = '#86efac';
+          alertBox.innerText = `🎉 Login successful! Welcome ${data.user.name}. Redirecting...`;
+
+          setTimeout(() => {
+            if (data.user.role === 'admin') {
+              window.location.href = 'admin-dashboard.html';
+            } else {
+              window.location.href = 'dashboard.html';
+            }
+          }, 1000);
+        } else {
+          alertBox.style.display = 'block';
+          alertBox.style.background = 'rgba(239, 68, 68, 0.2)';
+          alertBox.style.border = '1px solid #ef4444';
+          alertBox.style.color = '#fca5a5';
+          alertBox.innerText = '❌ ' + (data.message || 'Invalid credentials');
+        }
+      } catch (err) {
+        console.error('Login error:', err);
+        alertBox.style.display = 'block';
+        alertBox.style.background = 'rgba(239, 68, 68, 0.2)';
+        alertBox.style.border = '1px solid #ef4444';
+        alertBox.style.color = '#fca5a5';
+        alertBox.innerText = '❌ Connection error during login. Please try again.';
+      }
+    }
   </script>
 </body>
 </html>

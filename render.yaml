@@ -1,0 +1,18 @@
+# Render Web Service Blueprint for DishaSetu
+# Monolithic Express.js + Static Frontend + MongoDB Atlas Application
+
+services:
+  - type: web
+    name: dishasetu
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    autoDeploy: true
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false

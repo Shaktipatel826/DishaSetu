@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Submissions | DishaSetu</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .status-badge {
+      display: inline-block;
+      padding: 0.35rem 0.85rem;
+      border-radius: 9999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .status-pending { background: rgba(234, 179, 8, 0.18); color: #facc15; border: 1px solid rgba(234, 179, 8, 0.4); }
+    .status-under-review { background: rgba(59, 130, 246, 0.18); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.4); }
+    .status-changes-requested { background: rgba(249, 115, 22, 0.18); color: #fb923c; border: 1px solid rgba(249, 115, 22, 0.4); }
+    .status-approved { background: rgba(34, 197, 94, 0.18); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); }
+    .status-rejected { background: rgba(239, 68, 68, 0.18); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.4); }
+
+    .submission-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.2rem;
+      transition: transform 0.2s, border-color 0.2s, box-shadow 0.2s;
+    }
+    .submission-card:hover {
+      border-color: var(--primary-cyan);
+      box-shadow: 0 4px 20px rgba(6, 182, 212, 0.15);
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="main-content container py-4" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+    <!-- Page Header -->
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+      <div>
+        <span class="card-badge badge-open" style="margin-bottom: 0.4rem;">Student Submissions Portal</span>
+        <h1 style="color: #fff; font-size: 2rem; font-weight: 800; margin-bottom: 0.2rem;">My Opportunity Submissions</h1>
+        <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">Track verification status and admin feedback for your submitted opportunities and schemes.</p>
+      </div>
+
+      <a href="submit-opportunity.html" class="btn btn-primary" style="padding: 0.65rem 1.3rem;">
+        + Submit New Opportunity
+      </a>
+    </div>
+
+    <!-- Submissions Summary Stats -->
+    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.2rem; margin-bottom: 2rem;">
+      <div class="glass-panel" style="padding: 1.2rem; text-align: center;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Total Submitted</div>
+        <div id="stat-total" style="font-size: 2rem; font-weight: 800; color: var(--primary-cyan); margin-top: 0.2rem;">0</div>
+      </div>
+      <div class="glass-panel" style="padding: 1.2rem; text-align: center;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Pending Review</div>
+        <div id="stat-pending" style="font-size: 2rem; font-weight: 800; color: #facc15; margin-top: 0.2rem;">0</div>
+      </div>
+      <div class="glass-panel" style="padding: 1.2rem; text-align: center;">
+        <div style="font-size: 0.78rem; color: var(--text-muted); text-transform: uppercase;">Approved & Live</div>
+        <div id="stat-approved" style="font-size: 2rem; font-weight: 800; color: #4ade80; margin-top: 0.2rem;">0</div>
+      </div>
+    </div>
+
+    <!-- Submissions List -->
+    <div id="submissions-container">
+      <div style="text-align: center; color: var(--text-muted); padding: 3rem 0;">
+        ⏳ Loading your submitted opportunities...
+      </div>
+    </div>
+  </main>
+
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/reminders.js"></script>
+
+  <script>
+    async function loadMySubmissions() {
+      const container = document.getElementById('submissions-container');
+      const userStr = localStorage.getItem('dishasetu_user');
+
+      if (!userStr) {
+        container.innerHTML = `
+          <div class="glass-panel" style="padding: 3rem; text-align: center;">
+            <h3 style="color:#fff; margin-bottom:0.8rem;">🔒 Login Required</h3>
+            <p style="color:var(--text-muted); margin-bottom:1.5rem;">Please log in to view your submitted opportunities and status.</p>
+            <a href="login.html" class="btn btn-primary">Go to Login Page</a>
+          </div>
+        `;
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/submissions/my', { credentials: 'include' });
+        const data = await res.json();
+
+        if (!data.success) {
+          container.innerHTML = `<div style="color:#f87171; text-align:center;">Error: ${data.message}</div>`;
+          return;
+        }
+
+        const items = data.data || [];
+
+        // Update counts
+        document.getElementById('stat-total').innerText = items.length;
+        document.getElementById('stat-pending').innerText = items.filter(i => i.status === 'Pending Review' || i.status === 'Under Review').length;
+        document.getElementById('stat-approved').innerText = items.filter(i => i.status === 'Approved').length;
+
+        if (items.length === 0) {
+          container.innerHTML = `
+            <div class="glass-panel" style="padding: 3rem; text-align: center;">
+              <div style="font-size: 3rem; margin-bottom: 0.8rem;">📤</div>
+              <h3 style="color: #fff; margin-bottom: 0.5rem;">No Submissions Yet</h3>
+              <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Have you found a scholarship or government scheme? Share it to help fellow students.</p>
+              <a href="submit-opportunity.html" class="btn btn-primary">+ Submit First Opportunity</a>
+            </div>
+          `;
+          return;
+        }
+
+        container.innerHTML = items.map(sub => {
+          let badgeClass = 'status-pending';
+          if (sub.status === 'Under Review') badgeClass = 'status-under-review';
+          if (sub.status === 'Changes Requested') badgeClass = 'status-changes-requested';
+          if (sub.status === 'Approved') badgeClass = 'status-approved';
+          if (sub.status === 'Rejected') badgeClass = 'status-rejected';
+
+          const formattedDate = new Date(sub.createdAt).toLocaleDateString('en-IN', {
+            year: 'numeric', month: 'short', day: 'numeric'
+          });
+          const lastDateStr = new Date(sub.lastDate).toLocaleDateString('en-IN', {
+            year: 'numeric', month: 'short', day: 'numeric'
+          });
+
+          return `
+            <div class="submission-card">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.8rem;">
+                <div>
+                  <span class="status-badge ${badgeClass}">${sub.status}</span>
+                  <span style="font-size: 0.8rem; color: var(--primary-cyan); font-weight: 600; margin-left: 0.5rem;">[${sub.type}]</span>
+                  <h3 style="color: #fff; font-size: 1.25rem; margin-top: 0.4rem; margin-bottom: 0.2rem;">${sub.title}</h3>
+                  <div style="color: var(--text-muted); font-size: 0.85rem;">
+                    ${sub.organization ? `🏢 ${sub.organization} • ` : ''}Submitted on ${formattedDate}
+                  </div>
+                </div>
+
+                <div style="text-align: right;">
+                  <span style="font-size: 0.8rem; color: var(--text-muted); display: block;">Deadline</span>
+                  <strong style="color: #f87171; font-size: 0.95rem;">${lastDateStr}</strong>
+                </div>
+              </div>
+
+              ${sub.description ? `<p style="color: #cbd5e1; font-size: 0.9rem; margin-bottom: 1rem; line-height: 1.5;">${sub.description}</p>` : ''}
+
+              <!-- Source Link & Proof Badge -->
+              <div style="display: flex; gap: 0.8rem; flex-wrap: wrap; margin-bottom: 1rem; font-size: 0.82rem;">
+                <a href="${sub.sourceUrl}" target="_blank" rel="noopener" style="color: var(--primary-cyan); text-decoration: underline;">
+                  🔗 Source Link
+                </a>
+                <a href="${sub.proofUrl}" target="_blank" rel="noopener" style="color: #4ade80; text-decoration: underline;">
+                  📄 View Uploaded Proof (${sub.proofOriginalName || 'Document'})
+                </a>
+              </div>
+
+              <!-- Admin Feedback Section -->
+              ${sub.adminFeedback ? `
+                <div style="background: rgba(15, 23, 42, 0.7); border-left: 3px solid var(--primary-cyan); padding: 0.8rem 1rem; border-radius: 6px; margin-top: 0.8rem;">
+                  <div style="font-size: 0.78rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase;">💬 Admin Feedback Note</div>
+                  <div style="color: #e2e8f0; font-size: 0.88rem; margin-top: 0.2rem;">"${sub.adminFeedback}"</div>
+                </div>
+              ` : ''}
+
+              ${sub.status === 'Approved' ? `
+                <div style="margin-top: 0.8rem; color: #4ade80; font-size: 0.85rem; font-weight: 600;">
+                  ✨ Approved & published live on the public DishaSetu opportunity feed!
+                </div>
+              ` : ''}
+            </div>
+          `;
+        }).join('');
+
+      } catch (err) {
+        console.error('Fetch My Submissions Error:', err);
+        container.innerHTML = `<div style="color:#f87171; text-align:center;">Failed to connect to backend server.</div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadMySubmissions);
+  </script>
+</body>
+</html>

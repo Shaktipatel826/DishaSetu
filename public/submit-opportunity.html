@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Submit an Opportunity | DishaSetu</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .form-group {
+      margin-bottom: 1.2rem;
+    }
+    .form-label {
+      display: block;
+      color: #e2e8f0;
+      font-size: 0.88rem;
+      margin-bottom: 0.4rem;
+      font-weight: 500;
+    }
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid var(--border-light);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 0.92rem;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      border-color: var(--primary-cyan);
+      box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
+    }
+    .file-dropzone {
+      border: 2px dashed rgba(6, 182, 212, 0.4);
+      background: rgba(6, 182, 212, 0.05);
+      border-radius: 12px;
+      padding: 1.8rem;
+      text-align: center;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .file-dropzone:hover {
+      background: rgba(6, 182, 212, 0.1);
+      border-color: var(--primary-cyan);
+    }
+    .req-star {
+      color: #f87171;
+    }
+  </style>
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+
+  <main class="main-content container py-4" style="padding-top: 2.5rem; padding-bottom: 5rem; max-width: 850px;">
+    <!-- Page Title -->
+    <div style="margin-bottom: 2rem; text-align: center;">
+      <span class="card-badge badge-open" style="margin-bottom: 0.5rem; display: inline-block;">Community Contribution</span>
+      <h1 style="color: #fff; font-size: 2.2rem; font-weight: 800; margin-bottom: 0.4rem;">Submit an Opportunity or Scheme</h1>
+      <p style="color: var(--text-muted); font-size: 0.98rem; max-width: 650px; margin: 0 auto;">
+        Discovered a new scholarship, hackathon, government scheme, or exam? Submit it here with proof or official document so our verification team can approve and share it with thousands of students!
+      </p>
+    </div>
+
+    <!-- Submission Form Container -->
+    <div class="glass-panel" style="padding: 2.2rem;">
+      <div id="alert-box" style="display: none; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem; font-size: 0.9rem;"></div>
+
+      <form id="submission-form" enctype="multipart/form-data">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.2rem;">
+          
+          <!-- Category Type -->
+          <div class="form-group">
+            <label class="form-label">Category Type <span class="req-star">*</span></label>
+            <select name="categoryType" class="form-select" required id="categoryTypeSelect">
+              <option value="Opportunity">Student Opportunity (Scholarship / Hackathon / Exam / Quiz / Internship)</option>
+              <option value="Government Scheme">Government Scheme (Central / State Welfare Scheme)</option>
+            </select>
+          </div>
+
+          <!-- Specific Type -->
+          <div class="form-group">
+            <label class="form-label">Sub-Category / Program Type <span class="req-star">*</span></label>
+            <select name="type" class="form-select" required id="typeSelect">
+              <option value="Scholarship">🎓 Scholarship</option>
+              <option value="Government Scheme">🏛️ Government Scheme</option>
+              <option value="Hackathon">💻 Hackathon</option>
+              <option value="Coding Competition">💻 Coding Competition</option>
+              <option value="Quiz Competition">🏆 Quiz Competition</option>
+              <option value="GK / GS Competition">📚 GK / GS Competition</option>
+              <option value="Essay Competition">✍️ Essay Competition</option>
+              <option value="Competitive Exam">📝 Competitive Exam</option>
+              <option value="Skill Development Program">⚙️ Skill Development Program</option>
+              <option value="Prize Opportunity">🎁 Prize-Based Opportunity</option>
+              <option value="Internship">💼 Internship / Student Role</option>
+              <option value="Other">✨ Other Student Program</option>
+            </select>
+          </div>
+
+        </div>
+
+        <!-- Opportunity Title -->
+        <div class="form-group">
+          <label class="form-label">Opportunity / Scheme Title <span class="req-star">*</span></label>
+          <input type="text" name="title" class="form-input" placeholder="e.g. National Merit Scholarship Scheme 2026 or Smart India Hackathon" required>
+        </div>
+
+        <!-- Organization / Authority -->
+        <div class="form-group">
+          <label class="form-label">Organization / Conducting Authority</label>
+          <input type="text" name="organization" class="form-input" placeholder="e.g. Ministry of Education, AICTE, ISRO, Tata Trusts, Google">
+        </div>
+
+        <!-- Verification Source Link (MANDATORY) -->
+        <div class="form-group">
+          <label class="form-label">Official Source URL / Portal Link <span class="req-star">*</span></label>
+          <input type="url" name="sourceUrl" class="form-input" placeholder="https://scholarships.gov.in or https://official-notice-url.org" required>
+          <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 0.3rem;">Must be a valid official website or news link where our team can verify the authenticity.</span>
+        </div>
+
+        <!-- Official Proof Document Upload (MANDATORY) -->
+        <div class="form-group">
+          <label class="form-label">Upload Official Proof Document / Circular Image <span class="req-star">*</span></label>
+          <div class="file-dropzone" onclick="document.getElementById('proofFileInput').click()">
+            <div style="font-size: 2.2rem; margin-bottom: 0.3rem;">📄</div>
+            <div style="color: var(--primary-cyan); font-weight: 600; font-size: 0.95rem;" id="fileLabel">Click to select PDF Document, Circular, or Image Proof</div>
+            <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem;">Supported formats: PDF, JPG, PNG, WEBP (Max 15MB)</div>
+          </div>
+          <input type="file" id="proofFileInput" name="proof" accept=".pdf,.jpg,.jpeg,.png,.webp" style="display: none;" required onchange="updateFileName(this)">
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label class="form-label">Description & Overview</label>
+          <textarea name="description" class="form-textarea" rows="3" placeholder="Brief details about what this opportunity is, target audience, and key highlights..."></textarea>
+        </div>
+
+        <!-- Eligibility Grid -->
+        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-light); padding: 1.2rem; border-radius: 10px; margin-bottom: 1.5rem;">
+          <h4 style="color: var(--primary-cyan); margin-bottom: 0.8rem; font-size: 0.95rem;">🎯 Eligibility Criteria</h4>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+            <div>
+              <label class="form-label">Min Age (Years)</label>
+              <input type="number" name="minAge" class="form-input" value="0" min="0" max="100">
+            </div>
+
+            <div>
+              <label class="form-label">Max Age (Years)</label>
+              <input type="number" name="maxAge" class="form-input" value="100" min="0" max="100">
+            </div>
+
+            <div>
+              <label class="form-label">Applicable State</label>
+              <select name="stateSelect" class="form-select" id="stateSelect">
+                <option value="All India">All India</option>
+                <option value="Uttar Pradesh">Uttar Pradesh</option>
+                <option value="Bihar">Bihar</option>
+                <option value="Madhya Pradesh">Madhya Pradesh</option>
+                <option value="Rajasthan">Rajasthan</option>
+                <option value="Maharashtra">Maharashtra</option>
+                <option value="Delhi">Delhi</option>
+                <option value="Other State">Other State</option>
+              </select>
+            </div>
+          </div>
+
+          <div style="margin-top: 1rem;">
+            <label class="form-label">Education Qualification</label>
+            <select name="educationSelect" class="form-select" id="educationSelect">
+              <option value="Graduate">Graduate / Pursuing Degree</option>
+              <option value="10th">10th Pass</option>
+              <option value="12th">12th Pass</option>
+              <option value="Post Graduate">Post Graduate / Master</option>
+              <option value="Diploma">Diploma / ITI</option>
+              <option value="PhD">PhD / Researcher</option>
+              <option value="Any">Any Qualification</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Last Date & Application Link -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.2rem;">
+          <div class="form-group">
+            <label class="form-label">Last Application Deadline <span class="req-star">*</span></label>
+            <input type="date" name="lastDate" class="form-input" required id="lastDateInput">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Direct Application Form Link</label>
+            <input type="url" name="applyUrl" class="form-input" placeholder="https://apply-link.com (Optional)">
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.9rem; font-size: 1.05rem; margin-top: 1rem;" id="submitBtn">
+          🚀 Submit Opportunity for Verification
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/reminders.js"></script>
+  
+  <script>
+    // Pre-set min date to today
+    document.getElementById('lastDateInput').min = new Date().toISOString().split('T')[0];
+
+    function updateFileName(input) {
+      const label = document.getElementById('fileLabel');
+      if (input.files && input.files[0]) {
+        label.innerHTML = `✅ Selected: <strong>${input.files[0].name}</strong> (${(input.files[0].size / 1024 / 1024).toFixed(2)} MB)`;
+      } else {
+        label.innerText = 'Click to select PDF Document, Circular, or Image Proof';
+      }
+    }
+
+    document.getElementById('submission-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const alertBox = document.getElementById('alert-box');
+      const submitBtn = document.getElementById('submitBtn');
+
+      // Check user login state
+      const storedUser = localStorage.getItem('dishasetu_user');
+      if (!storedUser) {
+        alertBox.style.display = 'block';
+        alertBox.style.background = 'rgba(239, 68, 68, 0.2)';
+        alertBox.style.border = '1px solid #ef4444';
+        alertBox.style.color = '#fca5a5';
+        alertBox.innerText = '⚠️ Please log in first to submit opportunities.';
+        setTimeout(() => window.location.href = 'login.html', 1500);
+        return;
+      }
+
+      const form = e.target;
+      const formData = new FormData(form);
+
+      // Append education & state array
+      const eduVal = document.getElementById('educationSelect').value;
+      const stateVal = document.getElementById('stateSelect').value;
+      formData.set('education', JSON.stringify([eduVal]));
+      formData.set('state', JSON.stringify([stateVal]));
+
+      submitBtn.disabled = true;
+      submitBtn.innerText = '⏳ Uploading proof and submitting...';
+
+      try {
+        const res = await fetch('/api/submissions', {
+          method: 'POST',
+          body: formData,
+          credentials: 'include'
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alertBox.style.display = 'block';
+          alertBox.style.background = 'rgba(34, 197, 94, 0.2)';
+          alertBox.style.border = '1px solid #22c55e';
+          alertBox.style.color = '#86efac';
+          alertBox.innerText = '🎉 ' + data.message;
+          form.reset();
+          document.getElementById('fileLabel').innerText = 'Click to select PDF Document, Circular, or Image Proof';
+          
+          setTimeout(() => {
+            window.location.href = 'my-submissions.html';
+          }, 2000);
+        } else {
+          alertBox.style.display = 'block';
+          alertBox.style.background = 'rgba(239, 68, 68, 0.2)';
+          alertBox.style.border = '1px solid #ef4444';
+          alertBox.style.color = '#fca5a5';
+          alertBox.innerText = '❌ ' + (data.message || 'Submission failed.');
+        }
+      } catch (err) {
+        console.error('Submission Error:', err);
+        alertBox.style.display = 'block';
+        alertBox.style.background = 'rgba(239, 68, 68, 0.2)';
+        alertBox.style.border = '1px solid #ef4444';
+        alertBox.style.color = '#fca5a5';
+        alertBox.innerText = '❌ Connection error during upload. Please try again.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtn.innerText = '🚀 Submit Opportunity for Verification';
+      }
+    });
+  </script>
+</body>
+</html>

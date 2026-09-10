@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Dashboard | DishaSetu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <div id="ticker-placeholder"></div>
+
+  <main class="main-content container py-4" style="padding-top: 2.5rem; padding-bottom: 5rem;">
+    <!-- Welcome Header -->
+    <div class="glass-panel" style="padding: 2rem; margin-bottom: 2.5rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+        <div>
+          <span class="card-badge badge-open" style="margin-bottom: 0.5rem;">Student Profile</span>
+          <h1 style="color: #fff; font-size: 2rem; margin-bottom: 0.4rem;">
+            Welcome back, <span id="dash-user-name" style="color: var(--primary-cyan);">Student</span>!
+          </h1>
+          <p style="color: var(--text-muted); font-size: 0.95rem; margin: 0;">
+            Here are personalized opportunity recommendations matched to your profile.
+          </p>
+        </div>
+
+        <button class="btn btn-outline" onclick="openEditProfileModal()">
+          ⚙️ Edit Student Profile
+        </button>
+      </div>
+
+      <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-top: 1.5rem; padding-top: 1.2rem; border-top: 1px solid var(--border-light); font-size: 0.9rem;">
+        <span>🎓 Qualification: <strong id="dash-edu" style="color:#fff;">Graduate</strong></span>
+        <span>📍 State: <strong id="dash-state" style="color:#fff;">Uttar Pradesh</strong></span>
+        <span>🎂 Age: <strong id="dash-age" style="color:#fff;">21 Years</strong></span>
+        <span>🏷️ Category: <strong id="dash-cat" style="color:#fff;">General</strong></span>
+      </div>
+    </div>
+
+    <!-- Recommended For You Section -->
+    <div style="margin-bottom: 3rem;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+        <div>
+          <h2 style="color: #fff; font-size: 1.6rem; margin-bottom: 0.2rem;">✨ Recommended For You</h2>
+          <p style="color: var(--text-muted); font-size: 0.92rem; margin: 0;">Based on your qualification, age, and state profile</p>
+        </div>
+      </div>
+
+      <div id="dash-recommend-grid" class="cards-grid">
+        <!-- Dynamically Populated -->
+      </div>
+    </div>
+  </main>
+
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+  <script src="js/eligibility.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    async function loadStudentDashboard() {
+      try {
+        const res = await fetch('/api/auth/me', { credentials: 'include' });
+        const data = await res.json();
+        if (!data.success || !data.user) {
+          window.location.href = 'login.html';
+          return;
+        }
+
+        const user = data.user;
+        localStorage.setItem('dishasetu_user', JSON.stringify(user));
+
+        document.getElementById('dash-user-name').innerText = user.name;
+        document.getElementById('dash-edu').innerText = user.education || 'Graduate';
+        document.getElementById('dash-state').innerText = user.state || 'All India';
+        document.getElementById('dash-age').innerText = (user.age || '21') + ' Years';
+        document.getElementById('dash-cat').innerText = user.category || 'General';
+
+        // Fetch Recommendations based on user profile
+        fetchRecommendations(user);
+      } catch (err) {
+        console.error('Dashboard Error:', err);
+      }
+    }
+
+    async function fetchRecommendations(user) {
+      const grid = document.getElementById('dash-recommend-grid');
+      try {
+        const res = await fetch('/api/opportunities/check-eligibility', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            age: user.age || 21,
+            education: user.education || 'Graduate',
+            state: user.state || 'Uttar Pradesh',
+            category: user.category || 'General'
+          })
+        });
+
+        const data = await res.json();
+        if (!data.success || !data.results) return;
+
+        const lang = getCurrentLanguage();
+        const topMatches = data.results.slice(0, 6);
+
+        grid.innerHTML = topMatches.map(item => {
+          const op = item.opportunity;
+          const title = getLocalized(op.title, lang);
+          const desc = getLocalized(op.description, lang);
+          const isEligible = item.status === 'ELIGIBLE';
+
+          return `
+            <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                  <span class="card-badge ${isEligible ? 'badge-open' : 'badge-closing'}">
+                    ${isEligible ? '✓ Eligible' : '⚠ Likely Eligible'}
+                  </span>
+                  <span style="font-weight: 800; color: var(--primary-cyan); font-size: 0.82rem;">
+                    ${item.matchCount}/4 Matched
+                  </span>
+                </div>
+
+                <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem;">${title}</h3>
+                <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1rem;">${desc.substring(0, 100)}...</p>
+                
+                ${op.prizeAmount ? `<div style="font-size: 0.88rem; font-weight: 800; color: var(--primary-cyan); margin-bottom: 0.8rem;">💰 ${op.prizeAmount}</div>` : ''}
+              </div>
+
+              <div style="display: flex; gap: 0.6rem; margin-top: 1rem;">
+                <a href="opportunity-details.html?id=${op._id}" class="btn btn-outline" style="flex: 1; padding: 0.5rem; font-size: 0.82rem; justify-content: center;">
+                  View Details
+                </a>
+                <button class="btn btn-primary" style="padding: 0.5rem 0.8rem; font-size: 0.82rem;" onclick="openSaveReminderModal('Opportunity', '${op._id}')">
+                  🔖 Save
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+      } catch (err) {
+        console.error('Fetch Recommendations Error:', err);
+      }
+    }
+
+    function openEditProfileModal() {
+      const age = prompt('Enter your age:', '21');
+      const education = prompt('Enter your highest qualification (10th, 12th, Graduate, Post Graduate, Diploma, ITI):', 'Graduate');
+      const state = prompt('Enter your state (e.g. Uttar Pradesh, Madhya Pradesh, Maharashtra, All India):', 'Uttar Pradesh');
+      const category = prompt('Enter category (General, OBC, SC, ST, EWS, Women):', 'General');
+
+      if (age && education) {
+        fetch('/api/auth/profile', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ age, education, state, category }),
+          credentials: 'include'
+        }).then(res => res.json()).then(data => {
+          if (data.success) {
+            alert('Profile updated successfully!');
+            loadStudentDashboard();
+          }
+        });
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadStudentDashboard);
+  </script>
+</body>
+</html>

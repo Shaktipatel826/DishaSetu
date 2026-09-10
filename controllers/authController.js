@@ -1,5 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const User = require('../models/User');
 const Farmer = require('../models/Farmer');
 const Customer = require('../models/Customer');
 const Admin = require('../models/Admin');
@@ -22,151 +23,101 @@ const setAuthCookie = (res, token) => {
 };
 
 /**
- * @desc   Register a new Farmer
- * @route  POST /api/auth/register-farmer
+ * @desc   Register a new Student / User
+ * @route  POST /api/auth/register
  * @access Public
+ */
+exports.registerUser = async (req, res) => {
+  try {
+    const { name, email, password, phone, age, education, state, category } = req.body;
+
+    if (!name || !email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: 'Name, email, and password are required.'
+      });
+    }
+
+    const emailNormalized = email.toLowerCase().trim();
+
+    // Check existing account
+    const existingUser = await User.findOne({ email: emailNormalized });
+    const existingCustomer = await Customer.findOne({ email: emailNormalized });
+    const existingFarmer = await Farmer.findOne({ email: emailNormalized });
+    const existingAdmin = await Admin.findOne({ email: emailNormalized });
+
+    if (existingUser || existingCustomer || existingFarmer || existingAdmin) {
+      return res.status(400).json({
+        success: false,
+        message: 'An account with this email already exists.'
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = await User.create({
+      name: name.trim(),
+      email: emailNormalized,
+      password: hashedPassword,
+      phone: phone ? phone.trim() : '',
+      role: 'student',
+      age: age ? Number(age) : null,
+      education: education || 'Graduate',
+      state: state || 'All India',
+      category: category || 'General'
+    });
+
+    const token = signToken({
+      id: user._id,
+      role: user.role,
+      email: user.email,
+      name: user.name
+    });
+
+    setAuthCookie(res, token);
+
+    return res.status(201).json({
+      success: true,
+      message: 'Registration successful! Welcome to DishaSetu.',
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        age: user.age,
+        education: user.education,
+        state: user.state,
+        category: user.category,
+        languagePreference: user.languagePreference
+      }
+    });
+  } catch (error) {
+    console.error('Register User Error:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Server error during registration.'
+    });
+  }
+};
+
+/**
+ * Legacy Support: Register Farmer
  */
 exports.registerFarmer = async (req, res) => {
-  try {
-    const { name, email, password, phone, location } = req.body;
-
-    if (!name || !email || !password || !phone || !location) {
-      return res.status(400).json({
-        success: false,
-        message: 'All fields (name, email, password, phone, location) are required.'
-      });
-    }
-
-    const emailNormalized = email.toLowerCase().trim();
-
-    // Check if email already registered across roles
-    const existingFarmer = await Farmer.findOne({ email: emailNormalized });
-    const existingCustomer = await Customer.findOne({ email: emailNormalized });
-    const existingAdmin = await Admin.findOne({ email: emailNormalized });
-
-    if (existingFarmer || existingCustomer || existingAdmin) {
-      return res.status(400).json({
-        success: false,
-        message: 'An account with this email already exists.'
-      });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const farmer = await Farmer.create({
-      name: name.trim(),
-      email: emailNormalized,
-      password: hashedPassword,
-      phone: phone.trim(),
-      location: location.trim(),
-      role: 'farmer'
-    });
-
-    const token = signToken({
-      id: farmer._id,
-      role: 'farmer',
-      email: farmer.email,
-      name: farmer.name
-    });
-
-    setAuthCookie(res, token);
-
-    return res.status(201).json({
-      success: true,
-      message: 'Farmer registration successful!',
-      user: {
-        id: farmer._id,
-        name: farmer.name,
-        email: farmer.email,
-        phone: farmer.phone,
-        location: farmer.location,
-        role: 'farmer'
-      }
-    });
-  } catch (error) {
-    console.error('Register Farmer Error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Server error during farmer registration.'
-    });
-  }
+  return exports.registerUser(req, res);
 };
 
 /**
- * @desc   Register a new Customer
- * @route  POST /api/auth/register-customer
- * @access Public
+ * Legacy Support: Register Customer
  */
 exports.registerCustomer = async (req, res) => {
-  try {
-    const { name, email, password, phone, address } = req.body;
-
-    if (!name || !email || !password || !phone || !address) {
-      return res.status(400).json({
-        success: false,
-        message: 'All fields (name, email, password, phone, address) are required.'
-      });
-    }
-
-    const emailNormalized = email.toLowerCase().trim();
-
-    // Check if email already registered
-    const existingCustomer = await Customer.findOne({ email: emailNormalized });
-    const existingFarmer = await Farmer.findOne({ email: emailNormalized });
-    const existingAdmin = await Admin.findOne({ email: emailNormalized });
-
-    if (existingCustomer || existingFarmer || existingAdmin) {
-      return res.status(400).json({
-        success: false,
-        message: 'An account with this email already exists.'
-      });
-    }
-
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
-
-    const customer = await Customer.create({
-      name: name.trim(),
-      email: emailNormalized,
-      password: hashedPassword,
-      phone: phone.trim(),
-      address: address.trim(),
-      role: 'customer'
-    });
-
-    const token = signToken({
-      id: customer._id,
-      role: 'customer',
-      email: customer.email,
-      name: customer.name
-    });
-
-    setAuthCookie(res, token);
-
-    return res.status(201).json({
-      success: true,
-      message: 'Customer registration successful!',
-      user: {
-        id: customer._id,
-        name: customer.name,
-        email: customer.email,
-        phone: customer.phone,
-        address: customer.address,
-        role: 'customer'
-      }
-    });
-  } catch (error) {
-    console.error('Register Customer Error:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Server error during customer registration.'
-    });
-  }
+  return exports.registerUser(req, res);
 };
 
 /**
- * @desc   Login user (Farmer, Customer, or Admin)
+ * @desc   Login user
  * @route  POST /api/auth/login
  * @access Public
  */
@@ -174,33 +125,35 @@ exports.login = async (req, res) => {
   try {
     const { email, password, role } = req.body;
 
-    if (!email || !password || !role) {
+    if (!email || !password) {
       return res.status(400).json({
         success: false,
-        message: 'Email, password, and role selection are required.'
+        message: 'Email and password are required.'
       });
     }
 
     const emailNormalized = email.toLowerCase().trim();
     let user = null;
 
-    if (role === 'farmer') {
-      user = await Farmer.findOne({ email: emailNormalized });
-    } else if (role === 'customer') {
-      user = await Customer.findOne({ email: emailNormalized });
-    } else if (role === 'admin') {
-      user = await Admin.findOne({ email: emailNormalized });
-    } else {
-      return res.status(400).json({
-        success: false,
-        message: 'Invalid role specified. Must be farmer, customer, or admin.'
-      });
+    // Check User model first
+    user = await User.findOne({ email: emailNormalized });
+    
+    // Fallback to Customer / Farmer / Admin if legacy account
+    if (!user) {
+      if (role === 'farmer') user = await Farmer.findOne({ email: emailNormalized });
+      else if (role === 'customer') user = await Customer.findOne({ email: emailNormalized });
+      else if (role === 'admin') user = await Admin.findOne({ email: emailNormalized });
+      else {
+        user = await Admin.findOne({ email: emailNormalized }) ||
+               await Customer.findOne({ email: emailNormalized }) ||
+               await Farmer.findOne({ email: emailNormalized });
+      }
     }
 
     if (!user) {
       return res.status(401).json({
         success: false,
-        message: `No ${role} account found with this email address.`
+        message: 'No account found with this email address.'
       });
     }
 
@@ -212,30 +165,32 @@ exports.login = async (req, res) => {
       });
     }
 
+    const userRole = user.role || 'student';
+
     const token = signToken({
       id: user._id,
-      role: user.role,
+      role: userRole,
       email: user.email,
       name: user.name
     });
 
     setAuthCookie(res, token);
 
-    // Filter user details for response
-    const userData = {
-      id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      phone: user.phone || '',
-      location: user.location || '',
-      address: user.address || ''
-    };
-
     return res.status(200).json({
       success: true,
       message: `Welcome back, ${user.name}!`,
-      user: userData
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: userRole,
+        phone: user.phone || '',
+        age: user.age || null,
+        education: user.education || 'Graduate',
+        state: user.state || 'All India',
+        category: user.category || 'General',
+        languagePreference: user.languagePreference || 'en'
+      }
     });
   } catch (error) {
     console.error('Login Error:', error);
@@ -247,9 +202,7 @@ exports.login = async (req, res) => {
 };
 
 /**
- * @desc   Logout current user
- * @route  POST /api/auth/logout
- * @access Public
+ * Logout User
  */
 exports.logout = async (req, res) => {
   res.clearCookie('token', {
@@ -263,21 +216,17 @@ exports.logout = async (req, res) => {
 };
 
 /**
- * @desc   Get current authenticated user info
- * @route  GET /api/auth/me
- * @access Private (Requires valid token)
+ * Get Current User
  */
 exports.getMe = async (req, res) => {
   try {
     const { id, role } = req.user;
-    let user = null;
+    let user = await User.findById(id).select('-password');
 
-    if (role === 'farmer') {
-      user = await Farmer.findById(id).select('-password');
-    } else if (role === 'customer') {
-      user = await Customer.findById(id).select('-password');
-    } else if (role === 'admin') {
-      user = await Admin.findById(id).select('-password');
+    if (!user) {
+      if (role === 'admin') user = await Admin.findById(id).select('-password');
+      else if (role === 'customer') user = await Customer.findById(id).select('-password');
+      else if (role === 'farmer') user = await Farmer.findById(id).select('-password');
     }
 
     if (!user) {
@@ -301,39 +250,17 @@ exports.getMe = async (req, res) => {
 };
 
 /**
- * @desc   Update user profile
- * @route  PUT /api/auth/profile
- * @access Private
+ * Update Profile
  */
 exports.updateProfile = async (req, res) => {
   try {
-    const { id, role } = req.user;
-    const { name, phone, location, address } = req.body;
+    const { id } = req.user;
+    const { name, phone, age, education, state, category, languagePreference } = req.body;
 
-    let user = null;
+    let user = await User.findById(id);
 
-    if (role === 'farmer') {
-      user = await Farmer.findById(id);
-      if (user) {
-        if (name) user.name = name.trim();
-        if (phone) user.phone = phone.trim();
-        if (location) user.location = location.trim();
-        await user.save();
-      }
-    } else if (role === 'customer') {
-      user = await Customer.findById(id);
-      if (user) {
-        if (name) user.name = name.trim();
-        if (phone) user.phone = phone.trim();
-        if (address) user.address = address.trim();
-        await user.save();
-      }
-    } else if (role === 'admin') {
-      user = await Admin.findById(id);
-      if (user && name) {
-        user.name = name.trim();
-        await user.save();
-      }
+    if (!user) {
+      user = await Admin.findById(id) || await Customer.findById(id) || await Farmer.findById(id);
     }
 
     if (!user) {
@@ -343,18 +270,20 @@ exports.updateProfile = async (req, res) => {
       });
     }
 
+    if (name) user.name = name.trim();
+    if (phone) user.phone = phone.trim();
+    if (age !== undefined && age !== null) user.age = Number(age);
+    if (education) user.education = education;
+    if (state) user.state = state.trim();
+    if (category) user.category = category;
+    if (languagePreference) user.languagePreference = languagePreference;
+
+    await user.save();
+
     return res.status(200).json({
       success: true,
       message: 'Profile updated successfully!',
-      user: {
-        id: user._id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
-        phone: user.phone || '',
-        location: user.location || '',
-        address: user.address || ''
-      }
+      user
     });
   } catch (error) {
     console.error('Update Profile Error:', error);

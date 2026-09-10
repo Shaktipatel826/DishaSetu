@@ -1,60 +1,20 @@
 const express = require('express');
 const router = express.Router();
 const {
-  getStats,
-  getFarmers,
-  deleteFarmer,
-  getCustomers,
-  deleteCustomer,
-  getProducts,
-  deleteProduct,
-  getOrders,
-  deleteOrder,
-  getAllFeedback,
-  deleteFeedback,
-  getPaymentSettings,
-  updatePaymentSettings,
-  getPublicPaymentConfig,
-  getFarmerPayouts,
-  settleFarmerPayout
+  getDashboardStats,
+  getRegisteredStudents,
+  deleteStudent
 } = require('../controllers/adminController');
-const { verifyToken, requireRole } = require('../middleware/auth');
+const { verifyToken, adminOnly } = require('../middleware/auth');
 
-// Public route for checkout page to load receiving UPI ID & Payee details
-router.get('/public/payment-config', getPublicPaymentConfig);
+// Protect all admin routes with authentication & admin role check
+router.use(verifyToken, adminOnly);
 
-// Protect all following admin routes
-router.use(verifyToken, requireRole('admin'));
+// Dashboard stats endpoint
+router.get('/dashboard-stats', getDashboardStats);
 
-// Platform statistics
-router.get('/stats', getStats);
-
-// Farmer Payouts & Settlement (Admin transfers funds to Farmers)
-router.get('/payouts', getFarmerPayouts);
-router.post('/payouts/:farmerId/settle', settleFarmerPayout);
-
-// Payment Receiving & Bank Settings (Admin)
-router.get('/payment-settings', getPaymentSettings);
-router.put('/payment-settings', updatePaymentSettings);
-
-// Farmers management
-router.get('/farmers', getFarmers);
-router.delete('/farmers/:id', deleteFarmer);
-
-// Customers management
-router.get('/customers', getCustomers);
-router.delete('/customers/:id', deleteCustomer);
-
-// Products management
-router.get('/products', getProducts);
-router.delete('/products/:id', deleteProduct);
-
-// Orders management
-router.get('/orders', getOrders);
-router.delete('/orders/:id', deleteOrder);
-
-// Feedback moderation
-router.get('/feedback', getAllFeedback);
-router.delete('/feedback/:id', deleteFeedback);
+// Student directory endpoints
+router.get('/students', getRegisteredStudents);
+router.delete('/students/:id', deleteStudent);
 
 module.exports = router;

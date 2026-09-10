@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Scheme Details | DishaSetu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <div id="ticker-placeholder"></div>
+
+  <main class="main-content container py-4" style="padding-top: 2rem; padding-bottom: 5rem;">
+    
+    <!-- Mandatory Government Disclaimer Banner -->
+    <div class="govt-disclaimer-banner">
+      <div class="icon">🏛️</div>
+      <p data-i18n="govtDisclaimer">
+        This platform is an information and discovery portal. It is not an official government website. Always verify eligibility, dates and application details on the official website before applying.
+      </p>
+    </div>
+
+    <div id="scheme-details-loading" style="text-align: center; padding: 4rem 0;">
+      <div style="font-size: 3rem; margin-bottom: 1rem;">🏛️</div>
+      <p>Loading scheme details...</p>
+    </div>
+
+    <div id="scheme-details-container" style="display: none; grid-template-columns: 1fr 340px; gap: 2.5rem; align-items: start;">
+      <!-- Main Content Left -->
+      <div>
+        <div style="display: flex; gap: 0.6rem; align-items: center; margin-bottom: 1rem;">
+          <span id="scheme-gov-badge" class="card-badge badge-scheme">Central Scheme</span>
+          <span id="scheme-state-badge" style="font-size: 0.82rem; color: var(--scheme-amber); font-weight: 700;">📍 All India</span>
+        </div>
+
+        <h1 id="scheme-title" style="color: var(--navy-dark); font-size: 2.2rem; margin-bottom: 1rem;">Government Scheme Title</h1>
+
+        <div class="glass-panel" style="padding: 1.8rem; margin-bottom: 2rem;">
+          <h3 style="color: var(--navy-dark); font-size: 1.2rem; margin-bottom: 0.8rem;">📋 Overview</h3>
+          <p id="scheme-description" style="color: var(--text-muted); font-size: 1rem; line-height: 1.7; margin: 0;"></p>
+        </div>
+
+        <!-- Eligibility Section -->
+        <div class="glass-panel" style="padding: 1.8rem; margin-bottom: 2rem;">
+          <h3 style="color: #fff; font-size: 1.2rem; margin-bottom: 1rem;">🎯 Target Audience & Eligibility</h3>
+          <div id="scheme-eligibility-box" style="color: var(--text-muted); font-size: 0.95rem;"></div>
+        </div>
+
+        <!-- Benefits -->
+        <div class="glass-panel" style="padding: 1.8rem; margin-bottom: 2rem;">
+          <h3 style="color: #fff; font-size: 1.2rem; margin-bottom: 0.8rem;">💡 Key Scheme Benefits</h3>
+          <p id="scheme-benefits" style="color: var(--scheme-amber); font-weight: 700; font-size: 1.05rem; margin: 0;"></p>
+        </div>
+
+        <!-- Required Documents -->
+        <div class="glass-panel" style="padding: 1.8rem; margin-bottom: 2rem;">
+          <h3 style="color: #fff; font-size: 1.2rem; margin-bottom: 0.8rem;">📁 Required Documents</h3>
+          <p id="scheme-documents" style="color: var(--text-muted); font-size: 0.95rem; margin: 0;"></p>
+        </div>
+
+        <!-- Application Process -->
+        <div class="glass-panel" style="padding: 1.8rem; margin-bottom: 2rem;">
+          <h3 style="color: #fff; font-size: 1.2rem; margin-bottom: 1rem;">🚀 Official Application Process</h3>
+          <div id="scheme-process-box" style="color: var(--text-muted); font-size: 0.95rem; white-space: pre-line;"></div>
+        </div>
+      </div>
+
+      <!-- Sticky Right Summary Sidebar -->
+      <div class="glass-panel" style="padding: 1.8rem; position: sticky; top: 90px; border-color: var(--border-scheme-glow);">
+        <h3 style="color: #fff; font-size: 1.2rem; margin-bottom: 1.2rem;">Scheme Summary</h3>
+
+        <div style="margin-bottom: 1rem; border-bottom: 1px solid var(--border-light); padding-bottom: 0.8rem;">
+          <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Sector</span>
+          <div id="scheme-sector-text" style="font-size: 1.05rem; font-weight: 700; color: #fff; margin-top: 0.2rem;">-</div>
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Official Portal Link</span>
+          <div style="font-size: 0.85rem; color: var(--scheme-amber); font-weight: 600; margin-top: 0.2rem; word-break: break-all;" id="scheme-url-text">-</div>
+        </div>
+
+        <a id="scheme-apply-btn" href="#" target="_blank" class="btn btn-scheme" style="width: 100%; justify-content: center; margin-bottom: 0.8rem;">
+          🏛️ Visit Official Govt Portal →
+        </a>
+
+        <button id="scheme-save-btn" class="btn btn-outline" style="width: 100%; justify-content: center;">
+          🔖 Save Scheme & Remind Me
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    async function loadSchemeDetails() {
+      const urlParams = new URLSearchParams(window.location.search);
+      const id = urlParams.get('id');
+      if (!id) {
+        window.location.href = 'schemes.html';
+        return;
+      }
+
+      try {
+        const res = await fetch(`/api/schemes/${id}`);
+        const data = await res.json();
+        if (!data.success || !data.scheme) {
+          alert('Government scheme not found.');
+          window.location.href = 'schemes.html';
+          return;
+        }
+
+        const sch = data.scheme;
+        const lang = getCurrentLanguage();
+
+        document.getElementById('scheme-details-loading').style.display = 'none';
+        const container = document.getElementById('scheme-details-container');
+        container.style.display = 'grid';
+
+        document.getElementById('scheme-gov-badge').innerText = `${sch.governmentType} Scheme`;
+        document.getElementById('scheme-state-badge').innerText = `📍 ${sch.stateName}`;
+        document.getElementById('scheme-title').innerText = getLocalized(sch.title, lang);
+        document.getElementById('scheme-description').innerText = getLocalized(sch.description, lang);
+        document.getElementById('scheme-benefits').innerText = getLocalized(sch.benefits, lang) || 'Government subsidies and assistance.';
+        document.getElementById('scheme-documents').innerText = getLocalized(sch.documents, lang) || 'Aadhar card, Domicile certificate, Income certificate.';
+        document.getElementById('scheme-process-box').innerText = getLocalized(sch.applicationProcess, lang) || 'Apply online on the official portal.';
+        document.getElementById('scheme-sector-text').innerText = sch.sector;
+
+        document.getElementById('scheme-url-text').innerText = sch.applyUrl;
+        document.getElementById('scheme-apply-btn').href = sch.applyUrl;
+
+        document.getElementById('scheme-save-btn').onclick = () => openSaveReminderModal('Scheme', sch._id);
+      } catch (err) {
+        console.error('Load Scheme Details Error:', err);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadSchemeDetails);
+  </script>
+</body>
+</html>

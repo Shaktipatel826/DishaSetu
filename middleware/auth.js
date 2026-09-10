@@ -50,7 +50,6 @@ const verifyToken = (req, res, next) => {
 
 /**
  * Middleware for Role-Based Access Control (RBAC)
- * @param  {...string} allowedRoles - e.g. 'farmer', 'customer', 'admin'
  */
 const requireRole = (...allowedRoles) => {
   return (req, res, next) => {
@@ -72,7 +71,11 @@ const requireRole = (...allowedRoles) => {
   };
 };
 
+const adminOnly = requireRole('admin');
+
 module.exports = {
   verifyToken,
-  requireRole
+  protect: verifyToken,
+  requireRole,
+  adminOnly
 };

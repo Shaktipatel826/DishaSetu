@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Student Opportunities Discovery | DishaSetu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <div id="ticker-placeholder"></div>
+
+  <main class="main-content container py-4" style="padding-top: 2rem; padding-bottom: 4rem;">
+    <!-- Page Header -->
+    <div style="margin-bottom: 2rem;">
+      <h1 style="color: var(--navy-dark); font-size: 2.4rem; margin-bottom: 0.5rem;" data-i18n="navOpportunities">
+        Student Opportunities
+      </h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem;">
+        Discover scholarships, competitive exams, coding hackathons, essay competitions & prize opportunities.
+      </p>
+    </div>
+
+    <!-- Search & Filter Controls Grid -->
+    <div style="display: grid; grid-template-columns: 280px 1fr; gap: 2rem; align-items: start;">
+      
+      <!-- Filters Sidebar -->
+      <div class="glass-panel" style="padding: 1.5rem; position: sticky; top: 90px;">
+        <h3 style="color: var(--navy-dark); font-size: 1.1rem; margin-bottom: 1.2rem;">🔍 Filter Opportunities</h3>
+        
+        <div class="form-group" style="margin-bottom: 1.2rem;">
+          <label>Search Keyword</label>
+          <input type="text" id="filter-search" class="form-control" placeholder="Search title or keyword..." oninput="loadOpportunities()">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.2rem;">
+          <label>Opportunity Type</label>
+          <select id="filter-type" class="form-control" onchange="loadOpportunities()">
+            <option value="All">All Opportunity Types</option>
+            <option value="Scholarship">Scholarship</option>
+            <option value="Hackathon">Coding & Hackathon</option>
+            <option value="Quiz Competition">Quiz Competition</option>
+            <option value="Essay Competition">Essay Competition</option>
+            <option value="Competitive Exam">Competitive Exam</option>
+            <option value="Skill Development Program">Skill Program</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.2rem;">
+          <label>Education</label>
+          <select id="filter-education" class="form-control" onchange="loadOpportunities()">
+            <option value="Any">Any Qualification</option>
+            <option value="10th">10th Pass</option>
+            <option value="12th">12th Pass</option>
+            <option value="Graduate">Graduate</option>
+            <option value="Post Graduate">Post Graduate</option>
+            <option value="Diploma">Diploma</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.2rem;">
+          <label>State</label>
+          <select id="filter-state" class="form-control" onchange="loadOpportunities()">
+            <option value="All India">All India</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Delhi">Delhi</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label>Status</label>
+          <select id="filter-status" class="form-control" onchange="loadOpportunities()">
+            <option value="All">All Statuses</option>
+            <option value="OPEN">Open</option>
+            <option value="CLOSING SOON">Closing Soon</option>
+            <option value="UPCOMING">Upcoming</option>
+          </select>
+        </div>
+
+        <button class="btn btn-outline" style="width: 100%; justify-content: center;" onclick="resetFilters()">Reset Filters</button>
+      </div>
+
+      <!-- Opportunities Cards Grid -->
+      <div>
+        <div id="opportunities-loading" style="text-align: center; padding: 3rem 0; color: var(--text-muted);">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">✨</div>
+          <p data-i18n="loading">Finding the right opportunities for you...</p>
+        </div>
+
+        <div id="opportunities-grid" class="cards-grid" style="display: none;">
+          <!-- Dynamically Populated -->
+        </div>
+
+        <div id="opportunities-empty" style="display: none; text-align: center; padding: 4rem 0;">
+          <div style="font-size: 3.5rem; margin-bottom: 1rem;">🎓</div>
+          <h3 style="color: #fff; margin-bottom: 0.5rem;">No matching opportunities found</h3>
+          <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Try adjusting your filters or search keywords.</p>
+          <button class="btn btn-primary" onclick="resetFilters()">Explore All Opportunities</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Modular Scripts -->
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+  <script src="js/eligibility.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    async function loadOpportunities() {
+      const loading = document.getElementById('opportunities-loading');
+      const grid = document.getElementById('opportunities-grid');
+      const empty = document.getElementById('opportunities-empty');
+
+      loading.style.display = 'block';
+      grid.style.display = 'none';
+      empty.style.display = 'none';
+
+      const search = document.getElementById('filter-search')?.value || '';
+      const type = document.getElementById('filter-type')?.value || 'All';
+      const education = document.getElementById('filter-education')?.value || 'Any';
+      const state = document.getElementById('filter-state')?.value || 'All India';
+      const status = document.getElementById('filter-status')?.value || 'All';
+
+      // Parse query string parameters on initial load
+      const urlParams = new URLSearchParams(window.location.search);
+      const initialType = urlParams.get('type');
+      if (initialType && !search && type === 'All') {
+        document.getElementById('filter-type').value = initialType;
+      }
+
+      try {
+        const query = new URLSearchParams({ search, type: document.getElementById('filter-type').value, education, state, status });
+        const res = await fetch(`/api/opportunities?${query.toString()}`);
+        const data = await res.json();
+
+        loading.style.display = 'none';
+
+        if (!data.success || !data.opportunities || data.opportunities.length === 0) {
+          empty.style.display = 'block';
+          return;
+        }
+
+        const lang = getCurrentLanguage();
+        grid.innerHTML = data.opportunities.map(op => {
+          const title = getLocalized(op.title, lang);
+          const desc = getLocalized(op.description, lang);
+          const benefits = getLocalized(op.benefits, lang);
+          const lastDateStr = op.lastDate ? new Date(op.lastDate).toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+
+          let badgeClass = 'badge-open';
+          if (op.status === 'CLOSING SOON') badgeClass = 'badge-closing';
+          if (op.status === 'UPCOMING') badgeClass = 'badge-upcoming';
+
+          return `
+            <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                  <span class="card-badge ${badgeClass}">${op.type}</span>
+                  <span class="card-badge ${badgeClass}">${op.status}</span>
+                </div>
+                <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem;">${title}</h3>
+                <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1rem;">${desc.substring(0, 110)}...</p>
+                
+                ${op.prizeAmount ? `<div style="font-size: 0.9rem; font-weight: 800; color: var(--primary-cyan); margin-bottom: 0.5rem;">💰 ${op.prizeAmount}</div>` : ''}
+                
+                <div style="font-size: 0.8rem; color: var(--text-subtle); margin-bottom: 1rem;">
+                  📅 Last Date: <strong>${lastDateStr}</strong>
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 0.6rem; margin-top: 1rem;">
+                <a href="opportunity-details.html?id=${op._id}" class="btn btn-outline" style="flex: 1; padding: 0.5rem; font-size: 0.82rem; justify-content: center;">
+                  ${t('btnViewDetails', lang)}
+                </a>
+                <button id="save-btn-${op._id}" class="btn btn-primary" style="padding: 0.5rem 0.8rem; font-size: 0.82rem;" onclick="openSaveReminderModal('Opportunity', '${op._id}')">
+                  🔖 ${t('btnSave', lang)}
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        grid.style.display = 'grid';
+      } catch (err) {
+        console.error('Load Opportunities Error:', err);
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+      }
+    }
+
+    function resetFilters() {
+      document.getElementById('filter-search').value = '';
+      document.getElementById('filter-type').value = 'All';
+      document.getElementById('filter-education').value = 'Any';
+      document.getElementById('filter-state').value = 'All India';
+      document.getElementById('filter-status').value = 'All';
+      loadOpportunities();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadOpportunities);
+  </script>
+</body>
+</html>

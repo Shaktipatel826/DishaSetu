@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Government Schemes Portal | DishaSetu</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="navbar-placeholder"></div>
+  <div id="ticker-placeholder"></div>
+
+  <main class="main-content container py-4" style="padding-top: 2rem; padding-bottom: 4rem;">
+    
+    <!-- Mandatory Government Disclaimer Banner -->
+    <div class="govt-disclaimer-banner">
+      <div class="icon">🏛️</div>
+      <p data-i18n="govtDisclaimer">
+        This platform is an information and discovery portal. It is not an official government website. Always verify eligibility, dates and application details on the official website before applying.
+      </p>
+    </div>
+
+    <!-- Page Header -->
+    <div style="margin-bottom: 2rem;">
+      <h1 style="color: var(--navy-dark); font-size: 2.4rem; margin-bottom: 0.5rem;" data-i18n="exploreSchemesTitle">
+        Schemes for a Stronger Tomorrow
+      </h1>
+      <p style="color: var(--text-muted); font-size: 1.05rem;" data-i18n="exploreSchemesSubtext">
+        Discover Central and State Government schemes designed to support education, employment, health, housing, skills and more.
+      </p>
+    </div>
+
+    <!-- Tabs: All / Central / State -->
+    <div style="display: flex; gap: 1rem; margin-bottom: 2rem; border-bottom: 1px solid var(--border-light); padding-bottom: 1rem;">
+      <button class="btn btn-outline scheme-tab active" data-gov="All" onclick="selectGovTab(this, 'All')">All Schemes</button>
+      <button class="btn btn-outline scheme-tab" data-gov="Central" onclick="selectGovTab(this, 'Central')">Central Schemes</button>
+      <button class="btn btn-outline scheme-tab" data-gov="State" onclick="selectGovTab(this, 'State')">State Schemes</button>
+    </div>
+
+    <!-- Filter Grid -->
+    <div style="display: grid; grid-template-columns: 280px 1fr; gap: 2rem; align-items: start;">
+      
+      <div class="glass-panel" style="padding: 1.5rem; position: sticky; top: 90px;">
+        <h3 style="color: #fff; font-size: 1.1rem; margin-bottom: 1.2rem;">🏛️ Sector Filters</h3>
+        
+        <div class="form-group" style="margin-bottom: 1.2rem;">
+          <label>Search Scheme</label>
+          <input type="text" id="scheme-search" class="form-control" placeholder="Scheme name..." oninput="loadSchemes()">
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.2rem;">
+          <label>Sector / Category</label>
+          <select id="scheme-sector" class="form-control" onchange="loadSchemes()">
+            <option value="All">All Sectors</option>
+            <option value="Education">Education</option>
+            <option value="Employment">Employment</option>
+            <option value="Women">Women</option>
+            <option value="Farmers">Farmers</option>
+            <option value="Health">Health</option>
+            <option value="Housing">Housing</option>
+            <option value="Skill Development">Skill Development</option>
+            <option value="Financial Assistance">Financial Assistance</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 1.5rem;">
+          <label>State Filter</label>
+          <select id="scheme-state" class="form-control" onchange="loadSchemes()">
+            <option value="All India">All India / All States</option>
+            <option value="Uttar Pradesh">Uttar Pradesh</option>
+            <option value="Madhya Pradesh">Madhya Pradesh</option>
+            <option value="Maharashtra">Maharashtra</option>
+            <option value="Delhi">Delhi</option>
+          </select>
+        </div>
+
+        <button class="btn btn-outline" style="width: 100%; justify-content: center;" onclick="resetSchemeFilters()">Reset Filters</button>
+      </div>
+
+      <!-- Schemes Grid -->
+      <div>
+        <div id="schemes-loading" style="text-align: center; padding: 3rem 0; color: var(--text-muted);">
+          <div style="font-size: 2.5rem; margin-bottom: 1rem;">🏛️</div>
+          <p>Fetching government schemes...</p>
+        </div>
+
+        <div id="schemes-grid" class="cards-grid" style="display: none;">
+          <!-- Dynamically Populated -->
+        </div>
+
+        <div id="schemes-empty" style="display: none; text-align: center; padding: 4rem 0;">
+          <div style="font-size: 3.5rem; margin-bottom: 1rem;">🏛️</div>
+          <h3 style="color: #fff; margin-bottom: 0.5rem;">No matching government schemes found</h3>
+          <p style="color: var(--text-muted); margin-bottom: 1.5rem;">Try adjusting your sector or state filters.</p>
+          <button class="btn btn-scheme" onclick="resetSchemeFilters()">View All Schemes</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <script src="js/translations.js"></script>
+  <script src="js/theme-nav.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/reminders.js"></script>
+  <script src="js/main.js"></script>
+
+  <script>
+    let currentGovType = 'All';
+
+    function selectGovTab(btn, govType) {
+      document.querySelectorAll('.scheme-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      currentGovType = govType;
+      loadSchemes();
+    }
+
+    async function loadSchemes() {
+      const loading = document.getElementById('schemes-loading');
+      const grid = document.getElementById('schemes-grid');
+      const empty = document.getElementById('schemes-empty');
+
+      loading.style.display = 'block';
+      grid.style.display = 'none';
+      empty.style.display = 'none';
+
+      const search = document.getElementById('scheme-search')?.value || '';
+      const sector = document.getElementById('scheme-sector')?.value || 'All';
+      const stateName = document.getElementById('scheme-state')?.value || 'All India';
+
+      try {
+        const query = new URLSearchParams({ search, sector, governmentType: currentGovType, stateName });
+        const res = await fetch(`/api/schemes?${query.toString()}`);
+        const data = await res.json();
+
+        loading.style.display = 'none';
+
+        if (!data.success || !data.schemes || data.schemes.length === 0) {
+          empty.style.display = 'block';
+          return;
+        }
+
+        const lang = getCurrentLanguage();
+        grid.innerHTML = data.schemes.map(sch => {
+          const title = getLocalized(sch.title, lang);
+          const desc = getLocalized(sch.description, lang);
+          const benefits = getLocalized(sch.benefits, lang);
+
+          return `
+            <div class="glass-card scheme-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
+                  <span class="card-badge badge-scheme">🏛️ ${sch.governmentType} Scheme</span>
+                  <span style="font-size: 0.8rem; color: var(--scheme-amber); font-weight: 700;">📍 ${sch.stateName}</span>
+                </div>
+                <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem;">${title}</h3>
+                <p style="color: var(--text-muted); font-size: 0.88rem; margin-bottom: 1rem;">${desc.substring(0, 110)}...</p>
+
+                ${benefits ? `<div style="font-size: 0.85rem; font-weight: 700; color: var(--scheme-amber); margin-bottom: 1rem;">💡 ${benefits}</div>` : ''}
+              </div>
+
+              <div style="display: flex; gap: 0.6rem; margin-top: 1rem;">
+                <a href="scheme-details.html?id=${sch._id}" class="btn btn-outline" style="flex: 1; padding: 0.5rem; font-size: 0.82rem; justify-content: center;">
+                  ${t('btnViewDetails', lang)}
+                </a>
+                <button id="save-btn-${sch._id}" class="btn btn-scheme" style="padding: 0.5rem 0.8rem; font-size: 0.82rem;" onclick="openSaveReminderModal('Scheme', '${sch._id}')">
+                  🔖 ${t('btnSave', lang)}
+                </button>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        grid.style.display = 'grid';
+      } catch (err) {
+        console.error('Load Schemes Error:', err);
+        loading.style.display = 'none';
+        empty.style.display = 'block';
+      }
+    }
+
+    function resetSchemeFilters() {
+      document.getElementById('scheme-search').value = '';
+      document.getElementById('scheme-sector').value = 'All';
+      document.getElementById('scheme-state').value = 'All India';
+      currentGovType = 'All';
+      document.querySelectorAll('.scheme-tab').forEach(b => b.classList.remove('active'));
+      document.querySelector('.scheme-tab[data-gov="All"]').classList.add('active');
+      loadSchemes();
+    }
+
+    document.addEventListener('DOMContentLoaded', loadSchemes);
+  </script>
+</body>
+</html>
