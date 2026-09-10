@@ -25,12 +25,12 @@ const AdminSchema = new mongoose.Schema({
   },
   upiId: {
     type: String,
-    default: 'kisandirect@upi',
+    default: 'dishasetu@upi',
     trim: true
   },
   businessName: {
     type: String,
-    default: 'Kisan Direct Marketplace',
+    default: 'DishaSetu Portal',
     trim: true
   },
   bankAccount: {

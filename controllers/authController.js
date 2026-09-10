@@ -1,13 +1,11 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
-const Farmer = require('../models/Farmer');
-const Customer = require('../models/Customer');
 const Admin = require('../models/Admin');
 
 // Helper to sign JWT token
 const signToken = (payload) => {
-  const secret = process.env.JWT_SECRET || 'kisan_direct_super_secret_jwt_key_2026_agro_market';
+  const secret = process.env.JWT_SECRET || 'dishasetu_super_secret_jwt_key_2026_student_portal';
   return jwt.sign(payload, secret, { expiresIn: '7d' });
 };
 
@@ -40,16 +38,14 @@ exports.registerUser = async (req, res) => {
 
     const emailNormalized = email.toLowerCase().trim();
 
-    // Check existing account
+    // Check existing account across User and Admin models
     const existingUser = await User.findOne({ email: emailNormalized });
-    const existingCustomer = await Customer.findOne({ email: emailNormalized });
-    const existingFarmer = await Farmer.findOne({ email: emailNormalized });
     const existingAdmin = await Admin.findOne({ email: emailNormalized });
 
-    if (existingUser || existingCustomer || existingFarmer || existingAdmin) {
+    if (existingUser || existingAdmin) {
       return res.status(400).json({
         success: false,
-        message: 'An account with this email already exists.'
+        message: 'An account with this email address already exists.'
       });
     }
 
@@ -103,15 +99,12 @@ exports.registerUser = async (req, res) => {
 };
 
 /**
- * Legacy Support: Register Farmer
+ * Legacy Support: Register Farmer / Customer aliases
  */
 exports.registerFarmer = async (req, res) => {
   return exports.registerUser(req, res);
 };
 
-/**
- * Legacy Support: Register Customer
- */
 exports.registerCustomer = async (req, res) => {
   return exports.registerUser(req, res);
 };
@@ -138,16 +131,9 @@ exports.login = async (req, res) => {
     // Check User model first
     user = await User.findOne({ email: emailNormalized });
     
-    // Fallback to Customer / Farmer / Admin if legacy account
+    // Check Admin model if not found in User model
     if (!user) {
-      if (role === 'farmer') user = await Farmer.findOne({ email: emailNormalized });
-      else if (role === 'customer') user = await Customer.findOne({ email: emailNormalized });
-      else if (role === 'admin') user = await Admin.findOne({ email: emailNormalized });
-      else {
-        user = await Admin.findOne({ email: emailNormalized }) ||
-               await Customer.findOne({ email: emailNormalized }) ||
-               await Farmer.findOne({ email: emailNormalized });
-      }
+      user = await Admin.findOne({ email: emailNormalized });
     }
 
     if (!user) {
@@ -202,7 +188,9 @@ exports.login = async (req, res) => {
 };
 
 /**
- * Logout User
+ * @desc   Logout User
+ * @route  POST /api/auth/logout
+ * @access Public
  */
 exports.logout = async (req, res) => {
   res.clearCookie('token', {
@@ -216,17 +204,17 @@ exports.logout = async (req, res) => {
 };
 
 /**
- * Get Current User
+ * @desc   Get Current User Session
+ * @route  GET /api/auth/me
+ * @access Private
  */
 exports.getMe = async (req, res) => {
   try {
     const { id, role } = req.user;
     let user = await User.findById(id).select('-password');
 
-    if (!user) {
-      if (role === 'admin') user = await Admin.findById(id).select('-password');
-      else if (role === 'customer') user = await Customer.findById(id).select('-password');
-      else if (role === 'farmer') user = await Farmer.findById(id).select('-password');
+    if (!user && role === 'admin') {
+      user = await Admin.findById(id).select('-password');
     }
 
     if (!user) {
@@ -250,7 +238,9 @@ exports.getMe = async (req, res) => {
 };
 
 /**
- * Update Profile
+ * @desc   Update Profile
+ * @route  PUT /api/auth/profile
+ * @access Private
  */
 exports.updateProfile = async (req, res) => {
   try {
@@ -260,7 +250,7 @@ exports.updateProfile = async (req, res) => {
     let user = await User.findById(id);
 
     if (!user) {
-      user = await Admin.findById(id) || await Customer.findById(id) || await Farmer.findById(id);
+      user = await Admin.findById(id);
     }
 
     if (!user) {
@@ -280,10 +270,13 @@ exports.updateProfile = async (req, res) => {
 
     await user.save();
 
+    const userObj = user.toObject();
+    delete userObj.password;
+
     return res.status(200).json({
       success: true,
       message: 'Profile updated successfully!',
-      user
+      user: userObj
     });
   } catch (error) {
     console.error('Update Profile Error:', error);

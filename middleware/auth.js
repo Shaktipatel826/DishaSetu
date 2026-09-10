@@ -23,7 +23,7 @@ const verifyToken = (req, res, next) => {
       });
     }
 
-    const secret = process.env.JWT_SECRET || 'kisan_direct_super_secret_jwt_key_2026_agro_market';
+    const secret = process.env.JWT_SECRET || 'dishasetu_super_secret_jwt_key_2026_student_portal';
     const decoded = jwt.verify(token, secret);
 
     req.user = {
