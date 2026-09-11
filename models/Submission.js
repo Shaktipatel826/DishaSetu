@@ -8,7 +8,7 @@ const SubmissionSchema = new mongoose.Schema({
   },
   categoryType: {
     type: String,
-    enum: ['Opportunity', 'Government Scheme'],
+    enum: ['Opportunity', 'Government Scheme', 'Student Opportunity', 'student_opportunity', 'government_scheme'],
     default: 'Opportunity'
   },
   type: {

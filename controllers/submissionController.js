@@ -66,9 +66,17 @@ exports.createSubmission = async (req, res, next) => {
     const parsedState = typeof state === 'string' ? JSON.parse(state || '[]') : (state || ['All India']);
     const parsedCategory = typeof category === 'string' ? JSON.parse(category || '[]') : (category || ['All']);
 
+    // Normalize categoryType canonical value
+    let normalizedCategoryType = 'Opportunity';
+    if (categoryType === 'Government Scheme' || categoryType === 'government_scheme') {
+      normalizedCategoryType = 'Government Scheme';
+    } else {
+      normalizedCategoryType = 'Opportunity';
+    }
+
     const submission = await Submission.create({
       title,
-      categoryType: categoryType || 'Opportunity',
+      categoryType: normalizedCategoryType,
       type: type || 'Scholarship',
       organization: organization || '',
       description: description || '',
@@ -91,6 +99,22 @@ exports.createSubmission = async (req, res, next) => {
       submittedBy: req.user.id,
       status: 'Pending Review'
     });
+
+    // Create student notification upon successful submission
+    if (req.user && req.user.id) {
+      try {
+        const notifTitle = `Submission Received: ${title}`;
+        const notifMsg = `Your opportunity submission "${title}" has been received and is pending admin verification.`;
+        await Notification.create({
+          userId: req.user.id,
+          title: { en: notifTitle, hi: notifTitle },
+          message: { en: notifMsg, hi: notifMsg },
+          targetUrl: 'my-submissions.html'
+        });
+      } catch (notifErr) {
+        console.warn('Could not create submission notification:', notifErr.message);
+      }
+    }
 
     res.status(201).json({
       success: true,
@@ -275,15 +299,19 @@ exports.updateSubmissionStatusAdmin = async (req, res, next) => {
     await submission.save();
 
     // Create student notification
-    try {
-      await Notification.create({
-        user: submission.submittedBy,
-        title: `Submission Status Update: ${submission.title}`,
-        message: `Your submitted opportunity "${submission.title}" has been updated to "${status}". ${adminFeedback ? 'Admin note: ' + adminFeedback : ''}`,
-        linkUrl: '/my-submissions.html'
-      });
-    } catch (notifErr) {
-      console.warn('Could not create student notification:', notifErr.message);
+    if (submission.submittedBy) {
+      try {
+        const notifTitle = `Submission Status Update: ${submission.title}`;
+        const notifMsg = `Your submitted opportunity "${submission.title}" has been updated to "${status}". ${adminFeedback ? 'Admin note: ' + adminFeedback : ''}`;
+        await Notification.create({
+          userId: submission.submittedBy,
+          title: { en: notifTitle, hi: notifTitle },
+          message: { en: notifMsg, hi: notifMsg },
+          targetUrl: 'my-submissions.html'
+        });
+      } catch (notifErr) {
+        console.warn('Could not create student notification:', notifErr.message);
+      }
     }
 
     res.status(200).json({

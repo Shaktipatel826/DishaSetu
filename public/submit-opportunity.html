@@ -324,7 +324,10 @@
           alertBox.style.color = '#86efac';
           alertBox.innerText = '🎉 ' + data.message;
           form.reset();
-          document.getElementById('fileLabel').innerText = 'Click to select PDF Document, Circular, or Image Proof';
+          document.getElementById('proofFileLabel').innerText = 'Click to select Official Notice / Circular / Proof';
+          document.getElementById('bannerFileLabel').innerText = 'Click to select Event Poster / Banner Image';
+          document.getElementById('proofPreviewBox').style.display = 'none';
+          document.getElementById('bannerPreviewBox').style.display = 'none';
           
           setTimeout(() => {
             window.location.href = 'my-submissions.html';
@@ -334,7 +337,7 @@
           alertBox.style.background = 'rgba(239, 68, 68, 0.2)';
           alertBox.style.border = '1px solid #ef4444';
           alertBox.style.color = '#fca5a5';
-          alertBox.innerText = '❌ ' + (data.message || 'Submission failed.');
+          alertBox.innerText = '❌ ' + (data.message || 'Submission failed. Please check form inputs.');
         }
       } catch (err) {
         console.error('Submission Error:', err);
@@ -342,7 +345,7 @@
         alertBox.style.background = 'rgba(239, 68, 68, 0.2)';
         alertBox.style.border = '1px solid #ef4444';
         alertBox.style.color = '#fca5a5';
-        alertBox.innerText = '❌ Connection error during upload. Please try again.';
+        alertBox.innerText = '❌ ' + (err.message || 'Error processing upload. Please check network connection and try again.');
       } finally {
         submitBtn.disabled = false;
         submitBtn.innerText = '🚀 Submit Opportunity for Verification';
