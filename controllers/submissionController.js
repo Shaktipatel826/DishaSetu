@@ -1,3 +1,5 @@
+const path = require('path');
+const fs = require('fs');
 const Submission = require('../models/Submission');
 const Opportunity = require('../models/Opportunity');
 const Scheme = require('../models/Scheme');
@@ -56,10 +58,11 @@ exports.createSubmission = async (req, res, next) => {
       });
     }
 
-    // Construct relative web URLs for uploaded files
-    const proofUrl = `/uploads/proofs/${proofFile.filename}`;
+    // Private verification proof is served exclusively via protected API endpoint
+    const proofUrl = `/api/submissions/proof/${proofFile.filename}`;
     const verificationImage = proofUrl;
-    const publicBannerImage = bannerFile ? `/uploads/proofs/${bannerFile.filename}` : '';
+    // Public banner is saved in static banners folder
+    const publicBannerImage = bannerFile ? `/uploads/banners/${bannerFile.filename}` : '';
 
     // Parse array eligibility fields if passed as strings/JSON
     const parsedEducation = typeof education === 'string' ? JSON.parse(education || '[]') : (education || []);
@@ -319,6 +322,35 @@ exports.updateSubmissionStatusAdmin = async (req, res, next) => {
       message: `Submission status updated to ${status}.`,
       data: submission
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+/**
+ * @desc    Stream private verification proof document securely (Admin Only)
+ * @route   GET /api/submissions/proof/:filename
+ * @access  Private (Admin Only)
+ */
+exports.getProofFile = async (req, res, next) => {
+  try {
+    const filename = path.basename(req.params.filename);
+    const privateDir = process.env.PRIVATE_PROOF_DIR || path.join(__dirname, '..', 'private_uploads', 'proofs');
+    const legacyDir = path.join(__dirname, '..', 'public', 'uploads', 'proofs');
+
+    const primaryPath = path.join(privateDir, filename);
+    const fallbackPath = path.join(legacyDir, filename);
+
+    if (fs.existsSync(primaryPath)) {
+      return res.sendFile(primaryPath);
+    } else if (fs.existsSync(fallbackPath)) {
+      return res.sendFile(fallbackPath);
+    } else {
+      return res.status(404).json({
+        success: false,
+        message: 'Verification proof document not found.'
+      });
+    }
   } catch (error) {
     next(error);
   }

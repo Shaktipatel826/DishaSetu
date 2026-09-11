@@ -2,17 +2,25 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-// Destination upload directory (configurable via UPLOAD_DIR env variable for Render persistent disks)
-const uploadDir = process.env.UPLOAD_DIR || path.join(__dirname, '..', 'public', 'uploads', 'proofs');
+// Separate upload directories for Private Proofs (Non-Public) vs Public Banners
+const privateProofDir = process.env.PRIVATE_PROOF_DIR || path.join(__dirname, '..', 'private_uploads', 'proofs');
+const publicBannerDir = process.env.PUBLIC_BANNER_DIR || path.join(__dirname, '..', 'public', 'uploads', 'banners');
 
-if (!fs.existsSync(uploadDir)) {
-  fs.mkdirSync(uploadDir, { recursive: true });
+if (!fs.existsSync(privateProofDir)) {
+  fs.mkdirSync(privateProofDir, { recursive: true });
+}
+if (!fs.existsSync(publicBannerDir)) {
+  fs.mkdirSync(publicBannerDir, { recursive: true });
 }
 
-// Storage configuration
+// Storage configuration with separated destinations
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, uploadDir);
+    if (file.fieldname === 'proof' || file.fieldname === 'verificationImage') {
+      cb(null, privateProofDir);
+    } else {
+      cb(null, publicBannerDir);
+    }
   },
   filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);

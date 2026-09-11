@@ -7,7 +7,8 @@ const {
   getMySubmissions,
   getAllSubmissionsAdmin,
   getSubmissionById,
-  updateSubmissionStatusAdmin
+  updateSubmissionStatusAdmin,
+  getProofFile
 } = require('../controllers/submissionController');
 
 // All submission routes require authentication
@@ -20,6 +21,7 @@ router.get('/my', getMySubmissions);
 // Admin review endpoints
 router.get('/admin', adminOnly, getAllSubmissionsAdmin);
 router.put('/admin/:id/status', adminOnly, updateSubmissionStatusAdmin);
+router.get('/proof/:filename', adminOnly, getProofFile);
 
 // Single submission details
 router.get('/:id', getSubmissionById);

@@ -30,6 +30,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+// Block direct public static access to private verification proofs directory
+app.use('/uploads/proofs', (req, res) => {
+  res.status(403).json({
+    success: false,
+    message: 'Access Denied. Verification proofs are private and accessible only via Admin Console.'
+  });
+});
+
 // Serve Static Frontend Assets
 app.use(express.static(path.join(__dirname, 'public')));
 

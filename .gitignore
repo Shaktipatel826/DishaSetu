@@ -7,9 +7,13 @@ package-lock.json
 .env.local
 .env.production
 
-# Uploaded student proof documents (local test upload files)
+# Uploaded student proof documents & banners (local test upload files)
 public/uploads/proofs/*
 !public/uploads/proofs/.gitkeep
+public/uploads/banners/*
+!public/uploads/banners/.gitkeep
+private_uploads/proofs/*
+!private_uploads/proofs/.gitkeep
 
 # Logs
 logs/
