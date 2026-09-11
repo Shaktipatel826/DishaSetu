@@ -193,7 +193,8 @@
 
               <td style="padding: 0.8rem;">
                 <a href="${sub.sourceUrl}" target="_blank" style="color:var(--primary-cyan); text-decoration:underline; font-size:0.8rem; display:block;">🔗 Source URL</a>
-                <a href="${sub.proofUrl}" target="_blank" style="color:#4ade80; text-decoration:underline; font-size:0.8rem; display:block; margin-top:2px;">📄 View Proof</a>
+                <a href="${sub.proofUrl || sub.verificationImage}" target="_blank" style="color:#4ade80; text-decoration:underline; font-size:0.8rem; display:block; margin-top:2px;">📄 View Proof (Private)</a>
+                ${sub.publicBannerImage ? `<a href="${sub.publicBannerImage}" target="_blank" style="color:#38bdf8; text-decoration:underline; font-size:0.8rem; display:block; margin-top:2px;">🖼️ View Public Banner</a>` : ''}
               </td>
 
               <td style="padding: 0.8rem; color:#f87171; font-weight:600;">
@@ -231,7 +232,8 @@
         <div style="margin-bottom:0.4rem;"><strong>Category:</strong> ${sub.categoryType} • <strong>Type:</strong> ${sub.type}</div>
         <div style="margin-bottom:0.4rem;"><strong>Submitted By:</strong> ${sub.submittedBy ? sub.submittedBy.name : 'Student'} (${sub.submittedBy ? sub.submittedBy.email : ''})</div>
         <div style="margin-bottom:0.4rem;"><strong>Source Verification URL:</strong> <a href="${sub.sourceUrl}" target="_blank" style="color:var(--primary-cyan);">${sub.sourceUrl}</a></div>
-        <div style="margin-bottom:0.4rem;"><strong>Uploaded Proof:</strong> <a href="${sub.proofUrl}" target="_blank" style="color:#4ade80;">${sub.proofOriginalName || 'Uploaded Document File'}</a></div>
+        <div style="margin-bottom:0.4rem;"><strong>Verification Proof (Private):</strong> <a href="${sub.proofUrl || sub.verificationImage}" target="_blank" style="color:#4ade80;">${sub.proofOriginalName || 'Uploaded Verification File'}</a></div>
+        ${sub.publicBannerImage ? `<div style="margin-bottom:0.4rem;"><strong>Public Banner Image:</strong> <a href="${sub.publicBannerImage}" target="_blank" style="color:#38bdf8;">${sub.publicBannerOriginalName || 'Public Banner File'}</a></div>` : '<div style="margin-bottom:0.4rem; color: var(--text-muted);"><strong>Public Banner:</strong> None provided</div>'}
         ${sub.description ? `<div style="margin-top:0.4rem; padding-top:0.4rem; border-top:1px solid rgba(255,255,255,0.1);"><strong>Description:</strong> ${sub.description}</div>` : ''}
       `;
 

@@ -118,15 +118,42 @@
           <span style="font-size: 0.78rem; color: var(--text-muted); display: block; margin-top: 0.3rem;">Must be a valid official website or news link where our team can verify the authenticity.</span>
         </div>
 
-        <!-- Official Proof Document Upload (MANDATORY) -->
-        <div class="form-group">
-          <label class="form-label">Upload Official Proof Document / Circular Image <span class="req-star">*</span></label>
-          <div class="file-dropzone" onclick="document.getElementById('proofFileInput').click()">
-            <div style="font-size: 2.2rem; margin-bottom: 0.3rem;">📄</div>
-            <div style="color: var(--primary-cyan); font-weight: 600; font-size: 0.95rem;" id="fileLabel">Click to select PDF Document, Circular, or Image Proof</div>
-            <div style="color: var(--text-muted); font-size: 0.8rem; margin-top: 0.2rem;">Supported formats: PDF, JPG, PNG, WEBP (Max 15MB)</div>
+        <!-- Section Header for Image Uploads -->
+        <div style="background: rgba(15, 23, 42, 0.4); border: 1px solid var(--border-light); padding: 1.2rem; border-radius: 10px; margin-bottom: 1.5rem;">
+          <h4 style="color: var(--primary-cyan); margin-bottom: 0.4rem; font-size: 1rem;">📷 Opportunity Image Uploads</h4>
+          <p style="color: var(--text-muted); font-size: 0.82rem; margin-bottom: 1rem;">Upload two separate files: a private verification document for Admin inspection, and a public poster banner for student display.</p>
+
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.2rem;">
+            
+            <!-- 1. Private Verification / Proof Image (MANDATORY) -->
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-weight: 700;">1. Verification / Proof Image <span class="req-star">*</span></label>
+              <span style="font-size: 0.76rem; color: #facc15; display: block; margin-bottom: 0.5rem;">🔒 Private — visible ONLY to Admin for verification.</span>
+              
+              <div class="file-dropzone" onclick="document.getElementById('proofFileInput').click()">
+                <div style="font-size: 2rem; margin-bottom: 0.2rem;">📄</div>
+                <div style="color: var(--primary-cyan); font-weight: 600; font-size: 0.88rem;" id="proofFileLabel">Click to select Official Notice / Circular / Proof</div>
+                <div style="color: var(--text-muted); font-size: 0.76rem; margin-top: 0.2rem;">PDF, JPG, PNG, WEBP (Max 15MB)</div>
+              </div>
+              <input type="file" id="proofFileInput" name="verificationImage" accept=".pdf,.jpg,.jpeg,.png,.webp" style="display: none;" required onchange="updateProofPreview(this)">
+              <div id="proofPreviewBox" style="display: none; margin-top: 0.5rem; text-align: center;"></div>
+            </div>
+
+            <!-- 2. Public Opportunity Banner / Poster (PUBLIC) -->
+            <div class="form-group" style="margin-bottom: 0;">
+              <label class="form-label" style="font-weight: 700;">2. Opportunity Banner / Poster</label>
+              <span style="font-size: 0.76rem; color: #4ade80; display: block; margin-bottom: 0.5rem;">🌐 Public — displayed on DishaSetu website after approval.</span>
+              
+              <div class="file-dropzone" onclick="document.getElementById('bannerFileInput').click()" style="border-color: rgba(74, 222, 128, 0.4); background: rgba(74, 222, 128, 0.05);">
+                <div style="font-size: 2rem; margin-bottom: 0.2rem;">🖼️</div>
+                <div style="color: #4ade80; font-weight: 600; font-size: 0.88rem;" id="bannerFileLabel">Click to select Event Poster / Banner Image</div>
+                <div style="color: var(--text-muted); font-size: 0.76rem; margin-top: 0.2rem;">JPG, PNG, WEBP (Max 15MB)</div>
+              </div>
+              <input type="file" id="bannerFileInput" name="publicBannerImage" accept=".jpg,.jpeg,.png,.webp" style="display: none;" onchange="updateBannerPreview(this)">
+              <div id="bannerPreviewBox" style="display: none; margin-top: 0.5rem; text-align: center;"></div>
+            </div>
+
           </div>
-          <input type="file" id="proofFileInput" name="proof" accept=".pdf,.jpg,.jpeg,.png,.webp" style="display: none;" required onchange="updateFileName(this)">
         </div>
 
         <!-- Description -->
@@ -209,12 +236,47 @@
     // Pre-set min date to today
     document.getElementById('lastDateInput').min = new Date().toISOString().split('T')[0];
 
-    function updateFileName(input) {
-      const label = document.getElementById('fileLabel');
+    function updateProofPreview(input) {
+      const label = document.getElementById('proofFileLabel');
+      const previewBox = document.getElementById('proofPreviewBox');
       if (input.files && input.files[0]) {
-        label.innerHTML = `✅ Selected: <strong>${input.files[0].name}</strong> (${(input.files[0].size / 1024 / 1024).toFixed(2)} MB)`;
+        const file = input.files[0];
+        label.innerHTML = `✅ Verification Proof Selected: <strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            previewBox.style.display = 'block';
+            previewBox.innerHTML = `<img src="${e.target.result}" alt="Proof Preview" style="max-height: 110px; border-radius: 8px; border: 1px solid var(--border-light); margin-top: 0.4rem;">`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          previewBox.style.display = 'none';
+        }
       } else {
-        label.innerText = 'Click to select PDF Document, Circular, or Image Proof';
+        label.innerText = 'Click to select Official Notice / Circular / Proof';
+        previewBox.style.display = 'none';
+      }
+    }
+
+    function updateBannerPreview(input) {
+      const label = document.getElementById('bannerFileLabel');
+      const previewBox = document.getElementById('bannerPreviewBox');
+      if (input.files && input.files[0]) {
+        const file = input.files[0];
+        label.innerHTML = `✅ Public Banner Selected: <strong>${file.name}</strong> (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+        if (file.type.startsWith('image/')) {
+          const reader = new FileReader();
+          reader.onload = (e) => {
+            previewBox.style.display = 'block';
+            previewBox.innerHTML = `<img src="${e.target.result}" alt="Banner Preview" style="max-height: 120px; width: 100%; object-fit: cover; border-radius: 8px; border: 1px solid #4ade80; margin-top: 0.4rem;">`;
+          };
+          reader.readAsDataURL(file);
+        } else {
+          previewBox.style.display = 'none';
+        }
+      } else {
+        label.innerText = 'Click to select Event Poster / Banner Image';
+        previewBox.style.display = 'none';
       }
     }
 

@@ -55,6 +55,14 @@ const SubmissionSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
+  verificationImage: {
+    type: String,
+    default: ''
+  },
+  publicBannerImage: {
+    type: String,
+    default: ''
+  },
   eligibility: {
     minAge: { type: Number, default: 0 },
     maxAge: { type: Number, default: 100 },

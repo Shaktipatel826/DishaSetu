@@ -35,15 +35,31 @@ exports.createSubmission = async (req, res, next) => {
       });
     }
 
-    if (!req.file) {
+    // Extract uploaded verification proof and public banner files
+    let proofFile = null;
+    let bannerFile = null;
+
+    if (req.files) {
+      if (req.files.proof && req.files.proof[0]) proofFile = req.files.proof[0];
+      else if (req.files.verificationImage && req.files.verificationImage[0]) proofFile = req.files.verificationImage[0];
+
+      if (req.files.banner && req.files.banner[0]) bannerFile = req.files.banner[0];
+      else if (req.files.publicBannerImage && req.files.publicBannerImage[0]) bannerFile = req.files.publicBannerImage[0];
+    } else if (req.file) {
+      proofFile = req.file;
+    }
+
+    if (!proofFile) {
       return res.status(400).json({
         success: false,
-        message: 'Mandatory proof document / official notification file is required.'
+        message: 'Mandatory verification / proof document file is required.'
       });
     }
 
-    // Construct relative web URL for uploaded file
-    const proofUrl = `/uploads/proofs/${req.file.filename}`;
+    // Construct relative web URLs for uploaded files
+    const proofUrl = `/uploads/proofs/${proofFile.filename}`;
+    const verificationImage = proofUrl;
+    const publicBannerImage = bannerFile ? `/uploads/proofs/${bannerFile.filename}` : '';
 
     // Parse array eligibility fields if passed as strings/JSON
     const parsedEducation = typeof education === 'string' ? JSON.parse(education || '[]') : (education || []);
@@ -58,7 +74,9 @@ exports.createSubmission = async (req, res, next) => {
       description: description || '',
       sourceUrl,
       proofUrl,
-      proofOriginalName: req.file.originalname,
+      verificationImage,
+      publicBannerImage,
+      proofOriginalName: proofFile.originalname,
       eligibility: {
         minAge: Number(minAge) || 0,
         maxAge: Number(maxAge) || 100,
@@ -76,7 +94,7 @@ exports.createSubmission = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
-      message: 'Opportunity submitted successfully! Our team will review your proof and verification link.',
+      message: 'Opportunity submitted successfully! Our verification team will review your proof and public banner.',
       data: submission
     });
   } catch (error) {
@@ -230,7 +248,7 @@ exports.updateSubmissionStatusAdmin = async (req, res, next) => {
         });
         submission.createdSchemeId = newScheme._id;
       } else {
-        // Create official Opportunity
+        // Create official Opportunity with public banner image (private verification proof is NOT copied)
         const newOpp = await Opportunity.create({
           title: { en: submission.title, hi: submission.title },
           type: submission.type,
@@ -247,6 +265,7 @@ exports.updateSubmissionStatusAdmin = async (req, res, next) => {
           lastDate: submission.lastDate,
           status: 'OPEN',
           applyUrl: submission.applyUrl || submission.sourceUrl,
+          publicBannerImage: submission.publicBannerImage || '',
           showInLatestUpdates: true
         });
         submission.createdOpportunityId = newOpp._id;

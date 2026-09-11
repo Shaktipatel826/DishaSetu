@@ -19,6 +19,7 @@
     <div id="details-container" style="display: none; grid-template-columns: 1fr 340px; gap: 2.5rem; align-items: start;">
       <!-- Main Content Left -->
       <div>
+        <div id="detail-banner-box"></div>
         <div style="display: flex; gap: 0.6rem; align-items: center; margin-bottom: 1rem;">
           <span id="detail-type-badge" class="card-badge badge-open">Scholarship</span>
           <span id="detail-status-badge" class="card-badge badge-open">OPEN</span>
@@ -111,6 +112,13 @@
         document.getElementById('details-loading').style.display = 'none';
         const container = document.getElementById('details-container');
         container.style.display = 'grid';
+
+        const bannerBox = document.getElementById('detail-banner-box');
+        if (op.publicBannerImage) {
+          bannerBox.innerHTML = `<img src="${op.publicBannerImage}" alt="${getLocalized(op.title, lang)} Banner" class="detail-banner-img" onerror="this.style.display='none'">`;
+        } else {
+          bannerBox.innerHTML = '';
+        }
 
         document.getElementById('detail-type-badge').innerText = op.type;
         document.getElementById('detail-status-badge').innerText = op.status;

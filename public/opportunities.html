@@ -161,6 +161,7 @@
           return `
             <div class="glass-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between;">
               <div>
+                ${op.publicBannerImage ? `<img src="${op.publicBannerImage}" alt="${title} Banner" class="card-banner-img" onerror="this.style.display='none'">` : ''}
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.8rem;">
                   <span class="card-badge ${badgeClass}">${op.type}</span>
                   <span class="card-badge ${badgeClass}">${op.status}</span>

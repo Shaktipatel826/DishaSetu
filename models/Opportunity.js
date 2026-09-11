@@ -73,6 +73,11 @@ const OpportunitySchema = new mongoose.Schema({
     type: Boolean,
     default: false
   },
+  publicBannerImage: {
+    type: String,
+    default: '',
+    trim: true
+  },
   createdAt: {
     type: Date,
     default: Date.now

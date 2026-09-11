@@ -42,4 +42,12 @@ const upload = multer({
   }
 });
 
+const submissionUploads = upload.fields([
+  { name: 'proof', maxCount: 1 },
+  { name: 'verificationImage', maxCount: 1 },
+  { name: 'banner', maxCount: 1 },
+  { name: 'publicBannerImage', maxCount: 1 }
+]);
+
 module.exports = upload;
+module.exports.submissionUploads = submissionUploads;

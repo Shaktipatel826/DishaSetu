@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const upload = require('../middleware/upload');
+const { submissionUploads } = require('../middleware/upload');
 const { verifyToken, adminOnly } = require('../middleware/auth');
 const {
   createSubmission,
@@ -14,7 +14,7 @@ const {
 router.use(verifyToken);
 
 // Student submission endpoints
-router.post('/', upload.single('proof'), createSubmission);
+router.post('/', submissionUploads, createSubmission);
 router.get('/my', getMySubmissions);
 
 // Admin review endpoints
