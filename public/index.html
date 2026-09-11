@@ -337,7 +337,7 @@
                   <span class="card-badge ${isClosing ? 'badge-closing' : 'badge-open'}">${op.status}</span>
                 </div>
 
-                <h3 style="color: #fff; font-size: 1.15rem; margin-bottom: 0.5rem;">${title}</h3>
+                <h3 class="opportunity-card-title">${title}</h3>
                 
                 <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.8rem;">
                   🎯 For: Students | State: ${(op.eligibility.state || ['All India']).join(', ')}

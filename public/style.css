@@ -564,6 +564,17 @@ a:hover {
   box-shadow: 0 0 35px rgba(29, 78, 216, 0.35) !important;
 }
 
+/* Prominent Multi-line Opportunity Card Title */
+.opportunity-card-title {
+  color: #ffffff;
+  font-size: 1.15rem;
+  font-weight: 800;
+  margin-bottom: 0.6rem;
+  line-height: 1.38;
+  word-break: break-word;
+  overflow-wrap: break-word;
+}
+
 /* QUICK ELIGIBILITY FINDER PANEL */
 .eligibility-panel {
   margin-top: -1.5rem;

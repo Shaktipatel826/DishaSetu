@@ -231,6 +231,10 @@ exports.checkEligibility = async (req, res) => {
  */
 exports.createOpportunity = async (req, res) => {
   try {
+    if (req.body.title && typeof req.body.title === 'string') {
+      const cleanTitle = req.body.title.trim();
+      req.body.title = { en: cleanTitle, hi: cleanTitle };
+    }
     const opportunity = await Opportunity.create(req.body);
     return res.status(201).json({
       success: true,
@@ -251,6 +255,10 @@ exports.createOpportunity = async (req, res) => {
  */
 exports.updateOpportunity = async (req, res) => {
   try {
+    if (req.body.title && typeof req.body.title === 'string') {
+      const cleanTitle = req.body.title.trim();
+      req.body.title = { en: cleanTitle, hi: cleanTitle };
+    }
     const opportunity = await Opportunity.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!opportunity) {
       return res.status(404).json({ success: false, message: 'Opportunity not found.' });
