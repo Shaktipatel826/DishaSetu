@@ -141,6 +141,11 @@
   <script src="js/reminders.js"></script>
 
   <script>
+    const adminUser = JSON.parse(localStorage.getItem('dishasetu_user') || '{}');
+    if (!adminUser._id || adminUser.role !== 'admin') {
+      window.location.replace('login.html');
+    }
+
     let currentSubmissions = [];
     let selectedSubmissionId = null;
 
@@ -152,6 +157,11 @@
       try {
         const url = `/api/submissions/admin?status=${encodeURIComponent(statusFilter)}&search=${encodeURIComponent(searchInput)}`;
         const res = await fetch(url, { credentials: 'include' });
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem('dishasetu_user');
+          window.location.replace('login.html');
+          return;
+        }
         const data = await res.json();
 
         if (!data.success) {

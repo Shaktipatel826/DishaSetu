@@ -233,6 +233,14 @@
   <script src="js/reminders.js"></script>
   
   <script>
+    // Immediate authentication check
+    (function checkAuth() {
+      const storedUser = localStorage.getItem('dishasetu_user');
+      if (!storedUser) {
+        window.location.replace('login.html');
+      }
+    })();
+
     // Pre-set min date to today
     document.getElementById('lastDateInput').min = new Date().toISOString().split('T')[0];
 

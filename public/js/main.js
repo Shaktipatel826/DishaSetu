@@ -6,10 +6,11 @@
 async function handleLogout() {
   try {
     await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
-    localStorage.removeItem('dishasetu_user');
-    window.location.href = 'index.html';
   } catch (err) {
     console.error('Logout error:', err);
+  } finally {
+    localStorage.removeItem('dishasetu_user');
+    window.location.replace('index.html');
   }
 }
 

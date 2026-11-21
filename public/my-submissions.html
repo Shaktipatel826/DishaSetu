@@ -82,23 +82,26 @@
   <script src="js/reminders.js"></script>
 
   <script>
+    if (!localStorage.getItem('dishasetu_user')) {
+      window.location.replace('login.html');
+    }
+
     async function loadMySubmissions() {
       const container = document.getElementById('submissions-container');
       const userStr = localStorage.getItem('dishasetu_user');
 
       if (!userStr) {
-        container.innerHTML = `
-          <div class="glass-panel" style="padding: 3rem; text-align: center;">
-            <h3 style="color:#fff; margin-bottom:0.8rem;">🔒 Login Required</h3>
-            <p style="color:var(--text-muted); margin-bottom:1.5rem;">Please log in to view your submitted opportunities and status.</p>
-            <a href="login.html" class="btn btn-primary">Go to Login Page</a>
-          </div>
-        `;
+        window.location.replace('login.html');
         return;
       }
 
       try {
         const res = await fetch('/api/submissions/my', { credentials: 'include' });
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem('dishasetu_user');
+          window.location.replace('login.html');
+          return;
+        }
         const data = await res.json();
 
         if (!data.success) {

@@ -56,6 +56,20 @@ function translateDOM(lang) {
 }
 
 /**
+ * Global Logout Handler - Clears session on server and client, redirecting to home page
+ */
+async function handleLogout() {
+  try {
+    await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' });
+  } catch (err) {
+    console.error('Logout error:', err);
+  } finally {
+    localStorage.removeItem('dishasetu_user');
+    window.location.replace('index.html');
+  }
+}
+
+/**
  * Render Navbar with Official Brand Logo Image, Navigation Links, Notification Bell & Lang Switcher
  */
 function renderNavbar() {
@@ -87,14 +101,14 @@ function renderNavbar() {
           <li><a href="opportunities.html" data-i18n="navOpportunities">Opportunities</a></li>
           <li><a href="schemes.html" data-i18n="navSchemes">Government Schemes</a></li>
           <li><a href="index.html#how-it-works" data-i18n="navHowItWorks">How It Works</a></li>
+          <li><a href="submit-opportunity.html" data-i18n="navSubmitOpportunity">Submit an Opportunity</a></li>
           ${user && user.role !== 'admin' ? `
-            <li><a href="submit-opportunity.html" style="color: var(--primary-cyan); font-weight: 600;">+ Submit Opportunity</a></li>
-            <li><a href="my-submissions.html">My Submissions</a></li>
+            <li><a href="my-submissions.html" data-i18n="navMySubmissions">My Submissions</a></li>
             <li><a href="saved-opportunities.html" data-i18n="navSaved">Saved Items</a></li>
           ` : ''}
           ${user && user.role === 'admin' ? `
-            <li><a href="admin-submissions.html" style="color: #4ade80; font-weight: 600;">Review Submissions</a></li>
-            <li><a href="admin-students.html">Students Directory</a></li>
+            <li><a href="admin-submissions.html" style="color: #4ade80; font-weight: 600;" data-i18n="navReviewSubmissions">Review Submissions</a></li>
+            <li><a href="admin-students.html" data-i18n="navStudentsDirectory">Students Directory</a></li>
           ` : ''}
           ${user ? `<li><a href="${user.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html'}" data-i18n="navDashboard">Dashboard</a></li>` : ''}
         </ul>
@@ -117,8 +131,8 @@ function renderNavbar() {
 
           <!-- Auth Actions -->
           ${user ? `
-            <span style="font-size: 0.88rem; color: var(--text-muted);">Hi, <strong>${user.name.split(' ')[0]}</strong></span>
-            <button class="btn btn-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;" onclick="handleLogout()">Logout</button>
+            <a href="${user.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html'}" style="font-size: 0.88rem; color: var(--text-muted); text-decoration: none;" title="View Profile">Hi, <strong style="color: var(--primary-cyan);">${user.name.split(' ')[0]}</strong></a>
+            <button class="btn btn-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;" onclick="handleLogout()" data-i18n="navLogout">Logout</button>
           ` : `
             <a href="login.html" class="btn btn-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;" data-i18n="navLogin">Login</a>
             <a href="register.html" class="btn btn-primary" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;" data-i18n="navRegister">Register</a>

@@ -122,6 +122,11 @@
   <script src="js/reminders.js"></script>
 
   <script>
+    const adminUser = JSON.parse(localStorage.getItem('dishasetu_user') || '{}');
+    if (!adminUser._id || adminUser.role !== 'admin') {
+      window.location.replace('login.html');
+    }
+
     let currentStudents = [];
 
     async function loadStudents() {
@@ -133,6 +138,11 @@
       try {
         const url = `/api/admin/students?education=${encodeURIComponent(education)}&state=${encodeURIComponent(state)}&search=${encodeURIComponent(search)}`;
         const res = await fetch(url, { credentials: 'include' });
+        if (res.status === 401 || res.status === 403) {
+          localStorage.removeItem('dishasetu_user');
+          window.location.replace('login.html');
+          return;
+        }
         const data = await res.json();
 
         if (!data.success) {

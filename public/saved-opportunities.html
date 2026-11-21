@@ -45,7 +45,7 @@
     async function loadSavedItems() {
       const userStr = localStorage.getItem('dishasetu_user');
       if (!userStr) {
-        window.location.href = 'login.html';
+        window.location.replace('login.html');
         return;
       }
 
