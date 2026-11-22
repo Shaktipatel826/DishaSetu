@@ -250,43 +250,47 @@ exports.updateSubmissionStatusAdmin = async (req, res, next) => {
     submission.reviewedBy = req.user.id;
     submission.reviewedAt = new Date();
 
-    // IF APPROVED: Automatically convert submission to official MongoDB Opportunity or Scheme record!
-    if (status === 'Approved' && !submission.createdOpportunityId && !submission.createdSchemeId) {
+    // IF APPROVED: Create or update official MongoDB Opportunity or Scheme record
+    if (status === 'Approved') {
       if (submission.categoryType === 'Government Scheme' || submission.type === 'Government Scheme') {
-        // Create official Scheme
-        const newScheme = await Scheme.create({
+        const schemeData = {
           title: { en: submission.title, hi: submission.title },
           sector: 'Social Welfare',
           governmentType: 'Central',
-          stateName: submission.eligibility.state[0] || 'All India',
+          stateName: (submission.eligibility && submission.eligibility.state && submission.eligibility.state[0]) || 'All India',
           description: { en: submission.description, hi: submission.description },
           eligibility: {
-            minAge: submission.eligibility.minAge,
-            maxAge: submission.eligibility.maxAge,
-            education: submission.eligibility.education,
-            category: submission.eligibility.category,
-            details: { en: submission.eligibility.details, hi: submission.eligibility.details }
+            minAge: submission.eligibility ? submission.eligibility.minAge : 0,
+            maxAge: submission.eligibility ? submission.eligibility.maxAge : 100,
+            education: submission.eligibility ? submission.eligibility.education : [],
+            category: submission.eligibility ? submission.eligibility.category : ['All'],
+            details: { en: (submission.eligibility && submission.eligibility.details) || '', hi: (submission.eligibility && submission.eligibility.details) || '' }
           },
           benefits: { en: submission.benefits, hi: submission.benefits },
           lastDate: submission.lastDate,
           status: 'OPEN',
           applyUrl: submission.applyUrl || submission.sourceUrl,
           showInLatestUpdates: true
-        });
-        submission.createdSchemeId = newScheme._id;
+        };
+
+        if (submission.createdSchemeId) {
+          await Scheme.findByIdAndUpdate(submission.createdSchemeId, schemeData);
+        } else {
+          const newScheme = await Scheme.create(schemeData);
+          submission.createdSchemeId = newScheme._id;
+        }
       } else {
-        // Create official Opportunity with public banner image (private verification proof is NOT copied)
-        const newOpp = await Opportunity.create({
+        const oppData = {
           title: { en: submission.title, hi: submission.title },
           type: submission.type,
           description: { en: submission.description, hi: submission.description },
           eligibility: {
-            minAge: submission.eligibility.minAge,
-            maxAge: submission.eligibility.maxAge,
-            education: submission.eligibility.education,
-            state: submission.eligibility.state,
-            category: submission.eligibility.category,
-            details: { en: submission.eligibility.details, hi: submission.eligibility.details }
+            minAge: submission.eligibility ? submission.eligibility.minAge : 0,
+            maxAge: submission.eligibility ? submission.eligibility.maxAge : 100,
+            education: submission.eligibility ? submission.eligibility.education : [],
+            state: submission.eligibility ? submission.eligibility.state : ['All India'],
+            category: submission.eligibility ? submission.eligibility.category : ['All'],
+            details: { en: (submission.eligibility && submission.eligibility.details) || '', hi: (submission.eligibility && submission.eligibility.details) || '' }
           },
           benefits: { en: submission.benefits, hi: submission.benefits },
           lastDate: submission.lastDate,
@@ -294,8 +298,28 @@ exports.updateSubmissionStatusAdmin = async (req, res, next) => {
           applyUrl: submission.applyUrl || submission.sourceUrl,
           publicBannerImage: submission.publicBannerImage || '',
           showInLatestUpdates: true
+        };
+
+        if (submission.createdOpportunityId) {
+          await Opportunity.findByIdAndUpdate(submission.createdOpportunityId, oppData);
+        } else {
+          const newOpp = await Opportunity.create(oppData);
+          submission.createdOpportunityId = newOpp._id;
+        }
+      }
+    } else if (status === 'Rejected' || status === 'Changes Requested') {
+      // Hide rejected or change-requested records from public listings
+      if (submission.createdOpportunityId) {
+        await Opportunity.findByIdAndUpdate(submission.createdOpportunityId, {
+          status: 'CLOSED',
+          showInLatestUpdates: false
         });
-        submission.createdOpportunityId = newOpp._id;
+      }
+      if (submission.createdSchemeId) {
+        await Scheme.findByIdAndUpdate(submission.createdSchemeId, {
+          status: 'CLOSED',
+          showInLatestUpdates: false
+        });
       }
     }
 

@@ -319,7 +319,7 @@
       if (!grid) return;
 
       try {
-        const res = await fetch('/api/opportunities?limit=3');
+        const res = await fetch('/api/opportunities?limit=6&sort=latest');
         const data = await res.json();
         if (!data.success || !data.opportunities) return;
 
@@ -328,6 +328,10 @@
           const title = getLocalized(op.title, lang);
           const lastDateStr = op.lastDate ? new Date(op.lastDate).toLocaleDateString(lang === 'hi' ? 'hi-IN' : 'en-US', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
           const isClosing = op.status === 'CLOSING SOON';
+
+          const states = (op.eligibility && Array.isArray(op.eligibility.state) && op.eligibility.state.length > 0) ? op.eligibility.state : ['All India'];
+          const educations = (op.eligibility && Array.isArray(op.eligibility.education) && op.eligibility.education.length > 0) ? op.eligibility.education : ['12th Pass'];
+          const maxAge = (op.eligibility && op.eligibility.maxAge) || 25;
 
           return `
             <div class="glass-card" style="padding: 1.6rem; display: flex; flex-direction: column; justify-content: space-between;">
@@ -341,11 +345,11 @@
                 <h3 class="opportunity-card-title">${title}</h3>
                 
                 <div style="font-size: 0.82rem; color: var(--text-muted); margin-bottom: 0.8rem;">
-                  🎯 For: Students | State: ${(op.eligibility.state || ['All India']).join(', ')}
+                  🎯 For: Students | State: ${states.join(', ')}
                 </div>
 
                 <div style="font-size: 0.82rem; color: var(--text-subtle); margin-bottom: 0.8rem;">
-                  🎓 Min. ${(op.eligibility.education || ['12th Pass'])[0]} | 🎂 Max. ${op.eligibility.maxAge || 25} Years
+                  🎓 Min. ${educations[0]} | 🎂 Max. ${maxAge} Years
                 </div>
 
                 ${op.prizeAmount ? `<div style="font-size: 0.92rem; font-weight: 800; color: var(--primary-cyan); margin-bottom: 0.6rem;">💰 Prize: ${op.prizeAmount}</div>` : ''}

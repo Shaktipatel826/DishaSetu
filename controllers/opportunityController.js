@@ -7,7 +7,7 @@ const Opportunity = require('../models/Opportunity');
  */
 exports.getOpportunities = async (req, res) => {
   try {
-    const { search, type, education, state, category, age, status, latest, limit } = req.query;
+    const { search, type, education, state, category, age, status, latest, limit, sort } = req.query;
 
     const query = {};
 
@@ -25,6 +25,9 @@ exports.getOpportunities = async (req, res) => {
 
     if (status && status !== 'All') {
       query.status = status;
+    } else if (!status) {
+      // By default exclude CLOSED opportunities from public listings
+      query.status = { $ne: 'CLOSED' };
     }
 
     if (latest === 'true') {
@@ -60,7 +63,17 @@ exports.getOpportunities = async (req, res) => {
       }
     }
 
-    let resultQuery = Opportunity.find(query).sort({ lastDate: 1, createdAt: -1 });
+    // Determine sort order: default is newest first so fresh/approved opportunities appear immediately
+    let sortOptions = { createdAt: -1, lastDate: 1 };
+    if (sort === 'deadline') {
+      sortOptions = { lastDate: 1, createdAt: -1 };
+    } else if (sort === 'oldest') {
+      sortOptions = { createdAt: 1 };
+    } else if (sort === 'latest' || sort === 'newest') {
+      sortOptions = { createdAt: -1, lastDate: 1 };
+    }
+
+    let resultQuery = Opportunity.find(query).sort(sortOptions);
 
     if (limit) {
       resultQuery = resultQuery.limit(Number(limit));
@@ -119,6 +132,7 @@ exports.getLatestUpdatesTicker = async (req, res) => {
   try {
     const opportunities = await Opportunity.find({ showInLatestUpdates: true, status: { $ne: 'CLOSED' } })
       .select('title type lastDate applyUrl status')
+      .sort({ createdAt: -1 })
       .limit(10);
 
     return res.status(200).json({
