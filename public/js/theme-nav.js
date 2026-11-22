@@ -174,7 +174,7 @@ async function loadTicker() {
   if (!placeholder) return;
 
   try {
-    const res = await fetch('/api/opportunities/ticker');
+    const res = await fetch(`/api/opportunities/ticker?_t=${Date.now()}`);
     const data = await res.json();
     
     let rawItems = (data.success && data.items && data.items.length > 0) ? data.items : [];

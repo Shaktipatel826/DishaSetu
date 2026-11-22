@@ -7,6 +7,7 @@ const Opportunity = require('../models/Opportunity');
  */
 exports.getOpportunities = async (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     const { search, type, education, state, category, age, status, latest, limit, sort } = req.query;
 
     const query = {};
@@ -130,6 +131,7 @@ exports.getOpportunityById = async (req, res) => {
  */
 exports.getLatestUpdatesTicker = async (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
     const opportunities = await Opportunity.find({ showInLatestUpdates: true, status: { $ne: 'CLOSED' } })
       .select('title type lastDate applyUrl status')
       .sort({ createdAt: -1 })

@@ -319,7 +319,7 @@
       if (!grid) return;
 
       try {
-        const res = await fetch('/api/opportunities?limit=6&sort=latest');
+        const res = await fetch(`/api/opportunities?limit=6&sort=latest&_t=${Date.now()}`);
         const data = await res.json();
         if (!data.success || !data.opportunities) return;
 
