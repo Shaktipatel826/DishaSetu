@@ -91,6 +91,16 @@
   <script src="js/main.js"></script>
 
   <script>
+    const adminUser = JSON.parse(localStorage.getItem('dishasetu_user') || '{}');
+    const adminId = adminUser.id || adminUser._id;
+    const adminRole = (adminUser.role || '').toLowerCase();
+
+    if (!adminId) {
+      window.location.replace('login.html');
+    } else if (adminRole !== 'admin') {
+      window.location.replace('dashboard.html');
+    }
+
     let loadedOpportunities = [];
 
     async function loadAdminStats() {
@@ -106,9 +116,12 @@
           document.getElementById('stat-pending').innerText = s.pendingSubmissions || 0;
           document.getElementById('stat-approved').innerText = s.approvedSubmissions || 0;
           document.getElementById('btn-pending-count').innerText = s.pendingSubmissions || 0;
-        } else if (resStats.status === 401 || resStats.status === 403) {
+        } else if (resStats.status === 401) {
           localStorage.removeItem('dishasetu_user');
           window.location.replace('login.html');
+          return;
+        } else if (resStats.status === 403) {
+          window.location.replace('dashboard.html');
           return;
         }
 

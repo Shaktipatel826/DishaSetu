@@ -15,7 +15,8 @@ const setAuthCookie = (res, token) => {
   res.cookie('token', token, {
     httpOnly: true,
     secure: isProduction,
-    sameSite: isProduction ? 'strict' : 'lax',
+    sameSite: 'lax',
+    path: '/',
     maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
   });
 };
@@ -78,6 +79,7 @@ exports.registerUser = async (req, res) => {
       message: 'Registration successful! Welcome to DishaSetu.',
       user: {
         id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         phone: user.phone,
@@ -167,6 +169,7 @@ exports.login = async (req, res) => {
       message: `Welcome back, ${user.name}!`,
       user: {
         id: user._id,
+        _id: user._id,
         name: user.name,
         email: user.email,
         role: userRole,
@@ -193,9 +196,12 @@ exports.login = async (req, res) => {
  * @access Public
  */
 exports.logout = async (req, res) => {
+  const isProduction = process.env.NODE_ENV === 'production';
   res.clearCookie('token', {
     httpOnly: true,
-    sameSite: process.env.NODE_ENV === 'production' ? 'strict' : 'lax'
+    secure: isProduction,
+    sameSite: 'lax',
+    path: '/'
   });
   return res.status(200).json({
     success: true,

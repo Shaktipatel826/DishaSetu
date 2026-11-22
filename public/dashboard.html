@@ -60,6 +60,16 @@
   <script src="js/main.js"></script>
 
   <script>
+    const currentUser = JSON.parse(localStorage.getItem('dishasetu_user') || '{}');
+    const currentId = currentUser.id || currentUser._id;
+    const currentRole = (currentUser.role || '').toLowerCase();
+
+    if (!currentId) {
+      window.location.replace('login.html');
+    } else if (currentRole === 'admin') {
+      window.location.replace('admin-dashboard.html');
+    }
+
     async function loadStudentDashboard() {
       try {
         const res = await fetch('/api/auth/me', { credentials: 'include' });

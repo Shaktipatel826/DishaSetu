@@ -79,6 +79,9 @@ function renderNavbar() {
   const lang = getCurrentLanguage();
   const storedUserStr = localStorage.getItem('dishasetu_user');
   const user = storedUserStr ? JSON.parse(storedUserStr) : null;
+  const userRole = (user && user.role) ? user.role.toLowerCase() : '';
+  const isAdmin = userRole === 'admin';
+  const isStudent = user && !isAdmin;
 
   container.innerHTML = `
     <nav class="navbar">
@@ -102,15 +105,15 @@ function renderNavbar() {
           <li><a href="schemes.html" data-i18n="navSchemes">Government Schemes</a></li>
           <li><a href="index.html#how-it-works" data-i18n="navHowItWorks">How It Works</a></li>
           <li><a href="submit-opportunity.html" data-i18n="navSubmitOpportunity">Submit an Opportunity</a></li>
-          ${user && user.role !== 'admin' ? `
+          ${isStudent ? `
             <li><a href="my-submissions.html" data-i18n="navMySubmissions">My Submissions</a></li>
             <li><a href="saved-opportunities.html" data-i18n="navSaved">Saved Items</a></li>
           ` : ''}
-          ${user && user.role === 'admin' ? `
+          ${isAdmin ? `
             <li><a href="admin-submissions.html" style="color: #4ade80; font-weight: 600;" data-i18n="navReviewSubmissions">Review Submissions</a></li>
             <li><a href="admin-students.html" data-i18n="navStudentsDirectory">Students Directory</a></li>
           ` : ''}
-          ${user ? `<li><a href="${user.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html'}" data-i18n="navDashboard">Dashboard</a></li>` : ''}
+          ${user ? `<li><a href="${isAdmin ? 'admin-dashboard.html' : 'dashboard.html'}" data-i18n="navDashboard">Dashboard</a></li>` : ''}
         </ul>
 
         <!-- Right Controls -->
@@ -131,7 +134,7 @@ function renderNavbar() {
 
           <!-- Auth Actions -->
           ${user ? `
-            <a href="${user.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html'}" style="font-size: 0.88rem; color: var(--text-muted); text-decoration: none;" title="View Profile">Hi, <strong style="color: var(--primary-cyan);">${user.name.split(' ')[0]}</strong></a>
+            <a href="${isAdmin ? 'admin-dashboard.html' : 'dashboard.html'}" style="font-size: 0.88rem; color: var(--text-muted); text-decoration: none;" title="View Profile">Hi, <strong style="color: var(--primary-cyan);">${user.name.split(' ')[0]}</strong></a>
             <button class="btn btn-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;" onclick="handleLogout()" data-i18n="navLogout">Logout</button>
           ` : `
             <a href="login.html" class="btn btn-outline" style="padding: 0.4rem 0.9rem; font-size: 0.85rem;" data-i18n="navLogin">Login</a>

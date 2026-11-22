@@ -123,8 +123,14 @@
 
   <script>
     const adminUser = JSON.parse(localStorage.getItem('dishasetu_user') || '{}');
-    if (!adminUser._id || adminUser.role !== 'admin') {
+    const adminId = adminUser.id || adminUser._id;
+    const adminRole = (adminUser.role || '').toLowerCase();
+
+    if (!adminId) {
       window.location.replace('login.html');
+    } else if (adminRole !== 'admin') {
+      // Logged in as student - do not clear session, redirect to student dashboard
+      window.location.replace('dashboard.html');
     }
 
     let currentStudents = [];
@@ -138,9 +144,13 @@
       try {
         const url = `/api/admin/students?education=${encodeURIComponent(education)}&state=${encodeURIComponent(state)}&search=${encodeURIComponent(search)}`;
         const res = await fetch(url, { credentials: 'include' });
-        if (res.status === 401 || res.status === 403) {
+        if (res.status === 401) {
           localStorage.removeItem('dishasetu_user');
           window.location.replace('login.html');
+          return;
+        }
+        if (res.status === 403) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; color:#f87171; padding:2rem;">Access Denied. Admin privileges required.</td></tr>`;
           return;
         }
         const data = await res.json();
